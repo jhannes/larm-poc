@@ -11,6 +11,11 @@
   <packaging>jar</packaging>
 
 	<dependencies>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>larm-core</artifactId>
+          <version>${project.version}</version>
+        </dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>

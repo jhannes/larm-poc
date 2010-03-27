@@ -19,7 +19,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>larm-core</artifactId>
+      <artifactId>larm-core-container</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>
