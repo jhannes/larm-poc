@@ -1,9 +1,16 @@
 package no.statnett.larm.poc.client.stasjon;
 
-import no.statnett.larm.core.repository.Repository;
+import no.statnett.larm.core.async.AsyncCallback;
+import no.statnett.larm.core.async.SyncAsyncProxy;
+import no.statnett.larm.core.repository.HibernateRepository;
+import no.statnett.larm.core.repository.RepositoryAsync;
+import no.statnett.larm.poc.client.ApplicationFrame;
 
-import javax.swing.*;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -11,24 +18,46 @@ import java.util.Vector;
 
 public class StasjonListDialog extends JPanel {
     private StasjonSpecificationPanel searchPanel = new StasjonSpecificationPanel();
-    private Repository repository;
+    private RepositoryAsync repositoryAsync;
     private JTable searchResult = new JTable();
     private DefaultTableModel tableModel = new DefaultTableModel();
 
-    public StasjonListDialog() {
+    public StasjonListDialog(RepositoryAsync repositoryAsync) {
+        this.repositoryAsync = repositoryAsync;
         tableModel.addColumn("Stasjonsnavn");
         tableModel.addColumn("Fastområde");
         searchResult.setModel(tableModel);
 
         searchPanel.getSearchButton().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                performSearch();
+                StasjonListDialog.this.repositoryAsync.find(searchPanel.getSpecification(), new AsyncCallback<List<Stasjon>>() {
+                    public void onSuccess(List<Stasjon> result) {
+                        updateSearchResults(result);
+                    }
+
+                    public void onFailure(Throwable e) {
+                        reportError("while searching", e);
+                    }
+                });
             }
         });
+
+        setLayout(new BorderLayout());
+        add(BorderLayout.NORTH, searchPanel);
+        add(BorderLayout.CENTER, new JScrollPane(searchResult));
     }
 
-    private void performSearch() {
-        List<Stasjon> stasjoner = repository.find(searchPanel.getSpecification());
+    private void reportError(String whatWasHappening, Throwable e) {
+        System.err.println(whatWasHappening);
+        e.printStackTrace();
+    }
+
+    private void updateSearchResults(List<Stasjon> stasjoner) {
+        tableModel = new DefaultTableModel();
+        tableModel.addColumn("Stasjonsnavn");
+        tableModel.addColumn("Fastområde");
+        searchResult.setModel(tableModel);
+
         for (Stasjon stasjon : stasjoner) {
             tableModel.addRow(getRowData(stasjon));
         }
@@ -45,11 +74,17 @@ public class StasjonListDialog extends JPanel {
         return searchPanel;
     }
 
-    public void setRepository(Repository repository) {
-        this.repository = repository;
-    }
-
     public JTable getSearchResult() {
         return searchResult;
+    }
+
+    public static void main(String[] args) {
+        HibernateRepository repository = HibernateRepository.withFileDatabase(Stasjon.class);
+        repository.insert(Stasjon.medNavnOgFastområde("Stasjon 1", "F01"));
+        repository.insert(Stasjon.medNavnOgFastområde("Stasjon 2", "F01"));
+        repository.insert(Stasjon.medNavnOgFastområde("Stasjon 3", "F02"));
+        repository.insert(Stasjon.medNavnOgFastområde("Stasjon 4", "F03"));
+        ApplicationFrame.display("Stasjoner",
+                new StasjonListDialog(SyncAsyncProxy.createAsyncProxy(RepositoryAsync.class, repository)));
     }
 }

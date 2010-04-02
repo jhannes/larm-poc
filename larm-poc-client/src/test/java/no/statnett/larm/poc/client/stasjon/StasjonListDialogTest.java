@@ -1,6 +1,8 @@
 package no.statnett.larm.poc.client.stasjon;
 
+import no.statnett.larm.core.async.SyncAsyncProxy;
 import no.statnett.larm.core.repository.Repository;
+import no.statnett.larm.core.repository.RepositoryAsync;
 import org.junit.Test;
 
 import javax.swing.*;
@@ -16,7 +18,7 @@ public class StasjonListDialogTest {
 
     @Test
     public void shouldCreateSpecification() {
-        StasjonListDialog dialog = new StasjonListDialog();
+        StasjonListDialog dialog = new StasjonListDialog(null);
         dialog.getSearchPanel().getIncludeF01Checkbox().setSelected(true);
         dialog.getSearchPanel().getIncludeF02Checkbox().setSelected(false);
 
@@ -28,13 +30,13 @@ public class StasjonListDialogTest {
 
     @Test
     public void shouldDisplaySearchResults() throws Exception {
-        StasjonListDialog dialog = new StasjonListDialog();
         Repository repository = mock(Repository.class);
-        dialog.setRepository(repository);
+        StasjonListDialog dialog = new StasjonListDialog(SyncAsyncProxy.createAsyncProxy(RepositoryAsync.class, repository));
 
         List<Stasjon> stasjoner = Arrays.asList(Stasjon.medNavnOgFastområde("Foo", "F01"), Stasjon.medNavnOgFastområde("Bar", "F09"));
         when(repository.find(any(StasjonSpecification.class))).thenReturn(stasjoner);
 
+        dialog.getSearchPanel().getSearchButton().doClick();
         dialog.getSearchPanel().getSearchButton().doClick();
 
         JTable searchResult = dialog.getSearchResult();
@@ -42,6 +44,7 @@ public class StasjonListDialogTest {
         assertThat(searchResult.getModel().getColumnName(1)).isEqualTo("Fastområde");
         assertThat(searchResult.getModel().getValueAt(0, 0)).isEqualTo("Foo");
         assertThat(searchResult.getModel().getValueAt(1, 1)).isEqualTo("F09");
+        assertThat(searchResult.getModel().getRowCount()).isEqualTo(stasjoner.size());
     }
 
 

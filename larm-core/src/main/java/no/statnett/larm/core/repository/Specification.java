@@ -1,4 +1,9 @@
 package no.statnett.larm.core.repository;
 
-public class Specification<T> {
+import org.hibernate.criterion.DetachedCriteria;
+
+public interface Specification<T> {
+
+    Class<T> getEntityType();
+
 }

@@ -1,11 +1,21 @@
 package no.statnett.larm.poc.client.stasjon;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import java.awt.FlowLayout;
 
-public class StasjonSpecificationPanel {
+public class StasjonSpecificationPanel extends JPanel {
     private JCheckBox includeF01Checkbox = new JCheckBox("F01");
     private JCheckBox includeF02Checkbox = new JCheckBox("F02");
     private JButton searchButton = new JButton("Search");
+
+    public StasjonSpecificationPanel() {
+        setLayout(new FlowLayout());
+        add(includeF01Checkbox);
+        add(includeF02Checkbox);
+        add(searchButton);
+    }
 
     public JCheckBox getIncludeF01Checkbox() {
         return includeF01Checkbox;
