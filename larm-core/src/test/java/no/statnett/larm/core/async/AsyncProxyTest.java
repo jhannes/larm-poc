@@ -77,7 +77,7 @@ public class AsyncProxyTest {
         asynchProxy.transform("13", 12, mockLongCallback);
 
         synchronized (mockLongCallback) {
-            mockLongCallback.wait(100);
+            mockLongCallback.wait(200);
         }
         Mockito.verify(mockLongCallback).onSuccess(123L);
     }
