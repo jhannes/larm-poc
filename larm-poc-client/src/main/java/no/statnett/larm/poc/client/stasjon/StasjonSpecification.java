@@ -6,10 +6,11 @@ import no.statnett.larm.core.repository.inmemory.InmemorySpecification;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StasjonSpecification implements Specification<Stasjon>, HibernateSpecification<Stasjon>, InmemorySpecification<Stasjon> {
+public class StasjonSpecification implements Specification<Stasjon>, HibernateSpecification<Stasjon>, InmemorySpecification<Stasjon>, Serializable {
 
     private boolean includeF02;
     private boolean includeF01;

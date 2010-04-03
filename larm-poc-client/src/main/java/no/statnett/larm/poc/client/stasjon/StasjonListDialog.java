@@ -79,7 +79,7 @@ public class StasjonListDialog extends JPanel {
     }
 
     public static void main(String[] args) {
-        HibernateRepository repository = HibernateRepository.withFileDatabase(Stasjon.class);
+        HibernateRepository repository = HibernateRepository.withDatabase("jdbc:h2:file:target/testdb;MODE=Oracle", Stasjon.class);
         repository.insert(Stasjon.medNavnOgFastområde("Stasjon 1", "F01"));
         repository.insert(Stasjon.medNavnOgFastområde("Stasjon 2", "F01"));
         repository.insert(Stasjon.medNavnOgFastområde("Stasjon 3", "F02"));

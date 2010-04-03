@@ -12,7 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class JnlpServlet extends HttpServlet {
+public class
+        JnlpServlet extends HttpServlet {
 
     private static final long serialVersionUID = 6254020517387286254L;
 
@@ -20,7 +21,7 @@ public class JnlpServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException,
             IOException {
         String codebaseUrl = "http://" + req.getServerName() + ":" + req.getServerPort() + req.getContextPath();
-        String repositoryUrl = codebaseUrl + "/repository";
+        String repositoryUrl = codebaseUrl + "/service/repositoryService";
         String servletPath = req.getServletPath();
         if (!servletPath.endsWith(".jnlp") || !servletPath.startsWith("/")) {
             throw new RuntimeException("Huh!? " + servletPath);

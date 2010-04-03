@@ -69,10 +69,10 @@ public class HibernateRepository implements Repository {
         }
     }
 
-    public static HibernateRepository withFileDatabase(Class<?>... entities) {
+    public static HibernateRepository withDatabase(String databaseUrl, Class<?>... entities) {
         AnnotationConfiguration cfg = new AnnotationConfiguration();
         cfg
-                .setProperty(Environment.URL, "jdbc:h2:file:target/testdb;MODE=Oracle")
+                .setProperty(Environment.URL, databaseUrl)
                 .setProperty(Environment.DRIVER, "org.h2.Driver")
                 .setProperty(Environment.HBM2DDL_AUTO, "update");
         addAnnotatedEntities(cfg, entities);

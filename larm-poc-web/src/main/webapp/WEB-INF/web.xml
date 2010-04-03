@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns="http://java.sun.com/xml/ns/javaee"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-	version="2.5">
-	<display-name>LARM Proof-of-concept</display-name>
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         version="2.5">
+    <display-name>LARM Proof-of-concept</display-name>
+
 
     <servlet>
-      <servlet-name>jnlp</servlet-name>
-      <servlet-class>no.statnett.larm.core.jnlp.JnlpServlet</servlet-class>
+        <servlet-name>serviceFrontServlet</servlet-name>
+        <servlet-class>no.statnett.larm.poc.web.service.ServiceFrontServlet</servlet-class>
     </servlet>
+
+    <servlet>
+        <servlet-name>jnlp</servlet-name>
+        <servlet-class>no.statnett.larm.core.jnlp.JnlpServlet</servlet-class>
+    </servlet>
+
 
     <servlet>
         <servlet-name>jarServlet</servlet-name>
@@ -16,13 +23,18 @@
     </servlet>
 
     <servlet-mapping>
-      <servlet-name>jnlp</servlet-name>
-      <url-pattern>*.jnlp</url-pattern>
+        <servlet-name>jnlp</servlet-name>
+        <url-pattern>*.jnlp</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
-      <servlet-name>jarServlet</servlet-name>
-      <url-pattern>*.jar</url-pattern>
+        <servlet-name>jarServlet</servlet-name>
+        <url-pattern>*.jar</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>serviceFrontServlet</servlet-name>
+        <url-pattern>/service/*</url-pattern>
     </servlet-mapping>
 
 </web-app>

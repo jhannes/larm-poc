@@ -1,7 +1,9 @@
 package no.statnett.larm.poc.client;
 
+import no.statkraft.larm.core.web.service.LarmHessianProxyFactory;
 import no.statnett.larm.core.async.SwingWorkerAsyncProxy;
 import no.statnett.larm.core.repository.HibernateRepository;
+import no.statnett.larm.core.repository.Repository;
 import no.statnett.larm.core.repository.RepositoryAsync;
 import no.statnett.larm.poc.client.stasjon.Stasjon;
 import no.statnett.larm.poc.client.stasjon.StasjonListDialog;
@@ -24,15 +26,30 @@ public class ApplicationFrame {
     }
 
     public static void main(String[] args) {
-        HibernateRepository repository = HibernateRepository.withFileDatabase(Stasjon.class);
-        repository.insert(Stasjon.medNavnOgFastområde("Stasjon 1", "F01"));
-        repository.insert(Stasjon.medNavnOgFastområde("Stasjon 2", "F01"));
-        repository.insert(Stasjon.medNavnOgFastområde("Stasjon 3", "F02"));
-        repository.insert(Stasjon.medNavnOgFastområde("Stasjon 4", "F03"));
+        String clientUrl = args.length > 0 ? args[0] : null;
 
-        StasjonListDialog dialog = new StasjonListDialog(SwingWorkerAsyncProxy.createAsyncProxy(RepositoryAsync.class, repository));
+        StasjonListDialog dialog = new StasjonListDialog(createClientRepository(clientUrl));
         display("Stasjoner", dialog);
 
+    }
+
+    private static RepositoryAsync createClientRepository(String clientUrl) {
+        if (clientUrl == null) {
+            clientUrl = "jdbc:h2:file:target/testdb;MODE=Oracle";
+            Repository repository = HibernateRepository.withDatabase(clientUrl, Stasjon.class);
+            repository.insert(Stasjon.medNavnOgFastområde("Stasjon 1", "F01"));
+            repository.insert(Stasjon.medNavnOgFastområde("Stasjon 2", "F01"));
+            repository.insert(Stasjon.medNavnOgFastområde("Stasjon 3", "F02"));
+            repository.insert(Stasjon.medNavnOgFastområde("Stasjon 4", "F03"));
+            return SwingWorkerAsyncProxy.createAsyncProxy(RepositoryAsync.class, repository);
+        }
+        if (clientUrl.startsWith("jdbc:")) {
+            return SwingWorkerAsyncProxy.createAsyncProxy(RepositoryAsync.class, HibernateRepository.withDatabase(clientUrl, Stasjon.class));
+        } else if (clientUrl.startsWith("http:") || clientUrl.startsWith("https:")) {
+            return SwingWorkerAsyncProxy.createAsyncProxy(RepositoryAsync.class, LarmHessianProxyFactory.createProxy(Repository.class, clientUrl));
+        } else {
+            throw new IllegalArgumentException("Illegal repository URL " + clientUrl);
+        }
     }
 
 
