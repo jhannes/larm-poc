@@ -29,7 +29,7 @@ public class ApplicationFrame {
         String clientUrl = args.length > 0 ? args[0] : null;
 
         StasjonListDialog dialog = new StasjonListDialog(createClientRepository(clientUrl));
-        display("Stasjoner", dialog);
+        display("Visning av stasjoner: " + clientUrl, dialog);
 
     }
 
