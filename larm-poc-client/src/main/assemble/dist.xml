@@ -1,0 +1,28 @@
+<assembly>
+  <id>jar-with-dependencies</id>
+  <formats>
+    <format>jar</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <!--  <fileSets>
+    <fileSet>
+      <directory>target/classes</directory>
+      <outputDirectory>/</outputDirectory>
+    </fileSet>
+  </fileSets>-->
+  <dependencySets>
+    <dependencySet>
+      <outputDirectory>/</outputDirectory>
+      <unpack>true</unpack>
+      <unpackOptions>
+        <excludes>
+        	<exclude>*.txt</exclude>
+        	<exclude>LICENSE</exclude>
+        	<exclude>NOTICE</exclude>
+     		<exclude>META-INF/*.txt</exclude>
+     	</excludes>
+      </unpackOptions>
+      <scope>runtime</scope>
+    </dependencySet>
+  </dependencySets>
+</assembly>
