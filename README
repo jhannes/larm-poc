@@ -1,0 +1,51 @@
+== GETTING STARTED ==
+
+Prerequisites:
+* Java SDK 1.6
+* Maven 2
+* Eclipse or IDEA
+
+1. Check out: git clone git@github.com:jhannes/larm-poc.git
+2. Install dependencies in your local repo: "dependencies/install-dependencies.bat"
+3. Build everything: "mvn install"
+4. Create IDE project files: "mvn eclipse:eclipse" or "mvn idea:idea"
+5. Import project into your workspace
+   * In Eclipse: "File -> Import -> Existing projects into workspace"
+   * In IDEA: "File -> Open Project"
+6. Start server: Run main class no.statkraft.larm.poc.web.WebServer
+   * IDEA: Make sure Working Directory is project directory
+7. Start client: Run main class no.statnett.larm.poc.client.ApplicationFrame
+   with argument http://localhost:8088/larm-web/services/repositoryService
+   * Alternatively, start with argument jdbc:... to run in two-tier mode
+   
+== DEPLOYMENT ==
+
+1. mvn install builds everything
+2. larm-poc-web/target/larm-poc-server-1.0-SNAPSHOT-onejar.jar is a complete
+   executable jar that can be copied to the deployment server
+3. Copy larm-poc-server-1.0-SNAPSHOT-onejar.jar to server
+4. java -jar larm-poc-server-1.0-SNAPSHOT-onejar.jar
+5. Access the service at http://<hostname>:8080/larm-web/
+
+
+== DEVELOPMENT ==
+
+These tests are normative for development:
+
+* no.statnett.larm.poc.client.stasjon.StasjonListDialogTest describes
+  the mapping between the domain and the user interface
+* no.statnett.larm.poc.client.stasjon.StasjonSpecificationTest describes
+  the mapping between the domain and the database
+
+These files are the starting points for the runtime:
+
+* no.statkraft.larm.poc.web.WebServer
+  * Reads configuration, sets up web applications and starts Jetty in test mode
+  * The web.xml file specifies servlets for serving the JNLP definition;
+  	for serving the client jar files and for serving services using Hessian
+* no.statnett.larm.poc.LarmPocServer
+  * The main class started by the executable jar
+  * Reads configuration, sets up web applications and starts Jetty in production mode
+* no.statnett.larm.poc.client.ApplicationFrame
+  * Locates the server Repository (can be two-tier or three-tier, based on URL)
+  * Sets up the client's panels in the application frame
