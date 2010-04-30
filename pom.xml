@@ -1,35 +1,43 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>no.statnett.larm</groupId>
-  <artifactId>larm-poc</artifactId>
-  <version>1.0-SNAPSHOT</version>
-  <name>larm-poc</name>
-  <packaging>pom</packaging>
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>no.statnett.larm</groupId>
+	<artifactId>larm-poc</artifactId>
+	<version>1.0-SNAPSHOT</version>
+	<name>larm-poc</name>
+	<packaging>pom</packaging>
 
-  <modules>
-    <module>larm-core-test</module>
-    <module>larm-core</module>
-    <module>larm-core-container</module>
-    <module>larm-ediel-parser</module>
-    <module>larm-poc-client</module>
-    <module>larm-poc-web</module>
-    <module>larm-poc-server</module>
-  </modules>
-  
-  <build>
-  	<plugins>
-  		<plugin>
-  			<artifactId>maven-compiler-plugin</artifactId>
-  			<configuration>
-  				<source>1.6</source>
-  				<target>1.6</target>
-  			</configuration>
-  		</plugin>
-  	</plugins>
-  </build>
-  
-  <properties>
-  	<jetty.version>6.1.22</jetty.version>
-  </properties>
+	<repositories>
+		<repository>
+			<id>caucho</id>
+			<name>Caucho</name>
+			<url>http://caucho.com/m2</url>
+		</repository>
+	</repositories>
+
+	<modules>
+		<module>larm-core-test</module>
+		<module>larm-core</module>
+		<module>larm-core-container</module>
+		<module>larm-ediel-parser</module>
+		<module>larm-poc-client</module>
+		<module>larm-poc-web</module>
+		<module>larm-poc-server</module>
+	</modules>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<properties>
+		<jetty.version>6.1.22</jetty.version>
+	</properties>
 </project>
