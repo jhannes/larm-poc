@@ -148,40 +148,6 @@ public class EdifactParserTest {
 		assertThat(parser.readEdifactSegment().getSegmentName()).isEqualTo("UNH");
 	}
 
-	@Test
-	public void shouldReadTokensWithEscapeCharacter() throws Exception {
-
-		EdifactParser parser = new EdifactParser("");
-
-		List<String> tokens = parser.splitToStringList(null, '+', '?');
-		assertThat(tokens).isEmpty();
-
-		tokens = parser.splitToStringList("", '+', (char) 0);
-		assertThat(tokens).isEmpty();
-
-		tokens = parser.splitToStringList("  ", '+', '?');
-		assertThat(tokens).containsExactly("  ");
-
-		tokens = parser.splitToStringList("A++Å:?+?C", '+', '?');
-		assertThat(tokens).containsExactly("A", "", "Å:+?C");
-
-		tokens = parser.splitToStringList("A++Å:?+?C+", '+', '?');
-		assertThat(tokens).containsExactly("A", "", "Å:+?C", "");
-
-		tokens = parser.splitToStringList("A++B:?+C+", ':', '?');
-		assertThat(tokens).containsExactly("A++B", "?+C+");
-
-		tokens = parser.splitToStringList("A++B:?+?C+", '+', (char) 0);
-		assertThat(tokens).containsExactly("A", "", "B:?", "?C", "");
-
-		tokens = parser.splitToStringList("A++B:?+?C+", (char) 0, (char) 0);
-		assertThat(tokens).containsExactly("A++B:?+?C+");
-
-		tokens = parser.splitToStringList("A++B:?+?C+", (char) 0, '?');
-		assertThat(tokens).containsExactly("A++B:?+?C+");
-
-	}
-
 	private List<String> segmentNames(EdifactParser parser) throws IOException {
 		return collect(parser.eachSegment(), on(EdifactSegment.class).getSegmentName());
 	}

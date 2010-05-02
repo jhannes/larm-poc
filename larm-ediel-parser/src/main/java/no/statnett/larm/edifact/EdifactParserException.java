@@ -8,15 +8,12 @@ public class EdifactParserException extends RuntimeException {
 		super(message);
 	}
 
-	EdifactParserException(ParserContext ctx, String message) {
-		super(message + ": " + ctx.formatPosition());
+	EdifactParserException(String positionInfo, String message) {
+		super(message + ": " + positionInfo);
 	}
 
-	EdifactParserException(String message, Throwable t) {
-		super(message, t);
+	EdifactParserException(String positionInfo, String message, Throwable t) {
+		super(message + ": " + positionInfo, t);
 	}
 
-	EdifactParserException(ParserContext ctx, Throwable t) {
-		super(t.getMessage() + ": parsing at " + ctx.formatPosition(), t);
-	}
 }
