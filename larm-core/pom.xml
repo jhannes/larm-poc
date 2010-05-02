@@ -34,7 +34,7 @@
         </dependency>
         <dependency>
             <groupId>com.caucho</groupId>
-            <artifactId>resin-hessian</artifactId>
+            <artifactId>hessian</artifactId>
             <version>4.0.3</version>
         </dependency>
     </dependencies>
