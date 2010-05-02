@@ -13,10 +13,9 @@ import org.junit.Test;
 
 public class EdifactParserTest {
 
-
 	@Test
 	public void shouldSplitIntoSegments() throws Exception {
-		String edifactFile = //"UNA:+.? '\n" +
+		String edifactFile = // "UNA:+.? '\n" +
 				"UNB+UNOC:glarb'" +
 				"UNH+1+QUOTES:D:96A:UN:EDIEL2+S'" +
 				"CUX+2:NOK'NAD+FR+7080005053136::9+++++++NO'LIN+1++1608:::SM'\n" +
@@ -69,7 +68,7 @@ public class EdifactParserTest {
 		assertThat(segment.getSegmentName()).isEqualTo("PDI");
 		assertThat(segment.getDataElements().get(0).getComponentData()).isEmpty();
 		assertThat(segment.getDataElements().get(1).getComponentData()).containsExactly("C", "3");
-		assertThat(segment.getDataElements().get(3).getComponentData()).containsExactly("F", "",  "1");
+		assertThat(segment.getDataElements().get(3).getComponentData()).containsExactly("F", "", "1");
 	}
 
 	@Segment("PDI")
@@ -96,13 +95,9 @@ public class EdifactParserTest {
 		assertThat(segment.getDataElements()).hasSize(4);
 	}
 
-
 	@Test
 	public void shouldReadOptionalSegmentByNameAndQualifier() throws Exception {
-		String edifactFile =
-			"UNB+UNOC:glarb'" +
-			"UNH+1+GABBA'" +
-			"PDI+FOO+C:3+Y::3+F::1'";
+		String edifactFile = "UNB+UNOC:glarb'" + "UNH+1+GABBA'" + "PDI+FOO+C:3+Y::3+F::1'";
 		EdifactParser parser = new EdifactParser(new StringReader(edifactFile));
 		assertThat(parser.readEdifactSegment().getSegmentName()).isEqualTo("UNB");
 		assertThat(parser.readOptionalSegment(PdiEdifactSegment.class, "BAR")).isNull();
@@ -112,13 +107,9 @@ public class EdifactParserTest {
 		assertThat(parser.readOptionalSegment(PdiEdifactSegment.class, "FOO")).isNotNull();
 	}
 
-
 	@Test
 	public void shouldPushBack() throws Exception {
-		String edifactFile =
-			"UNB+UNOC:glarb'" +
-			"UNH+1+GABBA'" +
-			"PDI++C:3+Y::3+F::1'";
+		String edifactFile = "UNB+UNOC:glarb'" + "UNH+1+GABBA'" + "PDI++C:3+Y::3+F::1'";
 		EdifactParser parser = new EdifactParser(new StringReader(edifactFile));
 
 		assertThat(parser.readEdifactSegment().getSegmentName()).isEqualTo("UNB");
@@ -130,12 +121,8 @@ public class EdifactParserTest {
 
 	@Test
 	public void shouldReadOptionalStuff() throws Exception {
-		String edifactFile = "UNA:+.? '\n" +
-		"UNB+UNOC:glarb'" +
-		"UNH+1+GABBA'" +
-		"PDI++C:3+Y::3+F::1'" +
-		"UNT+169+1'\n" +
-		"UNZ+1+gabba'";
+		String edifactFile = "UNA:+.? '\n" + "UNB+UNOC:glarb'" + "UNH+1+GABBA'" + "PDI++C:3+Y::3+F::1'" + "UNT+169+1'\n"
+				+ "UNZ+1+gabba'";
 		SegmentSource parser = new EdifactParser(new StringReader(edifactFile));
 
 		assertThat(parser.readOptionalSegment("UNA").getSegmentName()).isEqualTo("UNA");
@@ -161,10 +148,42 @@ public class EdifactParserTest {
 		assertThat(parser.readEdifactSegment().getSegmentName()).isEqualTo("UNH");
 	}
 
+	@Test
+	public void shouldReadTokensWithEscapeCharacter() throws Exception {
+
+		EdifactParser parser = new EdifactParser("");
+
+		List<String> tokens = parser.splitToStringList(null, '+', '?');
+		assertThat(tokens).isEmpty();
+
+		tokens = parser.splitToStringList("", '+', (char) 0);
+		assertThat(tokens).isEmpty();
+
+		tokens = parser.splitToStringList("  ", '+', '?');
+		assertThat(tokens).containsExactly("  ");
+
+		tokens = parser.splitToStringList("A++Å:?+?C", '+', '?');
+		assertThat(tokens).containsExactly("A", "", "Å:+?C");
+
+		tokens = parser.splitToStringList("A++Å:?+?C+", '+', '?');
+		assertThat(tokens).containsExactly("A", "", "Å:+?C", "");
+
+		tokens = parser.splitToStringList("A++B:?+C+", ':', '?');
+		assertThat(tokens).containsExactly("A++B", "?+C+");
+
+		tokens = parser.splitToStringList("A++B:?+?C+", '+', (char) 0);
+		assertThat(tokens).containsExactly("A", "", "B:?", "?C", "");
+
+		tokens = parser.splitToStringList("A++B:?+?C+", (char) 0, (char) 0);
+		assertThat(tokens).containsExactly("A++B:?+?C+");
+
+		tokens = parser.splitToStringList("A++B:?+?C+", (char) 0, '?');
+		assertThat(tokens).containsExactly("A++B:?+?C+");
+
+	}
 
 	private List<String> segmentNames(EdifactParser parser) throws IOException {
 		return collect(parser.eachSegment(), on(EdifactSegment.class).getSegmentName());
 	}
-
 
 }

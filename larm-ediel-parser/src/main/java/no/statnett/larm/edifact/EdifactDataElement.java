@@ -1,14 +1,13 @@
 package no.statnett.larm.edifact;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class EdifactDataElement {
 
-	private final ArrayList<String> componentData;
+	private final List<String> componentData;
 	private String dataElement;
 
-	public EdifactDataElement(String dataElement, ArrayList<String> componentData) {
+	public EdifactDataElement(final String dataElement, final List<String> componentData) {
 		this.dataElement = dataElement;
 		this.componentData = componentData;
 	}

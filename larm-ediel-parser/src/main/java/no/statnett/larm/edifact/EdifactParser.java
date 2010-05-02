@@ -2,66 +2,79 @@ package no.statnett.larm.edifact;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
-
 public class EdifactParser implements SegmentSource {
 
-	private char segmentTerminator = '\'';
-	private char dataElementSeparator = '+';
-	private char componentDataElementSeparator = ':';
 	private Map<String, Class<? extends EdifactSegment>> segmentClassMap = new HashMap<String, Class<? extends EdifactSegment>>();
-	private String currentSegment;
-	private String pushedBackSegment;
-	private final Reader reader;
-	private boolean hasReadFirst = false;
 
-	public EdifactParser(Reader reader) throws IOException {
-		this.reader = reader;
+	private final Reader reader;
+	private final ParserContext ctx = new ParserContext(30);
+
+	public EdifactParser(final Reader input) throws IOException {
+		if (null == input) {
+			throw new IllegalArgumentException("input cannot be null");
+		}
+		this.reader = input;
 	}
 
-	public EdifactSegment readEdifactSegment() throws IOException {
+	public EdifactParser(final String input) throws IOException {
+		this(new StringReader(input));
+	}
+
+	EdifactSegment readEdifactSegment() throws IOException {
 		String segment = readSegment();
 		return segment != null ? parseSegment(segment) : null;
 	}
 
-	public void pushBack() {
-		pushedBackSegment = currentSegment;
+	void pushBack() {
+		ctx.pushBack();
 	}
 
 	public EdifactSegment readOptionalSegment(String segmentName) throws IOException {
 		EdifactSegment segment = readEdifactSegment();
-		if (segment.getSegmentName().equals(segmentName)) return segment;
+		if (segment.getSegmentName().equals(segmentName))
+			return segment;
 		pushBack();
 		return null;
 	}
 
 	public EdifactSegment readMandatorySegment(String segmentName) throws IOException {
 		EdifactSegment segment = readEdifactSegment();
-		if (segment.getSegmentName().equals(segmentName)) return segment;
+		if (segment.getSegmentName().equals(segmentName))
+			return segment;
 		pushBack();
-		throw new RuntimeException("Required segment <" + segmentName + "> but was <" + segment.getSegmentName() + ">");
+		throw new EdifactParserException(ctx, "Required segment <" + segmentName + "> but was <" + segment.getSegmentName() + ">");
 	}
 
 	private String readSegment() throws IOException {
-		if (pushedBackSegment != null) {
-			currentSegment = pushedBackSegment;
-			pushedBackSegment = null;
-		} else {
-			if (!hasReadFirst) {
-				hasReadFirst = true;
-				currentSegment = readFirstSegment();
+		if (ctx.popCurrent() == null) {
+			if (!ctx.hasReadFirst) {
+				ctx.hasReadFirst = true;
+				ctx.currentSegment = readFirstSegment();
 			} else {
-				currentSegment = readTo(segmentTerminator);
+				ctx.currentSegment = readTo(ctx.segmentTerminator);
 			}
-			currentSegment = StringUtils.stripStart(currentSegment, " \n\t\r");
+			ctx.currentSegment = stripStart(ctx.currentSegment, " \n\t\r");
 		}
-		return currentSegment;
+		return ctx.currentSegment;
+	}
+
+	private String stripStart(String str, String stripChars) {
+		if (str == null)
+			return null;
+
+		int len = str.length();
+		for (int i = 0; i < len; i++) {
+			if (stripChars.indexOf(str.charAt(i)) == -1) {
+				return str.substring(i, len);
+			}
+		}
+		return str;
 	}
 
 	public Iterable<EdifactSegment> eachSegment() throws IOException {
@@ -76,16 +89,14 @@ public class EdifactParser implements SegmentSource {
 	private String readFirstSegment() throws IOException {
 		String segmentHeader = read(3);
 
-		if (segmentHeader.equals("UNA")) {
+		if ("UNA".equals(segmentHeader)) {
 			String unaBody = read(6);
-			segmentTerminator = unaBody.charAt(5);
-			dataElementSeparator = unaBody.charAt(1);
-			componentDataElementSeparator = unaBody.charAt(0);
+			ctx.initSeparators(unaBody);
 			return segmentHeader + unaBody;
 		} else {
-			String segmentBody = readTo(segmentTerminator);
+			String segmentBody = readTo(ctx.segmentTerminator);
 			if (segmentBody != null) {
-				return segmentHeader+segmentBody;
+				return segmentHeader + segmentBody;
 			} else {
 				return null;
 			}
@@ -93,18 +104,19 @@ public class EdifactParser implements SegmentSource {
 	}
 
 	EdifactSegment parseSegment(String segment) {
-		EdifactSegment edifactSegment = createSegment(segment.substring(0,3));
-		StringUtils.splitPreserveAllTokens(segment, dataElementSeparator);
-		List<String> dataElements = splitToStringList(segment, dataElementSeparator);
+		EdifactSegment edifactSegment = createSegment(segment.subSequence(0, 3).toString());
+		List<String> dataElements = splitToStringList(segment, ctx.dataElementSeparator, ctx.releaseIndicator);
 		dataElements.remove(0);
 		edifactSegment.setDataElements(parseElements(dataElements));
 		return edifactSegment;
 	}
 
-	private List<EdifactDataElement> parseElements(List<String> dataElements) {
-		ArrayList<EdifactDataElement> result = new ArrayList<EdifactDataElement>();
+	private List<EdifactDataElement> parseElements(final List<String> dataElements) {
+
+		List<EdifactDataElement> result = new ArrayList<EdifactDataElement>();
 		for (String element : dataElements) {
-			result.add(new EdifactDataElement(element, splitToStringList(element, componentDataElementSeparator)));
+			List<String> tokens = splitToStringList(element, ctx.componentDataElementSeparator, ctx.releaseIndicator);
+			result.add(new EdifactDataElement(element, tokens));
 		}
 		return result;
 	}
@@ -127,48 +139,84 @@ public class EdifactParser implements SegmentSource {
 	private String readTo(char terminator) throws IOException {
 		StringBuilder result = new StringBuilder();
 		int c;
-		while ((c = reader.read()) != -1) {
-			if (c == terminator) return result.toString();
-			result.append((char)c);
+
+		while ((c = ctx.readChar(reader)) != -1) {
+			if (c == terminator)
+				return result.toString();
+			result.append((char) c);
 		}
 		return null;
 	}
 
 	private String read(int characters) throws IOException {
-		StringBuilder result = new StringBuilder();
-		while (result.length() < characters) {
-			int c = reader.read();
-			result.append((char)c);
+		StringBuilder result = new StringBuilder(characters);
+
+		int c;
+		while (result.length() < characters && ((c = ctx.readChar(reader)) != -1)) {
+			result.append((char) c);
 		}
 		return result.toString();
 	}
 
-	private ArrayList<String> splitToStringList(String segment, char separator) {
-		return new ArrayList<String>(Arrays.asList(StringUtils.splitPreserveAllTokens(segment, separator)));
+	List<String> splitToStringList(CharSequence text, char separator, char escape) {
+		List<String> tokens = new ArrayList<String>(6);
+		int len;
+
+		if (text == null || (len = text.length()) == 0) {
+			return tokens;
+		}
+
+		int start = 0;
+		StringBuilder tempToken = new StringBuilder();
+
+		for (int i = 0; i < len; i++) {
+			char c = text.charAt(i);
+			if (c == separator) {
+				tempToken.append(text.subSequence(start, i));
+				tokens.add(tempToken.toString());
+				tempToken.delete(0, tempToken.length());
+				start = i + 1;
+			} else if (c == escape) {
+				if (i < (len - 1) && text.charAt(i + 1) == separator) {
+					tempToken.append(text.subSequence(start, i));
+					start = ++i; // skip separator next char
+				}
+			}
+		}
+
+		if (start <= len) {
+			tempToken.append(text.subSequence(start, len));
+			tokens.add(tempToken.toString());
+		}
+
+		return tokens;
 	}
 
-	public<T extends EdifactSegment> T readMandatorySegment(Class<T> segmentClass) throws IOException {
+	public <T extends EdifactSegment> T readMandatorySegment(Class<T> segmentClass) throws IOException {
 		T segment = readOptionalSegment(segmentClass);
 		if (segment == null) {
-			throw new RuntimeException("Required segment of type " + segmentClass + " - was " + currentSegment);
+			throw new EdifactParserException(ctx, "Required segment of type " + segmentClass + " - was " + ctx.currentSegment);
 		}
 		return segment;
 	}
 
-	public<T extends QualifiedEdifactSegment> T readMandatorySegment(Class<T> segmentClass, String qualifier) throws IOException {
+	public <T extends QualifiedEdifactSegment> T readMandatorySegment(Class<T> segmentClass, String qualifier) throws IOException {
 		T segment = readOptionalSegment(segmentClass, qualifier);
 		if (segment == null) {
-			throw new RuntimeException("Required segment of type " + segmentClass + " with qualifier " + qualifier + " - was " + currentSegment);
+			throw new EdifactParserException(ctx, "Required segment of type " + segmentClass + " with qualifier " + qualifier
+					+ " - was " + ctx.currentSegment);
 		}
 		return segment;
 	}
 
-	public<T extends EdifactSegment> T readOptionalSegment(Class<T> segmentClass) throws IOException {
+	public <T extends EdifactSegment> T readOptionalSegment(Class<T> segmentClass) throws IOException {
 		if (segmentClass.getAnnotation(Segment.class) == null) {
 			throw new IllegalArgumentException(segmentClass + " must be annotated with " + Segment.class);
 		}
 		String segment = readSegment();
-		if (!segment.substring(0,3).equals(segmentClass.getAnnotation(Segment.class).value())) {
+		String segmentHeader = segment.substring(0, 3);
+
+		if (!segmentHeader.equals(segmentClass.getAnnotation(Segment.class).value())) {
 			pushBack();
 			return null;
 		}
@@ -181,17 +229,17 @@ public class EdifactParser implements SegmentSource {
 		} catch (IllegalAccessException e) {
 			throw new RuntimeException(e);
 		}
-		edifactSegment.setSegmentName(segment.substring(0,3));
-		StringUtils.splitPreserveAllTokens(segment, dataElementSeparator);
-		List<String> dataElements = splitToStringList(segment, dataElementSeparator);
+		edifactSegment.setSegmentName(segmentHeader);
+		List<String> dataElements = splitToStringList(segment, ctx.dataElementSeparator, ctx.releaseIndicator);
 		dataElements.remove(0);
 		edifactSegment.setDataElements(parseElements(dataElements));
 		return edifactSegment;
 	}
 
-	public<T extends QualifiedEdifactSegment> T readOptionalSegment(Class<T> segmentClass, String qualifier) throws IOException {
+	public <T extends QualifiedEdifactSegment> T readOptionalSegment(Class<T> segmentClass, String qualifier) throws IOException {
 		T segment = readOptionalSegment(segmentClass);
-		if (segment == null) return null;
+		if (segment == null)
+			return null;
 		if (!segment.getQualifier().equals(qualifier)) {
 			pushBack();
 			return null;
