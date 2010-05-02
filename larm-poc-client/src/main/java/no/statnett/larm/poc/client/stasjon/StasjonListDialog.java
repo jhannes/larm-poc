@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.Vector;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -52,6 +53,8 @@ public class StasjonListDialog extends JPanel {
     private void reportError(String whatWasHappening, Throwable e) {
         System.err.println(whatWasHappening);
         e.printStackTrace();
+        JOptionPane.showMessageDialog(this, e.toString(), "Feil: " + whatWasHappening,
+                JOptionPane.ERROR_MESSAGE);
     }
 
     private void updateSearchResults(List<Stasjon> stasjoner) {
