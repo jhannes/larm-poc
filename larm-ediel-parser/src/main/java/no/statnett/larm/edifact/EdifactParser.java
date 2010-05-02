@@ -4,13 +4,9 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class EdifactParser implements SegmentSource {
-
-	private Map<String, Class<? extends EdifactSegment>> segmentClassMap = new HashMap<String, Class<? extends EdifactSegment>>();
 
 	private final ParserConfig ctx = new ParserConfig();
 	private final EdifactLexer lexer;
@@ -78,15 +74,6 @@ public class EdifactParser implements SegmentSource {
 
 	private EdifactSegment createSegment(String segmentName) {
 		EdifactSegment edifactSegment = new EdifactSegment();
-		if (segmentClassMap.containsKey(segmentName)) {
-			try {
-				edifactSegment = segmentClassMap.get(segmentName).newInstance();
-			} catch (InstantiationException e) {
-				throw new RuntimeException(e);
-			} catch (IllegalAccessException e) {
-				throw new RuntimeException(e);
-			}
-		}
 		edifactSegment.setSegmentName(segmentName);
 		return edifactSegment;
 	}
