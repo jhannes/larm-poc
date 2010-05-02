@@ -1,13 +1,14 @@
 package no.statnett.larm.core.repository;
 
-import org.junit.Test;
+import static org.fest.assertions.Assertions.assertThat;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
 import java.io.Serializable;
 import java.util.List;
 
-import static org.fest.assertions.Assertions.assertThat;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+import org.junit.Test;
 
 public abstract class AbstractRepositoryTest {
     private Repository repository = getRepository();
@@ -82,6 +83,7 @@ public abstract class AbstractRepositoryTest {
     public void entitiesWithNonGeneratedIdsMustHaveIdSet() throws Exception {
         @Entity
         class EntityWithId {
+            @SuppressWarnings("unused")
             @Id
             private Long id;
         };

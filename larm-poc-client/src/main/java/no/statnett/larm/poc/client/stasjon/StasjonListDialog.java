@@ -1,23 +1,25 @@
 package no.statnett.larm.poc.client.stasjon;
 
-import no.statnett.larm.core.async.AsyncCallback;
-import no.statnett.larm.core.async.SyncAsyncProxy;
-import no.statnett.larm.core.repository.HibernateRepository;
-import no.statnett.larm.core.repository.RepositoryAsync;
-import no.statnett.larm.poc.client.ApplicationFrame;
-
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.Vector;
 
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+
+import no.statnett.larm.core.async.AsyncCallback;
+import no.statnett.larm.core.async.SyncAsyncProxy;
+import no.statnett.larm.core.repository.HibernateRepository;
+import no.statnett.larm.core.repository.RepositoryAsync;
+import no.statnett.larm.poc.client.ApplicationFrame;
+
 public class StasjonListDialog extends JPanel {
-    private StasjonSpecificationPanel searchPanel = new StasjonSpecificationPanel();
+    private static final long serialVersionUID = 3377211805587015468L;
+	private StasjonSpecificationPanel searchPanel = new StasjonSpecificationPanel();
     private RepositoryAsync repositoryAsync;
     private JTable searchResult = new JTable();
     private DefaultTableModel tableModel = new DefaultTableModel();
@@ -63,7 +65,7 @@ public class StasjonListDialog extends JPanel {
         }
     }
 
-    private Vector getRowData(Stasjon stasjon) {
+    private Vector<Object> getRowData(Stasjon stasjon) {
         Vector<Object> vector = new Vector<Object>();
         vector.add(stasjon.getNavn());
         vector.add(stasjon.getFastområde());

@@ -1,17 +1,20 @@
 package no.statnett.larm.core.repository;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
 @Entity
 public class ExampleEntity {
 
+    @SuppressWarnings("unused")
     @Id @GeneratedValue
     private Integer id;
     private String name;
     private int status;
 
-    private ExampleEntity() {
-        
+    protected ExampleEntity() {
+
     }
 
     public ExampleEntity(String name) {
