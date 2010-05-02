@@ -1,0 +1,453 @@
+From 366e1cd14a2444c71e60ce8dfdfe664ea25f6131 Mon Sep 17 00:00:00 2001
+From: Frode <Frode@FC>
+Date: Sun, 2 May 2010 10:12:14 +0200
+Subject: [PATCH 3/5] Escaping of delimiters ('?'), support for tracking current position in file
+ Removed dependency on commons-lang, io
+
+---
+ larm-ediel-parser/pom.xml                          |   10 --
+ .../statnett/larm/edifact/EdifactDataElement.java  |    5 +-
+ .../no/statnett/larm/edifact/EdifactParser.java    |  166 +++++++++++++-------
+ .../statnett/larm/edifact/EdifactParserTest.java   |   59 +++++---
+ 4 files changed, 148 insertions(+), 92 deletions(-)
+
+diff --git a/larm-ediel-parser/pom.xml b/larm-ediel-parser/pom.xml
+index 6ab0dd1..6babb58 100644
+--- a/larm-ediel-parser/pom.xml
++++ b/larm-ediel-parser/pom.xml
+@@ -12,16 +12,6 @@
+ 
+  <dependencies>
+    <dependency>
+-     <groupId>commons-lang</groupId>
+-     <artifactId>commons-lang</artifactId>
+-     <version>2.5</version>
+-   </dependency>
+-   <dependency>
+-     <groupId>commons-io</groupId>
+-     <artifactId>commons-io</artifactId>
+-     <version>1.4</version>
+-   </dependency>
+-   <dependency>
+      <groupId>com.googlecode.lambdaj</groupId>
+      <artifactId>lambdaj</artifactId>
+      <version>2.2</version>
+diff --git a/larm-ediel-parser/src/main/java/no/statnett/larm/edifact/EdifactDataElement.java b/larm-ediel-parser/src/main/java/no/statnett/larm/edifact/EdifactDataElement.java
+index d0a88e7..318afe7 100644
+--- a/larm-ediel-parser/src/main/java/no/statnett/larm/edifact/EdifactDataElement.java
++++ b/larm-ediel-parser/src/main/java/no/statnett/larm/edifact/EdifactDataElement.java
+@@ -1,14 +1,13 @@
+ package no.statnett.larm.edifact;
+ 
+-import java.util.ArrayList;
+ import java.util.List;
+ 
+ public class EdifactDataElement {
+ 
+-	private final ArrayList<String> componentData;
++	private final List<String> componentData;
+ 	private String dataElement;
+ 
+-	public EdifactDataElement(String dataElement, ArrayList<String> componentData) {
++	public EdifactDataElement(final String dataElement, final List<String> componentData) {
+ 		this.dataElement = dataElement;
+ 		this.componentData = componentData;
+ 	}
+diff --git a/larm-ediel-parser/src/main/java/no/statnett/larm/edifact/EdifactParser.java b/larm-ediel-parser/src/main/java/no/statnett/larm/edifact/EdifactParser.java
+index 96fd6f6..5e4e581 100644
+--- a/larm-ediel-parser/src/main/java/no/statnett/larm/edifact/EdifactParser.java
++++ b/larm-ediel-parser/src/main/java/no/statnett/larm/edifact/EdifactParser.java
+@@ -2,66 +2,79 @@ package no.statnett.larm.edifact;
+ 
+ import java.io.IOException;
+ import java.io.Reader;
++import java.io.StringReader;
+ import java.util.ArrayList;
+-import java.util.Arrays;
+ import java.util.HashMap;
+ import java.util.List;
+ import java.util.Map;
+ 
+-import org.apache.commons.lang.StringUtils;
+-
+ public class EdifactParser implements SegmentSource {
+ 
+-	private char segmentTerminator = '\'';
+-	private char dataElementSeparator = '+';
+-	private char componentDataElementSeparator = ':';
+ 	private Map<String, Class<? extends EdifactSegment>> segmentClassMap = new HashMap<String, Class<? extends EdifactSegment>>();
+-	private String currentSegment;
+-	private String pushedBackSegment;
++
+ 	private final Reader reader;
+-	private boolean hasReadFirst = false;
++	private final ParserContext ctx = new ParserContext(30);
+ 
+-	public EdifactParser(Reader reader) throws IOException {
+-		this.reader = reader;
++	public EdifactParser(final Reader input) throws IOException {
++		if (null == input) {
++			throw new IllegalArgumentException("input cannot be null");
++		}
++		this.reader = input;
+ 	}
+ 
+-	public EdifactSegment readEdifactSegment() throws IOException {
++	public EdifactParser(final String input) throws IOException {
++		this(new StringReader(input));
++	}
++
++	EdifactSegment readEdifactSegment() throws IOException {
+ 		String segment = readSegment();
+ 		return segment != null ? parseSegment(segment) : null;
+ 	}
+ 
+-	public void pushBack() {
+-		pushedBackSegment = currentSegment;
++	void pushBack() {
++		ctx.pushBack();
+ 	}
+ 
+ 	public EdifactSegment readOptionalSegment(String segmentName) throws IOException {
+ 		EdifactSegment segment = readEdifactSegment();
+-		if (segment.getSegmentName().equals(segmentName)) return segment;
++		if (segment.getSegmentName().equals(segmentName))
++			return segment;
+ 		pushBack();
+ 		return null;
+ 	}
+ 
+ 	public EdifactSegment readMandatorySegment(String segmentName) throws IOException {
+ 		EdifactSegment segment = readEdifactSegment();
+-		if (segment.getSegmentName().equals(segmentName)) return segment;
++		if (segment.getSegmentName().equals(segmentName))
++			return segment;
+ 		pushBack();
+-		throw new RuntimeException("Required segment <" + segmentName + "> but was <" + segment.getSegmentName() + ">");
++		throw new EdifactParserException(ctx, "Required segment <" + segmentName + "> but was <" + segment.getSegmentName() + ">");
+ 	}
+ 
+ 	private String readSegment() throws IOException {
+-		if (pushedBackSegment != null) {
+-			currentSegment = pushedBackSegment;
+-			pushedBackSegment = null;
+-		} else {
+-			if (!hasReadFirst) {
+-				hasReadFirst = true;
+-				currentSegment = readFirstSegment();
++		if (ctx.popCurrent() == null) {
++			if (!ctx.hasReadFirst) {
++				ctx.hasReadFirst = true;
++				ctx.currentSegment = readFirstSegment();
+ 			} else {
+-				currentSegment = readTo(segmentTerminator);
++				ctx.currentSegment = readTo(ctx.segmentTerminator);
++			}
++			ctx.currentSegment = stripStart(ctx.currentSegment, " \n\t\r");
++		}
++		return ctx.currentSegment;
++	}
++
++	private String stripStart(String str, String stripChars) {
++		if (str == null)
++			return null;
++
++		int len = str.length();
++		for (int i = 0; i < len; i++) {
++			if (stripChars.indexOf(str.charAt(i)) == -1) {
++				return str.substring(i, len);
+ 			}
+-			currentSegment = StringUtils.stripStart(currentSegment, " \n\t\r");
+ 		}
+-		return currentSegment;
++		return str;
+ 	}
+ 
+ 	public Iterable<EdifactSegment> eachSegment() throws IOException {
+@@ -76,16 +89,14 @@ public class EdifactParser implements SegmentSource {
+ 	private String readFirstSegment() throws IOException {
+ 		String segmentHeader = read(3);
+ 
+-		if (segmentHeader.equals("UNA")) {
++		if ("UNA".equals(segmentHeader)) {
+ 			String unaBody = read(6);
+-			segmentTerminator = unaBody.charAt(5);
+-			dataElementSeparator = unaBody.charAt(1);
+-			componentDataElementSeparator = unaBody.charAt(0);
++			ctx.initSeparators(unaBody);
+ 			return segmentHeader + unaBody;
+ 		} else {
+-			String segmentBody = readTo(segmentTerminator);
++			String segmentBody = readTo(ctx.segmentTerminator);
+ 			if (segmentBody != null) {
+-				return segmentHeader+segmentBody;
++				return segmentHeader + segmentBody;
+ 			} else {
+ 				return null;
+ 			}
+@@ -93,18 +104,19 @@ public class EdifactParser implements SegmentSource {
+ 	}
+ 
+ 	EdifactSegment parseSegment(String segment) {
+-		EdifactSegment edifactSegment = createSegment(segment.substring(0,3));
+-		StringUtils.splitPreserveAllTokens(segment, dataElementSeparator);
+-		List<String> dataElements = splitToStringList(segment, dataElementSeparator);
++		EdifactSegment edifactSegment = createSegment(segment.subSequence(0, 3).toString());
++		List<String> dataElements = splitToStringList(segment, ctx.dataElementSeparator, ctx.releaseIndicator);
+ 		dataElements.remove(0);
+ 		edifactSegment.setDataElements(parseElements(dataElements));
+ 		return edifactSegment;
+ 	}
+ 
+-	private List<EdifactDataElement> parseElements(List<String> dataElements) {
+-		ArrayList<EdifactDataElement> result = new ArrayList<EdifactDataElement>();
++	private List<EdifactDataElement> parseElements(final List<String> dataElements) {
++
++		List<EdifactDataElement> result = new ArrayList<EdifactDataElement>();
+ 		for (String element : dataElements) {
+-			result.add(new EdifactDataElement(element, splitToStringList(element, componentDataElementSeparator)));
++			List<String> tokens = splitToStringList(element, ctx.componentDataElementSeparator, ctx.releaseIndicator);
++			result.add(new EdifactDataElement(element, tokens));
+ 		}
+ 		return result;
+ 	}
+@@ -127,48 +139,84 @@ public class EdifactParser implements SegmentSource {
+ 	private String readTo(char terminator) throws IOException {
+ 		StringBuilder result = new StringBuilder();
+ 		int c;
+-		while ((c = reader.read()) != -1) {
+-			if (c == terminator) return result.toString();
+-			result.append((char)c);
++
++		while ((c = ctx.readChar(reader)) != -1) {
++			if (c == terminator)
++				return result.toString();
++			result.append((char) c);
+ 		}
+ 		return null;
+ 	}
+ 
+ 	private String read(int characters) throws IOException {
+-		StringBuilder result = new StringBuilder();
+-		while (result.length() < characters) {
+-			int c = reader.read();
+-			result.append((char)c);
++		StringBuilder result = new StringBuilder(characters);
++
++		int c;
++		while (result.length() < characters && ((c = ctx.readChar(reader)) != -1)) {
++			result.append((char) c);
+ 		}
+ 		return result.toString();
+ 	}
+ 
+-	private ArrayList<String> splitToStringList(String segment, char separator) {
+-		return new ArrayList<String>(Arrays.asList(StringUtils.splitPreserveAllTokens(segment, separator)));
++	List<String> splitToStringList(CharSequence text, char separator, char escape) {
++		List<String> tokens = new ArrayList<String>(6);
++		int len;
++
++		if (text == null || (len = text.length()) == 0) {
++			return tokens;
++		}
++
++		int start = 0;
++		StringBuilder tempToken = new StringBuilder();
++
++		for (int i = 0; i < len; i++) {
++			char c = text.charAt(i);
++			if (c == separator) {
++				tempToken.append(text.subSequence(start, i));
++				tokens.add(tempToken.toString());
++				tempToken.delete(0, tempToken.length());
++				start = i + 1;
++			} else if (c == escape) {
++				if (i < (len - 1) && text.charAt(i + 1) == separator) {
++					tempToken.append(text.subSequence(start, i));
++					start = ++i; // skip separator next char
++				}
++			}
++		}
++
++		if (start <= len) {
++			tempToken.append(text.subSequence(start, len));
++			tokens.add(tempToken.toString());
++		}
++
++		return tokens;
+ 	}
+ 
+-	public<T extends EdifactSegment> T readMandatorySegment(Class<T> segmentClass) throws IOException {
++	public <T extends EdifactSegment> T readMandatorySegment(Class<T> segmentClass) throws IOException {
+ 		T segment = readOptionalSegment(segmentClass);
+ 		if (segment == null) {
+-			throw new RuntimeException("Required segment of type " + segmentClass + " - was " + currentSegment);
++			throw new EdifactParserException(ctx, "Required segment of type " + segmentClass + " - was " + ctx.currentSegment);
+ 		}
+ 		return segment;
+ 	}
+ 
+-	public<T extends QualifiedEdifactSegment> T readMandatorySegment(Class<T> segmentClass, String qualifier) throws IOException {
++	public <T extends QualifiedEdifactSegment> T readMandatorySegment(Class<T> segmentClass, String qualifier) throws IOException {
+ 		T segment = readOptionalSegment(segmentClass, qualifier);
+ 		if (segment == null) {
+-			throw new RuntimeException("Required segment of type " + segmentClass + " with qualifier " + qualifier + " - was " + currentSegment);
++			throw new EdifactParserException(ctx, "Required segment of type " + segmentClass + " with qualifier " + qualifier
++					+ " - was " + ctx.currentSegment);
+ 		}
+ 		return segment;
+ 	}
+ 
+-	public<T extends EdifactSegment> T readOptionalSegment(Class<T> segmentClass) throws IOException {
++	public <T extends EdifactSegment> T readOptionalSegment(Class<T> segmentClass) throws IOException {
+ 		if (segmentClass.getAnnotation(Segment.class) == null) {
+ 			throw new IllegalArgumentException(segmentClass + " must be annotated with " + Segment.class);
+ 		}
+ 		String segment = readSegment();
+-		if (!segment.substring(0,3).equals(segmentClass.getAnnotation(Segment.class).value())) {
++		String segmentHeader = segment.substring(0, 3);
++
++		if (!segmentHeader.equals(segmentClass.getAnnotation(Segment.class).value())) {
+ 			pushBack();
+ 			return null;
+ 		}
+@@ -181,17 +229,17 @@ public class EdifactParser implements SegmentSource {
+ 		} catch (IllegalAccessException e) {
+ 			throw new RuntimeException(e);
+ 		}
+-		edifactSegment.setSegmentName(segment.substring(0,3));
+-		StringUtils.splitPreserveAllTokens(segment, dataElementSeparator);
+-		List<String> dataElements = splitToStringList(segment, dataElementSeparator);
++		edifactSegment.setSegmentName(segmentHeader);
++		List<String> dataElements = splitToStringList(segment, ctx.dataElementSeparator, ctx.releaseIndicator);
+ 		dataElements.remove(0);
+ 		edifactSegment.setDataElements(parseElements(dataElements));
+ 		return edifactSegment;
+ 	}
+ 
+-	public<T extends QualifiedEdifactSegment> T readOptionalSegment(Class<T> segmentClass, String qualifier) throws IOException {
++	public <T extends QualifiedEdifactSegment> T readOptionalSegment(Class<T> segmentClass, String qualifier) throws IOException {
+ 		T segment = readOptionalSegment(segmentClass);
+-		if (segment == null) return null;
++		if (segment == null)
++			return null;
+ 		if (!segment.getQualifier().equals(qualifier)) {
+ 			pushBack();
+ 			return null;
+diff --git a/larm-ediel-parser/src/test/java/no/statnett/larm/edifact/EdifactParserTest.java b/larm-ediel-parser/src/test/java/no/statnett/larm/edifact/EdifactParserTest.java
+index bc8d2a3..185803a 100644
+--- a/larm-ediel-parser/src/test/java/no/statnett/larm/edifact/EdifactParserTest.java
++++ b/larm-ediel-parser/src/test/java/no/statnett/larm/edifact/EdifactParserTest.java
+@@ -13,10 +13,9 @@ import org.junit.Test;
+ 
+ public class EdifactParserTest {
+ 
+-
+ 	@Test
+ 	public void shouldSplitIntoSegments() throws Exception {
+-		String edifactFile = //"UNA:+.? '\n" +
++		String edifactFile = // "UNA:+.? '\n" +
+ 				"UNB+UNOC:glarb'" +
+ 				"UNH+1+QUOTES:D:96A:UN:EDIEL2+S'" +
+ 				"CUX+2:NOK'NAD+FR+7080005053136::9+++++++NO'LIN+1++1608:::SM'\n" +
+@@ -69,7 +68,7 @@ public class EdifactParserTest {
+ 		assertThat(segment.getSegmentName()).isEqualTo("PDI");
+ 		assertThat(segment.getDataElements().get(0).getComponentData()).isEmpty();
+ 		assertThat(segment.getDataElements().get(1).getComponentData()).containsExactly("C", "3");
+-		assertThat(segment.getDataElements().get(3).getComponentData()).containsExactly("F", "",  "1");
++		assertThat(segment.getDataElements().get(3).getComponentData()).containsExactly("F", "", "1");
+ 	}
+ 
+ 	@Segment("PDI")
+@@ -96,13 +95,9 @@ public class EdifactParserTest {
+ 		assertThat(segment.getDataElements()).hasSize(4);
+ 	}
+ 
+-
+ 	@Test
+ 	public void shouldReadOptionalSegmentByNameAndQualifier() throws Exception {
+-		String edifactFile =
+-			"UNB+UNOC:glarb'" +
+-			"UNH+1+GABBA'" +
+-			"PDI+FOO+C:3+Y::3+F::1'";
++		String edifactFile = "UNB+UNOC:glarb'" + "UNH+1+GABBA'" + "PDI+FOO+C:3+Y::3+F::1'";
+ 		EdifactParser parser = new EdifactParser(new StringReader(edifactFile));
+ 		assertThat(parser.readEdifactSegment().getSegmentName()).isEqualTo("UNB");
+ 		assertThat(parser.readOptionalSegment(PdiEdifactSegment.class, "BAR")).isNull();
+@@ -112,13 +107,9 @@ public class EdifactParserTest {
+ 		assertThat(parser.readOptionalSegment(PdiEdifactSegment.class, "FOO")).isNotNull();
+ 	}
+ 
+-
+ 	@Test
+ 	public void shouldPushBack() throws Exception {
+-		String edifactFile =
+-			"UNB+UNOC:glarb'" +
+-			"UNH+1+GABBA'" +
+-			"PDI++C:3+Y::3+F::1'";
++		String edifactFile = "UNB+UNOC:glarb'" + "UNH+1+GABBA'" + "PDI++C:3+Y::3+F::1'";
+ 		EdifactParser parser = new EdifactParser(new StringReader(edifactFile));
+ 
+ 		assertThat(parser.readEdifactSegment().getSegmentName()).isEqualTo("UNB");
+@@ -130,12 +121,8 @@ public class EdifactParserTest {
+ 
+ 	@Test
+ 	public void shouldReadOptionalStuff() throws Exception {
+-		String edifactFile = "UNA:+.? '\n" +
+-		"UNB+UNOC:glarb'" +
+-		"UNH+1+GABBA'" +
+-		"PDI++C:3+Y::3+F::1'" +
+-		"UNT+169+1'\n" +
+-		"UNZ+1+gabba'";
++		String edifactFile = "UNA:+.? '\n" + "UNB+UNOC:glarb'" + "UNH+1+GABBA'" + "PDI++C:3+Y::3+F::1'" + "UNT+169+1'\n"
++				+ "UNZ+1+gabba'";
+ 		SegmentSource parser = new EdifactParser(new StringReader(edifactFile));
+ 
+ 		assertThat(parser.readOptionalSegment("UNA").getSegmentName()).isEqualTo("UNA");
+@@ -161,10 +148,42 @@ public class EdifactParserTest {
+ 		assertThat(parser.readEdifactSegment().getSegmentName()).isEqualTo("UNH");
+ 	}
+ 
++	@Test
++	public void shouldReadTokensWithEscapeCharacter() throws Exception {
++
++		EdifactParser parser = new EdifactParser("");
++
++		List<String> tokens = parser.splitToStringList(null, '+', '?');
++		assertThat(tokens).isEmpty();
++
++		tokens = parser.splitToStringList("", '+', (char) 0);
++		assertThat(tokens).isEmpty();
++
++		tokens = parser.splitToStringList("  ", '+', '?');
++		assertThat(tokens).containsExactly("  ");
++
++		tokens = parser.splitToStringList("A++Å:?+?C", '+', '?');
++		assertThat(tokens).containsExactly("A", "", "Å:+?C");
++
++		tokens = parser.splitToStringList("A++Å:?+?C+", '+', '?');
++		assertThat(tokens).containsExactly("A", "", "Å:+?C", "");
++
++		tokens = parser.splitToStringList("A++B:?+C+", ':', '?');
++		assertThat(tokens).containsExactly("A++B", "?+C+");
++
++		tokens = parser.splitToStringList("A++B:?+?C+", '+', (char) 0);
++		assertThat(tokens).containsExactly("A", "", "B:?", "?C", "");
++
++		tokens = parser.splitToStringList("A++B:?+?C+", (char) 0, (char) 0);
++		assertThat(tokens).containsExactly("A++B:?+?C+");
++
++		tokens = parser.splitToStringList("A++B:?+?C+", (char) 0, '?');
++		assertThat(tokens).containsExactly("A++B:?+?C+");
++
++	}
+ 
+ 	private List<String> segmentNames(EdifactParser parser) throws IOException {
+ 		return collect(parser.eachSegment(), on(EdifactSegment.class).getSegmentName());
+ 	}
+ 
+-
+ }
+-- 
+1.7.0.2.msysgit.0
+
