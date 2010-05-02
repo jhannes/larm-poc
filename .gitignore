@@ -1,4 +1,5 @@
 target
+server
 *.iml
 *.iws
 *.ipr
