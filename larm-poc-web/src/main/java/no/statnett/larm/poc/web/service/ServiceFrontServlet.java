@@ -1,23 +1,28 @@
 package no.statnett.larm.poc.web.service;
 
-import com.caucho.hessian.io.SerializerFactory;
-import com.caucho.hessian.server.HessianSkeleton;
-import no.statnett.larm.core.repository.HibernateRepository;
-import no.statnett.larm.core.repository.Repository;
-import no.statnett.larm.poc.client.stasjon.Stasjon;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import no.statnett.larm.core.repository.HibernateRepository;
+import no.statnett.larm.core.repository.Repository;
+import no.statnett.larm.poc.client.stasjon.Stasjon;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.caucho.hessian.io.SerializerFactory;
+import com.caucho.hessian.server.HessianSkeleton;
+
 public class ServiceFrontServlet extends HttpServlet {
+
+    private static final long serialVersionUID = -4263007495436844879L;
 
     private Map<String, HessianSkeleton> serviceMap = new HashMap<String, HessianSkeleton>();
 

@@ -1,17 +1,19 @@
 package no.statnett.larm.poc.client.stasjon;
 
-import no.statnett.larm.core.repository.Specification;
-import no.statnett.larm.core.repository.hibernate.HibernateSpecification;
-import no.statnett.larm.core.repository.inmemory.InmemorySpecification;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Restrictions;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import no.statnett.larm.core.repository.Specification;
+import no.statnett.larm.core.repository.hibernate.HibernateSpecification;
+import no.statnett.larm.core.repository.inmemory.InmemorySpecification;
+
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Restrictions;
+
 public class StasjonSpecification implements Specification<Stasjon>, HibernateSpecification<Stasjon>, InmemorySpecification<Stasjon>, Serializable {
 
+    private static final long serialVersionUID = -5213652929143499374L;
     private boolean includeF02;
     private boolean includeF01;
 

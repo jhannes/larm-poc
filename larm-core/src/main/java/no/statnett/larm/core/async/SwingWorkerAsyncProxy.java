@@ -18,14 +18,17 @@ public class SwingWorkerAsyncProxy extends AsyncProxy {
         return createProxy(targetInterface, new SwingWorkerAsyncProxy(implementation, targetInterface));
     }
 
+    @Override
     protected <T> void invokeAsync(final Object target, final Method method, final Object[] args,
             final AsyncCallback<T> callback) {
         SwingWorker<T, Object> worker = new SwingWorker<T, Object>() {
+            @Override
             @SuppressWarnings("unchecked")
             protected T doInBackground() throws Exception {
                 return (T)method.invoke(target, args);
             }
 
+            @Override
             protected void done() {
                 T result;
                 try {
@@ -37,7 +40,7 @@ public class SwingWorkerAsyncProxy extends AsyncProxy {
                     while (cause.getCause() != null) {
                     	cause = cause.getCause();
                     }
-					callback.onFailure(cause);
+                    callback.onFailure(cause);
                     return;
                 }
                 callback.onSuccess(result);

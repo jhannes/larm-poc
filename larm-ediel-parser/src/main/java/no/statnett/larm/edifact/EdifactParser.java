@@ -124,7 +124,7 @@ public class EdifactParser implements SegmentSource {
 			throw new IllegalArgumentException(segmentClass + " must be annotated with " + Segment.class);
 		}
 		EdifactSegment basicSegment = lexer.readSegment();
-
+		
 		if (!basicSegment.getSegmentName().equals(segmentClass.getAnnotation(Segment.class).value())) {
 			pushBack();
 			return null;

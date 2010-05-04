@@ -1,7 +1,9 @@
 target
+server
 *.iml
 *.iws
 *.ipr
+*.patch
 .project
 .classpath
 .settings
