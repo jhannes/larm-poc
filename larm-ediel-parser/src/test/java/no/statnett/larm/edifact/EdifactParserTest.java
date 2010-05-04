@@ -55,7 +55,7 @@ public class EdifactParserTest {
 	@Test
 	public void shouldReadDataElements() throws Exception {
 		EdifactParser parser = new EdifactParser(new StringReader(""));
-		EdifactSegment segment = parser.parseSegment("IFT+3+NO MORE FLIGHTS");
+		EdifactSegment segment = parser.parseSegment(new EdifactSegment("IFT", "3+NO MORE FLIGHTS"));
 		assertThat(segment.getSegmentName()).isEqualTo("IFT");
 		assertThat(collect(segment.getDataElements(), on(EdifactSegment.class).toString()))
 			.containsExactly("3", "NO MORE FLIGHTS");
@@ -64,7 +64,7 @@ public class EdifactParserTest {
 	@Test
 	public void shouldReadComponentData() throws Exception {
 		EdifactParser parser = new EdifactParser(new StringReader(""));
-		EdifactSegment segment = parser.parseSegment("PDI++C:3+Y::3+F::1");
+		EdifactSegment segment = parser.parseSegment(new EdifactSegment("PDI", "+C:3+Y::3+F::1"));
 		assertThat(segment.getSegmentName()).isEqualTo("PDI");
 		assertThat(segment.getDataElements().get(0).getComponentData()).isEmpty();
 		assertThat(segment.getDataElements().get(1).getComponentData()).containsExactly("C", "3");

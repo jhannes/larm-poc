@@ -1,6 +1,7 @@
 package no.statnett.larm.edifact;
 
 import java.io.IOException;
+import java.io.PushbackReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ import java.util.List;
  */
 class EdifactLexer {
 
-	static class CircularBuffer {
+	private static class CircularBuffer {
 		private final char[] buffer;
 		private long counter;
 		private final int size;
@@ -37,51 +38,41 @@ class EdifactLexer {
 		}
 	}
 
-	private static final int LINE = 0, COLUMN = 1, SEGMENT = 2;
-
 	private static final char NULL_CHAR = 0;
-	private static final int NUMPOSITIONS = 3;
+	private static final String SEGMENT_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	private static final String SKIP_CHARS = "\t\r\n ";
 
-	private final ParserConfig ctx;
-	private boolean hasReadFirst = false;
+	private final ParserContext ctx;
+	private EdifactSegment currentSegment, pushedBackSegment;
+
+	private boolean hasReadFirst;
+	private final CircularBuffer lastRead;
+
+	/* track position of reader */
+	int lineNum, columnNum, segmentNum;
 
 	private char prevChar = NULL_CHAR;
 
-	private final CircularBuffer lastRead;
+	private final PushbackReader reader;
 
-	private final Reader reader;
-
-	/* track position of pushed back segment. */
-	private final int[] pushedBackSegmentPos = new int[NUMPOSITIONS];
-
-	/* track position of reader */
-	private final int[] readerPos = new int[NUMPOSITIONS];
-
-	/* track position of current segment. */
-	private final int[] segmentPos = new int[NUMPOSITIONS];
-
-	private String segment, pushedBackSegment;
-
-	EdifactLexer(ParserConfig ctx, Reader input, int lastReadBufferSize) {
+	EdifactLexer(ParserContext ctx, Reader input, int lastReadBufferSize) {
 		if (ctx == null) {
 			throw new IllegalArgumentException("ctx cannot be null");
 		} else if (null == input) {
 			throw new IllegalArgumentException("input cannot be null");
 		}
-		this.reader = input;
+		this.reader = new PushbackReader(input);
 		this.ctx = ctx;
 		this.lastRead = new CircularBuffer(lastReadBufferSize);
 	}
 
-	EdifactLexer(ParserConfig pc, String testString, int lastReadBufferSize) throws IOException {
+	EdifactLexer(ParserContext pc, String testString, int lastReadBufferSize) throws IOException {
 		this(pc, new StringReader(testString), lastReadBufferSize);
 	}
 
 	String formatPosition() {
-		final String msg = "Segment start: (line:%s, segment:%s); " + //
-				"Reader: (line:%s, col:%s, segment:%s) last parsed: [%s].";
-		return String.format(msg, segmentPos[LINE], segmentPos[SEGMENT], //
-				readerPos[LINE], readerPos[COLUMN], readerPos[SEGMENT], lastRead());
+		final String msg = "Reader: (line:%s, col:%s, segment:%s) last parsed: [%s].";
+		return String.format(msg, lineNum, columnNum, segmentNum, lastRead());
 	}
 
 	List<String> getDataElementComponents(final CharSequence element) {
@@ -92,60 +83,72 @@ class EdifactLexer {
 		return splitToStringList(segment, ctx.dataElementSeparator, ctx.releaseIndicator);
 	}
 
-	int getReaderColumnNumber() {
-		return readerPos[COLUMN];
+	List<String> getDataElements(final EdifactSegment segment) {
+		return splitToStringList(segment.segmentBody, ctx.dataElementSeparator, ctx.releaseIndicator);
 	}
 
-	int getReaderLineNumber() {
-		return readerPos[LINE];
-	}
-
-	int getReaderSegmentNumber() {
-		return readerPos[SEGMENT];
-	}
-
-	String getSegment() {
-		return this.segment;
+	EdifactSegment getSegment() {
+		return this.currentSegment;
 	}
 
 	String getSegmentHeader(CharSequence segment) {
 		return segment.subSequence(0, 3).toString();
 	}
 
-	int getSegmentLineNumber() {
-		return segmentPos[LINE];
+	private EdifactSegment initSegment() throws IOException {
+		skipChars(SKIP_CHARS);
+
+		if (isReaderEmpty()) {
+			return null;
+		}
+
+		EdifactSegment segment = new EdifactSegment();
+
+		segment.lineNum = lineNum;
+		segment.segmentNum = ++segmentNum;
+
+		String segmentName = read(3, SEGMENT_CHARACTERS);
+		segment.setSegmentName(segmentName);
+		return segment;
 	}
 
-	int getSegmentNumber() {
-		return segmentPos[SEGMENT];
+	private boolean isReaderEmpty() throws IOException {
+		int c = reader.read();
+		if (c == -1) {
+			return true;
+		}
+		reader.unread(c);
+		return false;
 	}
 
 	String lastRead() {
 		return lastRead.getContent();
 	}
 
-	private String popCurrent() {
+	private EdifactSegment popCurrent() {
 		if (pushedBackSegment != null) {
-			segment = pushedBackSegment;
+			currentSegment = pushedBackSegment;
 			pushedBackSegment = null;
-			System.arraycopy(pushedBackSegmentPos, 0, segmentPos, 0, NUMPOSITIONS);
-			return segment;
+			return currentSegment;
 		}
 		return null;
 	}
 
 	void pushBack() {
-		pushedBackSegment = segment;
-		System.arraycopy(segmentPos, 0, pushedBackSegmentPos, 0, NUMPOSITIONS);
+		pushedBackSegment = currentSegment;
 	}
 
-	private String read(int characters) throws IOException {
+	private String read(int characters, String validChars) throws IOException {
 		StringBuilder result = new StringBuilder(characters);
 
 		int c;
 		while (result.length() < characters && ((c = readChar()) != -1)) {
+			verifyValidChar(validChars, c);
 			result.append((char) c);
 		}
+
+		verifyCharCount(characters, result);
+
 		return result.toString();
 	}
 
@@ -155,37 +158,45 @@ class EdifactLexer {
 		return c;
 	}
 
-	private String readFirstSegment() throws IOException {
-		String segmentHeader = read(3);
+	private EdifactSegment readFirstSegment() throws IOException {
 
-		if ("UNA".equals(segmentHeader)) {
-			String unaBody = read(6);
-			ctx.initSeparators(unaBody);
-			return segmentHeader + unaBody;
+		EdifactSegment segment = initSegment();
+		if (segment == null)
+			return null;
+
+		if ("UNA".equals(segment.getSegmentName())) {
+			segment.segmentBody = read(6, null);
+			ctx.initSeparators(segment.segmentBody);
 		} else {
-			String segmentBody = readTo(ctx.segmentTerminator);
-			if (segmentBody != null) {
-				return segmentHeader + segmentBody;
-			} else {
-				return null;
-			}
+			segment.segmentBody = readTo(ctx.segmentTerminator);
 		}
+
+		return segment;
 	}
 
-	String readSegment() throws IOException {
+	private EdifactSegment readNextSegment() throws IOException {
+		EdifactSegment segment = initSegment();
+		if (segment == null)
+			return null;
+
+		skipChar(ctx.dataElementSeparator);
+
+		segment.segmentBody = readTo(ctx.segmentTerminator);
+		return segment;
+	}
+
+	EdifactSegment readSegment() throws IOException {
 		if (popCurrent() == null) {
-			String str;
+			EdifactSegment segment;
 			if (!hasReadFirst) {
 				hasReadFirst = true;
-				str = readFirstSegment();
+				segment = readFirstSegment();
 			} else {
-				str = readTo(ctx.segmentTerminator);
+				segment = readNextSegment();
 			}
-
-			this.segment = stripStart(str, " \n\t\r");
-			System.arraycopy(readerPos, 0, segmentPos, 0, NUMPOSITIONS);
+			this.currentSegment = segment;
 		}
-		return this.segment;
+		return this.currentSegment;
 	}
 
 	private String readTo(char terminator) throws IOException {
@@ -198,6 +209,28 @@ class EdifactLexer {
 			result.append((char) c);
 		}
 		return null;
+	}
+
+	private void skipChar(char charToSkip) throws IOException {
+		int c;
+		if ((c = reader.read()) != -1) {
+			if (charToSkip != c) {
+				reader.unread(c);
+			} else {
+				trackPosition(c);
+			}
+		}
+	}
+
+	private void skipChars(String charsToSkip) throws IOException {
+		int c;
+		while ((c = reader.read()) != -1) {
+			if (charsToSkip.indexOf(c) == -1) {
+				reader.unread(c);
+				return;
+			}
+			trackPosition(c);
+		}
 	}
 
 	List<String> splitToStringList(CharSequence text, char separator, char escape) {
@@ -234,37 +267,40 @@ class EdifactLexer {
 		return tokens;
 	}
 
-	private String stripStart(String str, String stripChars) {
-		if (str == null)
-			return null;
-
-		int len = str.length();
-		for (int i = 0; i < len; i++) {
-			if (stripChars.indexOf(str.charAt(i)) == -1) {
-				return str.substring(i, len);
-			}
-		}
-		return str;
-	}
-
 	private void trackPosition(final int c) {
-		readerPos[COLUMN]++;
+		columnNum++;
 
 		if (prevChar == ctx.releaseIndicator) {
 			// reset so escaping itself (e.g '??') won't escape next char
 			prevChar = NULL_CHAR;
-		} else if (c == ctx.segmentTerminator) {
-			readerPos[SEGMENT]++;
 		} else if (c == '\n') {
 			if (prevChar != '\r')
-				readerPos[LINE]++;
-			readerPos[COLUMN] = 0;
+				lineNum++;
+			columnNum = 0;
 		} else if (c == '\r') {
-			readerPos[LINE]++;
-			readerPos[COLUMN] = 0;
+			lineNum++;
+			columnNum = 0;
 		}
 
 		prevChar = (char) c;
 		lastRead.add(prevChar);
+	}
+
+	private void verifyCharCount(int characters, StringBuilder result) {
+		if (result.length() < characters) {
+			String s = "Wrong format, could only read [" + result.length() + "] characters, expected " + characters
+					+ ", string read [" + result + "]";
+			throw new EdifactParserException(formatPosition(), s);
+		}
+	}
+
+	private void verifyValidChar(String validChars, int c) {
+		if (validChars == null)
+			return;
+
+		if (validChars.indexOf(c) == -1) {
+			String s = "Illegal character [" + (char) c + "]";
+			throw new EdifactParserException(formatPosition(), s);
+		}
 	}
 }

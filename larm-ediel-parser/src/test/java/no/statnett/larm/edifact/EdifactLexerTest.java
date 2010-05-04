@@ -13,29 +13,29 @@ public class EdifactLexerTest {
 	public void shouldTrackPositionAndLastRead() throws Exception {
 		String testString = "UX'\t\nAB\r\n,1'X2345\n678912345";
 
-		ParserConfig pc = new ParserConfig();
+		ParserContext pc = new ParserContext();
 		EdifactLexer lexer = new EdifactLexer(pc, testString, 15);
 
 		read(lexer, 2);
 		assertReaderPosition(lexer, 0, 2, 0);
 
 		read(lexer, 1);
-		assertReaderPosition(lexer, 0, 3, 1);
+		assertReaderPosition(lexer, 0, 3, 0);
 
 		read(lexer, 2);
-		assertReaderPosition(lexer, 1, 0, 1);
+		assertReaderPosition(lexer, 1, 0, 0);
 
 		read(lexer, 2);
-		assertReaderPosition(lexer, 1, 2, 1);
+		assertReaderPosition(lexer, 1, 2, 0);
 		assertThat(lexer.lastRead()).isEqualTo(testString.substring(0, 7));
 
 		read(lexer, 2);
-		assertReaderPosition(lexer, 2, 0, 1);
+		assertReaderPosition(lexer, 2, 0, 0);
 		assertThat(lexer.lastRead()).isEqualTo(testString.substring(0, 9));
 
 		// read past cyclic buffer size
 		read(lexer, 12);
-		assertReaderPosition(lexer, 3, 3, 2);
+		assertReaderPosition(lexer, 3, 3, 0);
 
 		assertThat(lexer.lastRead()).isEqualTo(testString.substring(6, 21));
 
@@ -45,29 +45,29 @@ public class EdifactLexerTest {
 	public void shouldTrackPositionWhenPushBack() throws Exception {
 		String testString = "UXA'\t\nABC\r\n,1'X2345\n678912345";
 
-		ParserConfig pc = new ParserConfig();
+		ParserContext pc = new ParserContext();
 		EdifactLexer lexer = new EdifactLexer(pc, testString, 15);
 
-		lexer.readSegment();
+		EdifactSegment segment1 = lexer.readSegment();
 
 		assertReaderPosition(lexer, 0, 4, 1);
-		assertSegmentPosition(lexer, 0, 1);
+		assertSegmentPosition(segment1, 0, 1);
 
 		lexer.pushBack();
-		lexer.readSegment();
+		EdifactSegment segment2 = lexer.readSegment();
 		assertReaderPosition(lexer, 0, 4, 1);
-		assertSegmentPosition(lexer, 0, 1);
+		assertSegmentPosition(segment2, 0, 1);
 
-		lexer.readSegment();
+		EdifactSegment segment3 = lexer.readSegment();
 		assertReaderPosition(lexer, 2, 3, 2);
-		assertSegmentPosition(lexer, 2, 2);
+		assertSegmentPosition(segment3, 1, 2);
 
 	}
 
 	@Test
 	public void shouldReadTokensWithEscapeCharacter() throws Exception {
 
-		EdifactLexer lexer = new EdifactLexer(new ParserConfig(), "", 15);
+		EdifactLexer lexer = new EdifactLexer(new ParserContext(), "", 15);
 
 		List<String> tokens = lexer.splitToStringList(null, '+', '?');
 		assertThat(tokens).isEmpty();
@@ -105,13 +105,13 @@ public class EdifactLexerTest {
 	}
 
 	private void assertReaderPosition(EdifactLexer lexer, int lineNum, int colNum, int segmentNum) throws Exception {
-		assertThat(lexer.getReaderLineNumber()).isEqualTo(lineNum);
-		assertThat(lexer.getReaderColumnNumber()).isEqualTo(colNum);
-		assertThat(lexer.getReaderSegmentNumber()).isEqualTo(segmentNum);
+		assertThat(lexer.lineNum).isEqualTo(lineNum);
+		assertThat(lexer.columnNum).isEqualTo(colNum);
+		assertThat(lexer.segmentNum).isEqualTo(segmentNum);
 	}
 
-	private void assertSegmentPosition(EdifactLexer lexer, int lineNum, int segmentNum) throws Exception {
-		assertThat(lexer.getSegmentLineNumber()).isEqualTo(lineNum);
-		assertThat(lexer.getSegmentNumber()).isEqualTo(segmentNum);
+	private void assertSegmentPosition(EdifactSegment segment, int lineNum, int segmentNum) throws Exception {
+		assertThat(segment.lineNum).isEqualTo(lineNum);
+		assertThat(segment.segmentNum).isEqualTo(segmentNum);
 	}
 }
