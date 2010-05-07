@@ -49,3 +49,16 @@ These files are the starting points for the runtime:
 * <tt>no.statnett.larm.poc.client.ApplicationFrame</tt>
   * Locates the server Repository (can be two-tier or three-tier, based on URL)
   * Sets up the client's panels in the application frame
+
+== STYLE GUIDE (ECLIPSE)
+
+* Import coding-conventions-eclipse.xml under Java -> Code Style -> Formatter (Windows -> Preferences)
+* Import cleaup-actions-eclipse.xml under Java -> Code Style -> Clean Up
+* Add the following warnings to Java -> Compiler -> Errors/Warnings
+  * Potential programming problems -> Potential null point access
+  * Potential programming problems -> Class overrides equals but not hashCode
+  * Unnecessary code -> Parameter is never read
+  * Unnecessary code -> Redundant null check
+  * Unnecessary code -> Unnecessary cast or 'instanceof' operation
+  * Annotations -> Missing @Override annotation
+* Avoid ALL compiler warnings
