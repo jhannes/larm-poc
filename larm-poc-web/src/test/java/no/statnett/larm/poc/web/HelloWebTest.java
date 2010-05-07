@@ -1,4 +1,6 @@
-package no.statkraft.larm.poc.web;
+package no.statnett.larm.poc.web;
+
+import static org.fest.assertions.Assertions.assertThat;
 
 import org.junit.Test;
 import org.mortbay.jetty.Server;
@@ -6,8 +8,6 @@ import org.mortbay.jetty.webapp.WebAppContext;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
-
-import static org.fest.assertions.Assertions.assertThat;
 
 public class HelloWebTest {
 

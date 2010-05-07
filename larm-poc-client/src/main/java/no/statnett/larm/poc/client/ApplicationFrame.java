@@ -1,14 +1,15 @@
 package no.statnett.larm.poc.client;
 
-import no.statkraft.larm.core.web.service.LarmHessianProxyFactory;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
 import no.statnett.larm.core.async.SwingWorkerAsyncProxy;
 import no.statnett.larm.core.repository.HibernateRepository;
 import no.statnett.larm.core.repository.Repository;
 import no.statnett.larm.core.repository.RepositoryAsync;
+import no.statnett.larm.core.web.service.LarmHessianProxyFactory;
 import no.statnett.larm.poc.client.stasjon.Stasjon;
 import no.statnett.larm.poc.client.stasjon.StasjonListDialog;
-
-import javax.swing.*;
 
 public class ApplicationFrame {
     public static void display(final String title, final JPanel panel) {

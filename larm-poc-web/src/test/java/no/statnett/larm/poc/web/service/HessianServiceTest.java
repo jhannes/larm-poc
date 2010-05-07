@@ -1,21 +1,26 @@
-package no.statkraft.larm.poc.web.service;
+package no.statnett.larm.poc.web.service;
 
-import com.caucho.hessian.HessianException;
-import com.caucho.hessian.server.HessianSkeleton;
-import no.statkraft.larm.core.web.service.LarmHessianProxyFactory;
+import static org.fest.assertions.Assertions.assertThat;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.io.FileNotFoundException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.UndeclaredThrowableException;
+
+import no.statnett.larm.core.web.service.LarmHessianProxyFactory;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.webapp.WebAppContext;
 
-import java.io.FileNotFoundException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.UndeclaredThrowableException;
-
-import static org.fest.assertions.Assertions.assertThat;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.*;
+import com.caucho.hessian.HessianException;
+import com.caucho.hessian.server.HessianSkeleton;
 
 public class HessianServiceTest {
     private static ServiceInterface service = mock(ServiceInterface.class);

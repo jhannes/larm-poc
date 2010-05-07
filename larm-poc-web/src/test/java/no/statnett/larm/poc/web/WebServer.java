@@ -1,4 +1,4 @@
-package no.statkraft.larm.poc.web;
+package no.statnett.larm.poc.web;
 
 import no.statnett.larm.core.container.ShutdownHandler;
 import org.mortbay.jetty.Server;

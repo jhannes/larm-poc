@@ -1,8 +1,8 @@
-package no.statkraft.larm.core.web.service;
-
-import com.caucho.hessian.client.HessianProxyFactory;
+package no.statnett.larm.core.web.service;
 
 import java.net.MalformedURLException;
+
+import com.caucho.hessian.client.HessianProxyFactory;
 
 public class LarmHessianProxyFactory extends HessianProxyFactory {
 
