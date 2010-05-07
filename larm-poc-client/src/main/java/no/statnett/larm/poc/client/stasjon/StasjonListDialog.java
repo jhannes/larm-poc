@@ -20,7 +20,7 @@ import no.statnett.larm.poc.client.ApplicationFrame;
 
 public class StasjonListDialog extends JPanel {
     private static final long serialVersionUID = 3377211805587015468L;
-	private StasjonSpecificationPanel searchPanel = new StasjonSpecificationPanel();
+    private StasjonSpecificationPanel searchPanel = new StasjonSpecificationPanel();
     private RepositoryAsync repositoryAsync;
     private JTable searchResult = new JTable();
     private DefaultTableModel tableModel = new DefaultTableModel();

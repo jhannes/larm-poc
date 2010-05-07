@@ -6,9 +6,9 @@ import no.statnett.larm.edifact.Segment;
 @Segment("BGM")
 public class BgmSegment extends EdifactSegment {
 
-	public String getMessageTime() {
-		return getElementData(1);
-	}
+    public String getMessageTime() {
+        return getElementData(1);
+    }
 
 
 }

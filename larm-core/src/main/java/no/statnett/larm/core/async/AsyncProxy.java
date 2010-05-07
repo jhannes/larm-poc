@@ -47,11 +47,11 @@ public class AsyncProxy implements InvocationHandler {
              */
             Class<?>[] paramTypes = asyncMethod.getParameterTypes();
             if (paramTypes.length == 0) {
-            	invalidMethods.add(asyncMethod);
-            	continue;
+                invalidMethods.add(asyncMethod);
+                continue;
             } else if (paramTypes[paramTypes.length-1] != AsyncCallback.class) {
-            	invalidMethods.add(asyncMethod);
-            	continue;
+                invalidMethods.add(asyncMethod);
+                continue;
             }
 
             Class<?>[] params = Arrays.copyOf(paramTypes, paramTypes.length-1);

@@ -10,24 +10,24 @@ import no.statnett.larm.edifact.SegmentSource;
 @Segment("PRI")
 public class PriSegment extends EdifactSegment {
 
-	private DtmSegment processingTime;
-	private RngSegment range;
+    private DtmSegment processingTime;
+    private RngSegment range;
 
-	public String getPrice() {
-		return getElementComponent(0, 1);
-	}
+    public String getPrice() {
+        return getElementComponent(0, 1);
+    }
 
-	public RngSegment getRange() {
-		return range;
-	}
+    public RngSegment getRange() {
+        return range;
+    }
 
-	public DtmSegment getProcessingTime() {
-		return processingTime;
-	}
+    public DtmSegment getProcessingTime() {
+        return processingTime;
+    }
 
-	public void readSegmentGroup(SegmentSource segmentSource) throws IOException {
-		range = segmentSource.readOptionalSegment(RngSegment.class);
-		processingTime = segmentSource.readOptionalSegment(DtmSegment.class, "324");
-	}
+    public void readSegmentGroup(SegmentSource segmentSource) throws IOException {
+        range = segmentSource.readOptionalSegment(RngSegment.class);
+        processingTime = segmentSource.readOptionalSegment(DtmSegment.class, "324");
+    }
 
 }

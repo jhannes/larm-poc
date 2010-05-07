@@ -38,7 +38,7 @@ public class SwingWorkerAsyncProxy extends AsyncProxy {
                 } catch (ExecutionException e) {
                     Throwable cause = e.getCause();
                     while (cause.getCause() != null) {
-                    	cause = cause.getCause();
+                        cause = cause.getCause();
                     }
                     callback.onFailure(cause);
                     return;
