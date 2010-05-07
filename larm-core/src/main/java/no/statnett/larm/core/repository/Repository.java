@@ -13,4 +13,8 @@ public interface Repository {
     <T> T retrieve(Class<T> entityClass, Serializable key);
 
     void insertAll(Object... entities);
+
+    void deleteAll(Class<?> entityType);
+
+    void execute(RepositoryCallback repositoryCallback);
 }

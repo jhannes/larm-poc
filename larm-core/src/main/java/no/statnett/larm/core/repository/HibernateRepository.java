@@ -1,13 +1,14 @@
 package no.statnett.larm.core.repository;
 
+import java.io.Serializable;
+import java.util.List;
+
 import no.statnett.larm.core.repository.hibernate.HibernateSpecification;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Environment;
-
-import java.io.Serializable;
-import java.util.List;
 
 public class HibernateRepository implements Repository {
     private SessionFactory sessionFactory;
@@ -93,5 +94,17 @@ public class HibernateRepository implements Repository {
                 .setProperty(Environment.HBM2DDL_AUTO, "create");
         addAnnotatedEntities(cfg, entities);
         return new HibernateRepository(cfg.buildSessionFactory());
+    }
+
+    @Override
+    public void deleteAll(Class<?> entityType) {
+        // TODO Auto-generated method stub on May 8, 2010
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
+    public void execute(RepositoryCallback repositoryCallback) {
+        // TODO Auto-generated method stub on May 8, 2010
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 }

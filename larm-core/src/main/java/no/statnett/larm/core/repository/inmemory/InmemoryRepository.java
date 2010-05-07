@@ -1,11 +1,7 @@
 package no.statnett.larm.core.repository.inmemory;
 
-import no.statnett.larm.core.repository.Repository;
-import no.statnett.larm.core.repository.Specification;
+import static no.statnett.larm.core.repository.inmemory.ObjectUtils.cloneEntity;
 
-import javax.persistence.EmbeddedId;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -13,7 +9,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static no.statnett.larm.core.repository.inmemory.ObjectUtils.cloneEntity;
+import javax.persistence.EmbeddedId;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+import no.statnett.larm.core.repository.Repository;
+import no.statnett.larm.core.repository.RepositoryCallback;
+import no.statnett.larm.core.repository.Specification;
 
 public class InmemoryRepository implements Repository {
     private Map<EntityKey, Object> store = new HashMap<EntityKey, Object>();
@@ -90,6 +92,18 @@ public class InmemoryRepository implements Repository {
         for (Object entity : entities) {
             insert(entity);
         }
+    }
+
+    @Override
+    public void deleteAll(Class<?> entityType) {
+        // TODO Auto-generated method stub on May 8, 2010
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
+    public void execute(RepositoryCallback repositoryCallback) {
+        // TODO Auto-generated method stub on May 8, 2010
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
 }
