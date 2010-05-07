@@ -19,6 +19,11 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>larm-ediel-parser</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>larm-core</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -51,6 +56,12 @@
             <groupId>org.seleniumhq.webdriver</groupId>
             <artifactId>webdriver-htmlunit</artifactId>
             <version>0.9.7376</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>3.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>

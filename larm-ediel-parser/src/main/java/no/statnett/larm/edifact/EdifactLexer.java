@@ -29,7 +29,7 @@ class EdifactLexer {
 		}
 
 		String getContent() {
-			int length = (int) Math.min((long) size, counter);
+			int length = (int) Math.min(size, counter);
 			char[] arr = new char[length];
 			for (int i = 1; i <= length; i++) {
 				arr[length - i] = buffer[(int) ((counter - i) % size)];

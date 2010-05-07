@@ -16,6 +16,7 @@ public class SyncAsyncProxy extends AsyncProxy {
         return createProxy(targetInterface, new SyncAsyncProxy(implementation, targetInterface));
     }
 
+    @Override
     protected <T> void invokeAsync(Object implementation, Method targetMethod, Object[] args,
             AsyncCallback<T> callback) {
         execute(implementation, targetMethod, args, callback);

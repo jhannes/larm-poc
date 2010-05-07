@@ -2,7 +2,6 @@ package no.statnett.larm.edifact;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,10 +16,6 @@ public class EdifactParser implements SegmentSource {
 
 	public EdifactParser(final Reader input) throws IOException {
 		this.lexer = new EdifactLexer(ctx, input, 30);
-	}
-
-	public EdifactParser(final String input) throws IOException {
-		this(new StringReader(input));
 	}
 
 	EdifactSegment readEdifactSegment() throws IOException {
@@ -124,7 +119,7 @@ public class EdifactParser implements SegmentSource {
 			throw new IllegalArgumentException(segmentClass + " must be annotated with " + Segment.class);
 		}
 		EdifactSegment basicSegment = lexer.readSegment();
-		
+
 		if (!basicSegment.getSegmentName().equals(segmentClass.getAnnotation(Segment.class).value())) {
 			pushBack();
 			return null;
