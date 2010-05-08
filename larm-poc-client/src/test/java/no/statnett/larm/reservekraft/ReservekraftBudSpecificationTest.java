@@ -16,11 +16,12 @@ import org.junit.Test;
 public class ReservekraftBudSpecificationTest {
 
     @Rule
-    private RepositoryFixture repository = new RepositoryFixture().withInmemDb().withInmemRepo();
+    public RepositoryFixture repository = new RepositoryFixture().withInmemDb().withInmemRepo();
 
     @ReferenceData
-    private Elspotområde no1 = new Elspotområde("NO1"),
-        no2 = new Elspotområde("NO2"),
+    private Elspotområde no1 = new Elspotområde("NO1");
+    @ReferenceData
+    private Elspotområde no2 = new Elspotområde("NO2"),
         no3 = new Elspotområde("NO3");
 
     @ReferenceData
@@ -42,27 +43,28 @@ public class ReservekraftBudSpecificationTest {
     @Test
     public void skalBegrenseTilDato() throws Exception {
         DateMidnight driftsdøgn = new DateMidnight(2010, 3, 2);
-        ReservekraftBudSpecification specification = new ReservekraftBudSpecification().setDriftsdøgn(driftsdøgn);
+        ReservekraftBudSpecification specification = new ReservekraftBudSpecification();
+        specification.setDriftsdøgn(driftsdøgn);
 
-        ReservekraftBud budInnenDriftsdøgnet = new ReservekraftBud(stasjonsgruppe1);
-        budInnenDriftsdøgnet.setStartTid(new DateTime(driftsdøgn).withHourOfDay(8));
-        budInnenDriftsdøgnet.setSluttTid(new DateTime(driftsdøgn).withHourOfDay(23));
+        ReservekraftBud budInnenDriftsdøgnet = budMedTidsintervall(stasjonsgruppe1,
+                new DateTime(driftsdøgn).withHourOfDay(8),
+                new DateTime(driftsdøgn).withHourOfDay(23));
 
-        ReservekraftBud budSomSlutterFør = new ReservekraftBud(stasjonsgruppe1);
-        budSomSlutterFør.setStartTid(new DateTime(driftsdøgn.minusDays(1)).withHourOfDay(8));
-        budSomSlutterFør.setSluttTid(new DateTime(driftsdøgn.minusDays(1)).withHourOfDay(23));
+        ReservekraftBud budSomSlutterFør = budMedTidsintervall(stasjonsgruppe1,
+                new DateTime(driftsdøgn.minusDays(1)).withHourOfDay(8),
+                new DateTime(driftsdøgn.minusDays(1)).withHourOfDay(23));
 
-        ReservekraftBud budSomStarterEtter = new ReservekraftBud(stasjonsgruppe1);
-        budSomStarterEtter.setStartTid(new DateTime(driftsdøgn.plusDays(1)).withHourOfDay(8));
-        budSomStarterEtter.setSluttTid(new DateTime(driftsdøgn.plusDays(1)).withHourOfDay(23));
+        ReservekraftBud budSomStarterEtter = budMedTidsintervall(stasjonsgruppe1,
+                new DateTime(driftsdøgn.plusDays(1)).withHourOfDay(8),
+                new DateTime(driftsdøgn.plusDays(1)).withHourOfDay(23));
 
-        ReservekraftBud budSomStrekkesInnIDriftsdøgn = new ReservekraftBud(stasjonsgruppe1);
-        budSomStrekkesInnIDriftsdøgn.setStartTid(new DateTime(driftsdøgn.minusDays(1)).withHourOfDay(23));
-        budSomStrekkesInnIDriftsdøgn.setSluttTid(new DateTime(driftsdøgn).withHourOfDay(4));
+        ReservekraftBud budSomStrekkesInnIDriftsdøgn = budMedTidsintervall(stasjonsgruppe1,
+                new DateTime(driftsdøgn.minusDays(1)).withHourOfDay(23),
+                new DateTime(driftsdøgn).withHourOfDay(4));
 
-        ReservekraftBud budSomStrekkesUtAvIDriftsdøgn = new ReservekraftBud(stasjonsgruppe1);
-        budSomStrekkesUtAvIDriftsdøgn.setStartTid(new DateTime(driftsdøgn).withHourOfDay(23));
-        budSomStrekkesUtAvIDriftsdøgn.setSluttTid(new DateTime(driftsdøgn.plusDays(1)).withHourOfDay(4));
+        ReservekraftBud budSomStrekkesUtAvIDriftsdøgn = budMedTidsintervall(stasjonsgruppe1,
+                new DateTime(driftsdøgn).withHourOfDay(23),
+                new DateTime(driftsdøgn.plusDays(1)).withHourOfDay(4));
 
         repository.insertAll(budInnenDriftsdøgnet, budSomSlutterFør, budSomStarterEtter,
                 budSomStrekkesInnIDriftsdøgn, budSomStrekkesUtAvIDriftsdøgn);
@@ -81,7 +83,7 @@ public class ReservekraftBudSpecificationTest {
         budMedVolumITidsrom.setVolumForTidsrom(startTid, sluttTid, 300);
 
         ReservekraftBud budMedVolumIDelerAvTidsrom = new ReservekraftBud(stasjonsgruppe1);
-        budMedVolumIDelerAvTidsrom.setVolumForTidsrom(startTid.minusHours(1), startTid.minusHours(1), 200);
+        budMedVolumIDelerAvTidsrom.setVolumForTidsrom(startTid.minusHours(1), sluttTid.minusHours(1), 200);
 
         ReservekraftBud budMedNullVolumITidsrom = new ReservekraftBud(stasjonsgruppe1);
         budMedNullVolumITidsrom.setVolumForTidsrom(startTid, sluttTid, 0);
@@ -96,7 +98,16 @@ public class ReservekraftBudSpecificationTest {
         repository.insertAll(budMedVolumITidsrom, budMedVolumIDelerAvTidsrom, budMedNullVolumITidsrom, budMedVolumUtenforTidsrom);
 
         assertThat(repository.find(specification))
-            .contains(budMedNullVolumITidsrom, budMedVolumIDelerAvTidsrom)
-            .excludes(budMedNullVolumITidsrom, budMedVolumUtenforTidsrom);
+            .contains(budMedVolumITidsrom)
+            .excludes(budMedVolumUtenforTidsrom)
+            .excludes(budMedNullVolumITidsrom)
+            .contains(budMedVolumIDelerAvTidsrom);
+    }
+
+    private ReservekraftBud budMedTidsintervall(Stasjonsgruppe stasjonsgruppe, DateTime startTid, DateTime sluttTid) {
+        ReservekraftBud reservekraftBud = new ReservekraftBud(stasjonsgruppe);
+        reservekraftBud.setStartTid(startTid);
+        reservekraftBud.setSluttTid(sluttTid);
+        return reservekraftBud;
     }
 }

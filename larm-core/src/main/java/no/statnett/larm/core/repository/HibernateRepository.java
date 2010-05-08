@@ -89,17 +89,17 @@ public class HibernateRepository implements Repository {
     public static HibernateRepository inmemoryDatabase(Class<?>... entities) {
         AnnotationConfiguration cfg = new AnnotationConfiguration();
         cfg
-                .setProperty(Environment.URL, "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;MODE=Oracle")
+                .setProperty(Environment.URL, "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;MODE=Oracle;MVCC=true")
                 .setProperty(Environment.DRIVER, "org.h2.Driver")
-                .setProperty(Environment.HBM2DDL_AUTO, "create");
+                .setProperty(Environment.HBM2DDL_AUTO, "update");
         addAnnotatedEntities(cfg, entities);
         return new HibernateRepository(cfg.buildSessionFactory());
     }
 
     @Override
     public void deleteAll(Class<?> entityType) {
-        // TODO Auto-generated method stub on May 8, 2010
-        throw new UnsupportedOperationException("Not implemented yet");
+        Session session = sessionFactory.openSession();
+        session.createQuery("delete " + entityType.getName());
     }
 
     @Override

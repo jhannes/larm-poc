@@ -96,8 +96,9 @@ public class InmemoryRepository implements Repository {
 
     @Override
     public void deleteAll(Class<?> entityType) {
-        // TODO Auto-generated method stub on May 8, 2010
-        throw new UnsupportedOperationException("Not implemented yet");
+        for (Object entity : findAll(entityType)) {
+            store.remove(getOrGenerateId(entity));
+        }
     }
 
     @Override

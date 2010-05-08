@@ -1,6 +1,8 @@
 package no.statnett.larm.core.repository.inmemory;
 
-public interface InmemorySpecification<T> {
+import no.statnett.larm.core.repository.Specification;
+
+public interface InmemorySpecification<T> extends Specification<T> {
 
     boolean matches(T entity);
 
