@@ -14,23 +14,23 @@ public class Stasjonsgruppe {
     private String navn;
 
     @ManyToOne
-    private Elspotområde elspotområde;
+    private ElspotomrÃ¥de elspotomrÃ¥de;
 
     Stasjonsgruppe() {
     }
 
-    public Stasjonsgruppe(String navn, Elspotområde elspotområde) {
+    public Stasjonsgruppe(String navn, ElspotomrÃ¥de elspotomrÃ¥de) {
         this.navn = navn;
-        this.elspotområde = elspotområde;
+        this.elspotomrÃ¥de = elspotomrÃ¥de;
     }
 
     @Override
     public String toString() {
-        return "Stasjonsgruppe<" + navn + "," + elspotområde + ">";
+        return "Stasjonsgruppe<" + navn + "," + elspotomrÃ¥de + ">";
     }
 
-    public Elspotområde getElspotområde() {
-        return elspotområde;
+    public ElspotomrÃ¥de getElspotomrÃ¥de() {
+        return elspotomrÃ¥de;
     }
 
 }

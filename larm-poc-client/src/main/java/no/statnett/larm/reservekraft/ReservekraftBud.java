@@ -12,7 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 
-import no.statnett.larm.nettmodell.Elspotområde;
+import no.statnett.larm.nettmodell.ElspotomrÃ¥de;
 import no.statnett.larm.nettmodell.Stasjonsgruppe;
 
 import org.hibernate.annotations.Type;
@@ -87,8 +87,8 @@ public class ReservekraftBud {
         return stasjonsgruppe.hashCode();
     }
 
-    public Elspotområde getElspotområde() {
-        return stasjonsgruppe.getElspotområde();
+    public ElspotomrÃ¥de getElspotomrÃ¥de() {
+        return stasjonsgruppe.getElspotomrÃ¥de();
     }
 
     public Interval getBudperiode() {

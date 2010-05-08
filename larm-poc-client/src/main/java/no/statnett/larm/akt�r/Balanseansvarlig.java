@@ -1,4 +1,4 @@
-package no.statnett.larm.aktør;
+package no.statnett.larm.aktÃ¸r;
 
 public class Balanseansvarlig {
 

@@ -38,10 +38,10 @@ public class ApplicationFrame {
         if (clientUrl == null) {
             clientUrl = "jdbc:h2:file:target/testdb;MODE=Oracle";
             Repository repository = HibernateRepository.withDatabase(clientUrl, Stasjon.class);
-            repository.insert(Stasjon.medNavnOgFastområde("Stasjon 1", "F01"));
-            repository.insert(Stasjon.medNavnOgFastområde("Stasjon 2", "F01"));
-            repository.insert(Stasjon.medNavnOgFastområde("Stasjon 3", "F02"));
-            repository.insert(Stasjon.medNavnOgFastområde("Stasjon 4", "F03"));
+            repository.insert(Stasjon.medNavnOgFastomrÃ¥de("Stasjon 1", "F01"));
+            repository.insert(Stasjon.medNavnOgFastomrÃ¥de("Stasjon 2", "F01"));
+            repository.insert(Stasjon.medNavnOgFastomrÃ¥de("Stasjon 3", "F02"));
+            repository.insert(Stasjon.medNavnOgFastomrÃ¥de("Stasjon 4", "F03"));
             return SwingWorkerAsyncProxy.createAsyncProxy(RepositoryAsync.class, repository);
         }
         if (clientUrl.startsWith("jdbc:")) {

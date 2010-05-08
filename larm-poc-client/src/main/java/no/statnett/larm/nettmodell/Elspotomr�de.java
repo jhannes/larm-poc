@@ -5,24 +5,24 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
-public class Elspotområde {
+public class ElspotomrÃ¥de {
 
     @Id @GeneratedValue
     private Integer id;
 
     private String navn;
 
-    Elspotområde() {
+    ElspotomrÃ¥de() {
     }
 
-    public Elspotområde(String navn) {
+    public ElspotomrÃ¥de(String navn) {
         this.navn = navn;
         // TODO Auto-generated constructor stub
     }
 
     @Override
     public String toString() {
-        return "Elspotområde<" + navn + ">";
+        return "ElspotomrÃ¥de<" + navn + ">";
     }
 
 }

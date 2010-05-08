@@ -28,7 +28,7 @@ public class StasjonListDialog extends JPanel {
     public StasjonListDialog(RepositoryAsync repositoryAsync) {
         this.repositoryAsync = repositoryAsync;
         tableModel.addColumn("Stasjonsnavn");
-        tableModel.addColumn("Fastområde");
+        tableModel.addColumn("FastomrÃ¥de");
         searchResult.setModel(tableModel);
 
         searchPanel.getSearchButton().addActionListener(new ActionListener() {
@@ -60,7 +60,7 @@ public class StasjonListDialog extends JPanel {
     private void updateSearchResults(List<Stasjon> stasjoner) {
         tableModel = new DefaultTableModel();
         tableModel.addColumn("Stasjonsnavn");
-        tableModel.addColumn("Fastområde");
+        tableModel.addColumn("Fastomrï¿½de");
         searchResult.setModel(tableModel);
 
         for (Stasjon stasjon : stasjoner) {
@@ -71,7 +71,7 @@ public class StasjonListDialog extends JPanel {
     private Vector<Object> getRowData(Stasjon stasjon) {
         Vector<Object> vector = new Vector<Object>();
         vector.add(stasjon.getNavn());
-        vector.add(stasjon.getFastområde());
+        vector.add(stasjon.getFastomrÃ¥de());
         return vector;
     }
 
@@ -85,10 +85,10 @@ public class StasjonListDialog extends JPanel {
 
     public static void main(String[] args) {
         HibernateRepository repository = HibernateRepository.withDatabase("jdbc:h2:file:target/testdb;MODE=Oracle", Stasjon.class);
-        repository.insert(Stasjon.medNavnOgFastområde("Stasjon 1", "F01"));
-        repository.insert(Stasjon.medNavnOgFastområde("Stasjon 2", "F01"));
-        repository.insert(Stasjon.medNavnOgFastområde("Stasjon 3", "F02"));
-        repository.insert(Stasjon.medNavnOgFastområde("Stasjon 4", "F03"));
+        repository.insert(Stasjon.medNavnOgFastomrÃ¥de("Stasjon 1", "F01"));
+        repository.insert(Stasjon.medNavnOgFastomrÃ¥de("Stasjon 2", "F01"));
+        repository.insert(Stasjon.medNavnOgFastomrÃ¥de("Stasjon 3", "F02"));
+        repository.insert(Stasjon.medNavnOgFastomrÃ¥de("Stasjon 4", "F03"));
         ApplicationFrame.display("Stasjoner",
                 new StasjonListDialog(SyncAsyncProxy.createAsyncProxy(RepositoryAsync.class, repository)));
     }

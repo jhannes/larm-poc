@@ -38,19 +38,19 @@ public class StasjonSpecification implements Specification<Stasjon>, HibernateSp
     }
 
     public boolean matches(Stasjon entity) {
-        return getFastområder().isEmpty() || getFastområder().contains(entity.getFastområde());
+        return getFastomrÃ¥der().isEmpty() || getFastomrÃ¥der().contains(entity.getFastomrÃ¥de());
     }
 
-    private List<String> getFastområder() {
-        ArrayList<String> fastområder = new ArrayList<String>();
-        if (includeF01) fastområder.add("F01");
-        if (includeF02) fastområder.add("F02");
-        return fastområder;
+    private List<String> getFastomrÃ¥der() {
+        ArrayList<String> fastomrÃ¥der = new ArrayList<String>();
+        if (includeF01) fastomrÃ¥der.add("F01");
+        if (includeF02) fastomrÃ¥der.add("F02");
+        return fastomrÃ¥der;
     }
 
     public DetachedCriteria createCriteria() {
         DetachedCriteria criteria = DetachedCriteria.forClass(getEntityType());
-        if (!getFastområder().isEmpty()) criteria.add(Restrictions.in("fastområde", getFastområder()));
+        if (!getFastomrÃ¥der().isEmpty()) criteria.add(Restrictions.in("fastomrÃ¥de", getFastomrÃ¥der()));
         return criteria;
     }
 

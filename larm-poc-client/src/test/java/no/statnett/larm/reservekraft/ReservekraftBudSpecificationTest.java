@@ -4,7 +4,7 @@ import static org.fest.assertions.Assertions.assertThat;
 
 import java.util.Arrays;
 
-import no.statnett.larm.nettmodell.Elspotområde;
+import no.statnett.larm.nettmodell.ElspotomrÃ¥de;
 import no.statnett.larm.nettmodell.Stasjonsgruppe;
 
 import org.joda.time.DateMidnight;
@@ -19,58 +19,58 @@ public class ReservekraftBudSpecificationTest {
     public RepositoryFixture repository = new RepositoryFixture().withInmemDb().withInmemRepo();
 
     @ReferenceData
-    private Elspotområde no1 = new Elspotområde("NO1");
+    private ElspotomrÃ¥de no1 = new ElspotomrÃ¥de("NO1");
     @ReferenceData
-    private Elspotområde no2 = new Elspotområde("NO2"),
-        no3 = new Elspotområde("NO3");
+    private ElspotomrÃ¥de no2 = new ElspotomrÃ¥de("NO2"),
+        no3 = new ElspotomrÃ¥de("NO3");
 
     @ReferenceData
     private Stasjonsgruppe stasjonsgruppe1 = new Stasjonsgruppe("NOKG00116", no1),
         stasjonsgruppe2 = new Stasjonsgruppe("NOKG00115", no2);
 
     @Test
-    public void skalBegrenseTilElspotområder() throws Exception {
-        ReservekraftBudSpecification specification = ReservekraftBudSpecification.forOmråder(Arrays.asList(no1, no3));
+    public void skalBegrenseTilElspotomrÃ¥der() throws Exception {
+        ReservekraftBudSpecification specification = ReservekraftBudSpecification.forOmrÃ¥der(Arrays.asList(no1, no3));
 
-        ReservekraftBud budIValgtOmråde = new ReservekraftBud(stasjonsgruppe1);
-        ReservekraftBud budIAnnetOmråde = new ReservekraftBud(stasjonsgruppe2);
+        ReservekraftBud budIValgtOmrÃ¥de = new ReservekraftBud(stasjonsgruppe1);
+        ReservekraftBud budIAnnetOmrÃ¥de = new ReservekraftBud(stasjonsgruppe2);
 
-        repository.insertAll(budIValgtOmråde, budIAnnetOmråde);
+        repository.insertAll(budIValgtOmrÃ¥de, budIAnnetOmrÃ¥de);
         assertThat(repository.find(specification))
-            .contains(budIValgtOmråde).excludes(budIAnnetOmråde);
+            .contains(budIValgtOmrÃ¥de).excludes(budIAnnetOmrÃ¥de);
     }
 
     @Test
     public void skalBegrenseTilDato() throws Exception {
-        DateMidnight driftsdøgn = new DateMidnight(2010, 3, 2);
+        DateMidnight driftsdÃ¸gn = new DateMidnight(2010, 3, 2);
         ReservekraftBudSpecification specification = new ReservekraftBudSpecification();
-        specification.setDriftsdøgn(driftsdøgn);
+        specification.setDriftsdÃ¸gn(driftsdÃ¸gn);
 
-        ReservekraftBud budInnenDriftsdøgnet = budMedTidsintervall(stasjonsgruppe1,
-                new DateTime(driftsdøgn).withHourOfDay(8),
-                new DateTime(driftsdøgn).withHourOfDay(23));
+        ReservekraftBud budInnenDriftsdÃ¸gnet = budMedTidsintervall(stasjonsgruppe1,
+                new DateTime(driftsdÃ¸gn).withHourOfDay(8),
+                new DateTime(driftsdÃ¸gn).withHourOfDay(23));
 
-        ReservekraftBud budSomSlutterFør = budMedTidsintervall(stasjonsgruppe1,
-                new DateTime(driftsdøgn.minusDays(1)).withHourOfDay(8),
-                new DateTime(driftsdøgn.minusDays(1)).withHourOfDay(23));
+        ReservekraftBud budSomSlutterFÃ¸r = budMedTidsintervall(stasjonsgruppe1,
+                new DateTime(driftsdÃ¸gn.minusDays(1)).withHourOfDay(8),
+                new DateTime(driftsdÃ¸gn.minusDays(1)).withHourOfDay(23));
 
         ReservekraftBud budSomStarterEtter = budMedTidsintervall(stasjonsgruppe1,
-                new DateTime(driftsdøgn.plusDays(1)).withHourOfDay(8),
-                new DateTime(driftsdøgn.plusDays(1)).withHourOfDay(23));
+                new DateTime(driftsdÃ¸gn.plusDays(1)).withHourOfDay(8),
+                new DateTime(driftsdÃ¸gn.plusDays(1)).withHourOfDay(23));
 
-        ReservekraftBud budSomStrekkesInnIDriftsdøgn = budMedTidsintervall(stasjonsgruppe1,
-                new DateTime(driftsdøgn.minusDays(1)).withHourOfDay(23),
-                new DateTime(driftsdøgn).withHourOfDay(4));
+        ReservekraftBud budSomStrekkesInnIDriftsdÃ¸gn = budMedTidsintervall(stasjonsgruppe1,
+                new DateTime(driftsdÃ¸gn.minusDays(1)).withHourOfDay(23),
+                new DateTime(driftsdÃ¸gn).withHourOfDay(4));
 
-        ReservekraftBud budSomStrekkesUtAvIDriftsdøgn = budMedTidsintervall(stasjonsgruppe1,
-                new DateTime(driftsdøgn).withHourOfDay(23),
-                new DateTime(driftsdøgn.plusDays(1)).withHourOfDay(4));
+        ReservekraftBud budSomStrekkesUtAvIDriftsdÃ¸gn = budMedTidsintervall(stasjonsgruppe1,
+                new DateTime(driftsdÃ¸gn).withHourOfDay(23),
+                new DateTime(driftsdÃ¸gn.plusDays(1)).withHourOfDay(4));
 
-        repository.insertAll(budInnenDriftsdøgnet, budSomSlutterFør, budSomStarterEtter,
-                budSomStrekkesInnIDriftsdøgn, budSomStrekkesUtAvIDriftsdøgn);
+        repository.insertAll(budInnenDriftsdÃ¸gnet, budSomSlutterFÃ¸r, budSomStarterEtter,
+                budSomStrekkesInnIDriftsdÃ¸gn, budSomStrekkesUtAvIDriftsdÃ¸gn);
         assertThat(repository.find(specification))
-            .contains(budInnenDriftsdøgnet, budSomStrekkesInnIDriftsdøgn, budSomStrekkesUtAvIDriftsdøgn)
-            .excludes(budSomSlutterFør, budSomStarterEtter);
+            .contains(budInnenDriftsdÃ¸gnet, budSomStrekkesInnIDriftsdÃ¸gn, budSomStrekkesUtAvIDriftsdÃ¸gn)
+            .excludes(budSomSlutterFÃ¸r, budSomStarterEtter);
     }
 
     @Test

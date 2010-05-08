@@ -6,7 +6,7 @@ import java.util.Collection;
 
 import no.statnett.larm.core.repository.hibernate.HibernateSpecification;
 import no.statnett.larm.core.repository.inmemory.InmemorySpecification;
-import no.statnett.larm.nettmodell.Elspotområde;
+import no.statnett.larm.nettmodell.ElspotomrÃ¥de;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
@@ -15,13 +15,13 @@ import org.joda.time.Interval;
 
 public class ReservekraftBudSpecification implements HibernateSpecification<ReservekraftBud>, InmemorySpecification<ReservekraftBud> {
 
-    private Collection<Elspotområde> elspotområder;
-    private DateMidnight driftsdøgn;
+    private Collection<ElspotomrÃ¥de> elspotomrÃ¥der;
+    private DateMidnight driftsdÃ¸gn;
     private Interval driftsperiode;
 
-    public static ReservekraftBudSpecification forOmråder(Collection<Elspotområde> elspotområder) {
+    public static ReservekraftBudSpecification forOmrÃ¥der(Collection<ElspotomrÃ¥de> elspotomrÃ¥der) {
         ReservekraftBudSpecification specification = new ReservekraftBudSpecification();
-        specification.elspotområder = elspotområder;
+        specification.elspotomrÃ¥der = elspotomrÃ¥der;
         return specification;
     }
 
@@ -29,8 +29,8 @@ public class ReservekraftBudSpecification implements HibernateSpecification<Rese
         return ReservekraftBud.class;
     }
 
-    public void setDriftsdøgn(DateMidnight driftsdøgn) {
-        this.driftsdøgn = driftsdøgn;
+    public void setDriftsdÃ¸gn(DateMidnight driftsdÃ¸gn) {
+        this.driftsdÃ¸gn = driftsdÃ¸gn;
     }
 
     public void setDriftsperiode(Interval driftsperiode) {
@@ -41,11 +41,11 @@ public class ReservekraftBudSpecification implements HibernateSpecification<Rese
     public DetachedCriteria createCriteria() {
         DetachedCriteria criteria = DetachedCriteria.forClass(getEntityType());
         criteria.createAlias("stasjonsgruppe", "stasjonsgruppe");
-        addInUnlessBlank(criteria, "stasjonsgruppe.elspotområde", elspotområder);
+        addInUnlessBlank(criteria, "stasjonsgruppe.elspotomrÃ¥de", elspotomrÃ¥der);
 
-        if (driftsdøgn != null) {
-            criteria.add(Restrictions.le("startTid", driftsdøgn.plusDays(1).toDateTime()));
-            criteria.add(Restrictions.ge("sluttTid", driftsdøgn.toDateTime()));
+        if (driftsdÃ¸gn != null) {
+            criteria.add(Restrictions.le("startTid", driftsdÃ¸gn.plusDays(1).toDateTime()));
+            criteria.add(Restrictions.ge("sluttTid", driftsdÃ¸gn.toDateTime()));
         }
         if (driftsperiode != null) {
             criteria.createAlias("volumPerioder", "volumperiode");
@@ -64,8 +64,8 @@ public class ReservekraftBudSpecification implements HibernateSpecification<Rese
 
     @Override
     public boolean matches(ReservekraftBud entity) {
-        return blankOrContains(elspotområder, entity.getElspotområde()) &&
-            inneholderDriftsdøgn(driftsdøgn, entity.getBudperiode()) &&
+        return blankOrContains(elspotomrÃ¥der, entity.getElspotomrÃ¥de()) &&
+            inneholderDriftsdÃ¸gn(driftsdÃ¸gn, entity.getBudperiode()) &&
             harVolumIPeriode(driftsperiode, entity.getVolumPerioder());
     }
 
@@ -79,9 +79,9 @@ public class ReservekraftBudSpecification implements HibernateSpecification<Rese
         return false;
     }
 
-    private boolean inneholderDriftsdøgn(DateMidnight aktueltDøgn, Interval budperiode) {
-        if (aktueltDøgn == null) return true;
-        return aktueltDøgn.toInterval().overlaps(budperiode);
+    private boolean inneholderDriftsdÃ¸gn(DateMidnight aktueltDÃ¸gn, Interval budperiode) {
+        if (aktueltDÃ¸gn == null) return true;
+        return aktueltDÃ¸gn.toInterval().overlaps(budperiode);
     }
 
 }

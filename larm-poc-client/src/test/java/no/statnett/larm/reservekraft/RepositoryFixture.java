@@ -10,7 +10,7 @@ import no.statnett.larm.core.repository.Repository;
 import no.statnett.larm.core.repository.RepositoryCallback;
 import no.statnett.larm.core.repository.Specification;
 import no.statnett.larm.core.repository.inmemory.InmemoryRepository;
-import no.statnett.larm.nettmodell.Elspotområde;
+import no.statnett.larm.nettmodell.ElspotomrÃ¥de;
 import no.statnett.larm.nettmodell.Stasjonsgruppe;
 
 import org.junit.rules.MethodRule;
@@ -20,7 +20,7 @@ import org.junit.runners.model.Statement;
 public class RepositoryFixture implements Repository, MethodRule {
 
     private static final Class<?>[] ALL_ENTITIES = new Class[] {
-        Stasjonsgruppe.class, Elspotområde.class,
+        Stasjonsgruppe.class, ElspotomrÃ¥de.class,
         ReservekraftBud.class, Volumperiode.class
     };
 

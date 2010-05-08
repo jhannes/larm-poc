@@ -16,17 +16,17 @@ public class Stasjon implements Serializable {
     private Integer id;
 
     private String navn;
-    private String fastområde;
+    private String fastomrÃ¥de;
 
-    public static Stasjon medNavnOgFastområde(String navn, String fastområde) {
+    public static Stasjon medNavnOgFastomrÃ¥de(String navn, String fastomrÃ¥de) {
         Stasjon stasjon = new Stasjon();
         stasjon.navn = navn;
-        stasjon.fastområde = fastområde;
+        stasjon.fastomrÃ¥de = fastomrÃ¥de;
         return stasjon;
     }
 
-    public String getFastområde() {
-        return fastområde;
+    public String getFastomrÃ¥de() {
+        return fastomrÃ¥de;
     }
 
     public String getNavn() {
@@ -35,7 +35,7 @@ public class Stasjon implements Serializable {
 
     @Override
     public String toString() {
-        return "Stasjon<" + navn + ",fastområde=" + fastområde + ">";
+        return "Stasjon<" + navn + ",fastomrÃ¥de=" + fastomrÃ¥de + ">";
     }
 
     @Override
@@ -44,7 +44,7 @@ public class Stasjon implements Serializable {
         if (!(o instanceof Stasjon)) return false;
 
         Stasjon stasjon = (Stasjon) o;
-        return nullSafeEquals(navn, stasjon.navn) && nullSafeEquals(fastområde, stasjon.fastområde);
+        return nullSafeEquals(navn, stasjon.navn) && nullSafeEquals(fastomrÃ¥de, stasjon.fastomrÃ¥de);
     }
 
     private<T> boolean nullSafeEquals(T a, T b) {
@@ -53,7 +53,7 @@ public class Stasjon implements Serializable {
 
     @Override
     public int hashCode() {
-        return nullSafeHashCode(navn, fastområde);
+        return nullSafeHashCode(navn, fastomrÃ¥de);
     }
 
     private int nullSafeHashCode(Object... fields) {

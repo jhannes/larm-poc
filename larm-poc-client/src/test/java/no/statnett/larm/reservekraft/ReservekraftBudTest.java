@@ -10,16 +10,16 @@ public class ReservekraftBudTest {
 
     @Test
     public void skalHaVolumPerioder() throws Exception {
-        DateTime driftsdøgn = new DateMidnight(2010, 3, 2).toDateTime();
+        DateTime driftsdÃ¸gn = new DateMidnight(2010, 3, 2).toDateTime();
 
         ReservekraftBud bud = new ReservekraftBud();
-        bud.setVolumForTidsrom(driftsdøgn.withHourOfDay(1), driftsdøgn.withHourOfDay(2), 200);
-        bud.setVolumForTidsrom(driftsdøgn.withHourOfDay(3), driftsdøgn.withHourOfDay(5), 300);
-        bud.setVolumForTidsrom(driftsdøgn.withHourOfDay(6), driftsdøgn.withHourOfDay(7), 400);
+        bud.setVolumForTidsrom(driftsdÃ¸gn.withHourOfDay(1), driftsdÃ¸gn.withHourOfDay(2), 200);
+        bud.setVolumForTidsrom(driftsdÃ¸gn.withHourOfDay(3), driftsdÃ¸gn.withHourOfDay(5), 300);
+        bud.setVolumForTidsrom(driftsdÃ¸gn.withHourOfDay(6), driftsdÃ¸gn.withHourOfDay(7), 400);
 
         assertThat(bud.getVolumPerioder()).hasSize(3);
-        assertThat(bud.getVolumPerioder().get(1).getStartTid()).isEqualTo(driftsdøgn.withHourOfDay(3));
-        assertThat(bud.getVolumPerioder().get(1).getSluttTid()).isEqualTo(driftsdøgn.withHourOfDay(5));
+        assertThat(bud.getVolumPerioder().get(1).getStartTid()).isEqualTo(driftsdÃ¸gn.withHourOfDay(3));
+        assertThat(bud.getVolumPerioder().get(1).getSluttTid()).isEqualTo(driftsdÃ¸gn.withHourOfDay(5));
         assertThat(bud.getVolumPerioder().get(1).getTilgjengeligVolum()).isEqualTo(300);
     }
 

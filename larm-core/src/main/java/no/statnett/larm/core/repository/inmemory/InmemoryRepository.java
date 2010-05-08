@@ -21,7 +21,6 @@ public class InmemoryRepository implements Repository {
     private Map<EntityKey, Object> store = new HashMap<EntityKey, Object>();
     private static int idSequence = 0;
 
-    @SuppressWarnings("unchecked")
     public <T> List<T> find(Specification<T> specification) {
         InmemorySpecification<T> inmemorySpecification = (InmemorySpecification<T>) specification;
         List<T> result = new ArrayList<T>();
