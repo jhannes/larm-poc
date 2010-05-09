@@ -4,12 +4,12 @@ import java.util.List;
 
 /**
  * Parses the UNB segment in Edifact.
- * 
+ *
  * <h3>Unique interchange</h3><br>
- * The combination of {@link #interchangeSender}, {@link #interchangeRecipient}
- * and {@link #interchangeControlReference} uniquely identifies the interchange
+ * The combination of {@link #interchangeSender}, {@link #interchangeRecipient} and {@link #interchangeControlReference}
+ * uniquely identifies the interchange
  * for the purpose of acknowledgement.
- * 
+ *
  * @see http://www.stylusstudio.com/edifact/40100/UNB_.htm
  */
 @Segment("UNB")

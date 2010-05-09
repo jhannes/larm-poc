@@ -11,29 +11,29 @@ import org.junit.Test;
 public class QuoteParserTest {
 
     private String exampleFile =
-        "UNA:+.? '" +
-        "UNB+UNOC:3+7080005050999:14:REGULERMARKED+7080000923168:14:REGULERMARKED+091130:1434+statkraft-987++++1'" +
-        "UNH+1+QUOTES:D:96A:UN:EDIEL2+S'" +
-        "BGM+310+2009113000025305+9+AB'" +
-        "DTM+137:200911301554:203'" +
-        "DTM+163:200912010000:203'" +
-        "DTM+164:200912012400:203'" +
-        "DTM+ZZZ:1:805'" +
-        "CUX+2:NOK'" +
-        "NAD+FR+7080005050999::9'" +
-        "NAD+DO+7080000923168::9+++++++NO'" +
-        "LIN+1++1608:::SM'" +
-        "DTM+44:120:806'" +
-        "DTM+66:180:806'" +
-        "PRI+CAL:450'RNG+4+Z01:-39'DTM+324:200912010000200912010100:Z13'" +
-        "PRI+CAL:450'RNG+4+Z01:-39'DTM+324:200912010100200912010200:Z13'" +
-        "RFF+PR:2009492-3-1'" +
-        "LOC+90+NOKG00049::SM'" +
-        "UNS+S'" +
-        "CNT+1:-410'" +
-        "CNT+ZZZ:14400'" +
-        "UNT+76+1'" +
-        "UNZ+1+statkraft-987'";
+            "UNA:+.? '" +
+            "UNB+UNOC:3+7080005050999:14:REGULERMARKED+7080000923168:14:REGULERMARKED+091130:1434+statkraft-987++++1'" +
+            "UNH+1+QUOTES:D:96A:UN:EDIEL2+S'" +
+            "BGM+310+2009113000025305+9+AB'" +
+            "DTM+137:200911301554:203'" +
+            "DTM+163:200912010000:203'" +
+            "DTM+164:200912012400:203'" +
+            "DTM+ZZZ:1:805'" +
+            "CUX+2:NOK'" +
+            "NAD+FR+7080005050999::9'" +
+            "NAD+DO+7080000923168::9+++++++NO'" +
+            "LIN+1++1608:::SM'" +
+            "DTM+44:120:806'" +
+            "DTM+66:180:806'" +
+            "PRI+CAL:450'RNG+4+Z01:-39'DTM+324:200912010000200912010100:Z13'" +
+            "PRI+CAL:450'RNG+4+Z01:-39'DTM+324:200912010100200912010200:Z13'" +
+            "RFF+PR:2009492-3-1'" +
+            "LOC+90+NOKG00049::SM'" +
+            "UNS+S'" +
+            "CNT+1:-410'" +
+            "CNT+ZZZ:14400'" +
+            "UNT+76+1'" +
+            "UNZ+1+statkraft-987'";
 
     @Test
     public void shouldParseQuotes() throws Exception {

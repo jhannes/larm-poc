@@ -1,6 +1,5 @@
 package no.statnett.larm.edifact;
 
-
 /**
  * Track context while parsing message, including delimiters, position in
  * message.

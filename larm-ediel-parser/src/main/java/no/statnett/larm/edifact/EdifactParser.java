@@ -122,10 +122,12 @@ public class EdifactParser implements SegmentSource {
         return segment;
     }
 
-    public <T extends QualifiedEdifactSegment> T readMandatorySegment(Class<T> segmentClass, String qualifier) throws IOException {
+    public <T extends QualifiedEdifactSegment> T readMandatorySegment(Class<T> segmentClass, String qualifier)
+            throws IOException {
         T segment = readOptionalSegment(segmentClass, qualifier);
         if (segment == null) {
-            String s = "Required segment of type " + segmentClass + " with qualifier " + qualifier + " - was " + lexer.getSegment();
+            String s = "Required segment of type " + segmentClass + " with qualifier " + qualifier + " - was "
+                    + lexer.getSegment();
             throw new EdifactParserException(lexer.formatPosition(), s);
         }
         return segment;
@@ -155,7 +157,8 @@ public class EdifactParser implements SegmentSource {
         return edifactSegment;
     }
 
-    public <T extends QualifiedEdifactSegment> T readOptionalSegment(Class<T> segmentClass, String qualifier) throws IOException {
+    public <T extends QualifiedEdifactSegment> T readOptionalSegment(Class<T> segmentClass, String qualifier)
+            throws IOException {
         T segment = readOptionalSegment(segmentClass);
         if (segment == null)
             return null;
