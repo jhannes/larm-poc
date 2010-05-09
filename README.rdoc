@@ -62,3 +62,4 @@ These files are the starting points for the runtime:
   * Unnecessary code -> Unnecessary cast or 'instanceof' operation
   * Annotations -> Missing @Override annotation
 * Avoid ALL compiler warnings
+* Use UTF-8 encoding for all files (General -> Workspace, Text file encoding)

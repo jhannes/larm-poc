@@ -66,10 +66,10 @@ public class ServiceFrontServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         HibernateRepository repository = HibernateRepository.withDatabase("jdbc:h2:file:target/testdb;MODE=Oracle", Stasjon.class);
-        repository.insert(Stasjon.medNavnOgFastområde("Stasjon 1", "F01"));
-        repository.insert(Stasjon.medNavnOgFastområde("Stasjon 2", "F01"));
-        repository.insert(Stasjon.medNavnOgFastområde("Stasjon 3", "F02"));
-        repository.insert(Stasjon.medNavnOgFastområde("Stasjon 4", "F03"));
+        repository.insert(Stasjon.medNavnOgFastomrÃ¥de("Stasjon 1", "F01"));
+        repository.insert(Stasjon.medNavnOgFastomrÃ¥de("Stasjon 2", "F01"));
+        repository.insert(Stasjon.medNavnOgFastomrÃ¥de("Stasjon 3", "F02"));
+        repository.insert(Stasjon.medNavnOgFastomrÃ¥de("Stasjon 4", "F03"));
         addService("repositoryService", Repository.class, repository);
     }
 
