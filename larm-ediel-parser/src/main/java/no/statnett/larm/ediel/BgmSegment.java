@@ -7,8 +7,7 @@ import no.statnett.larm.edifact.Segment;
 public class BgmSegment extends EdifactSegment {
 
     public String getMessageTime() {
-        return getElementData(1);
+        return getAsString(1);
     }
-
 
 }

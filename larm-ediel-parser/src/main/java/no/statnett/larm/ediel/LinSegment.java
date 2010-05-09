@@ -18,11 +18,11 @@ public class LinSegment extends EdifactSegment {
     private LocSegment location;
 
     public String getItemNumber() {
-        return getElementComponent(2, 0);
+        return getAsString(2, 0);
     }
 
     public String getResponsibleAgency() {
-        return getElementComponent(2, 3);
+        return getAsString(2, 3);
     }
 
     public DtmSegment getAvailability() {
@@ -62,6 +62,5 @@ public class LinSegment extends EdifactSegment {
         priceQuote = segmentSource.readMandatorySegment(RffSegment.class, "PR");
         location = segmentSource.readMandatorySegment(LocSegment.class, "90");
     }
-
 
 }

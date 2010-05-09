@@ -10,12 +10,12 @@ import no.statnett.larm.edifact.Segment;
 public class NadSegment extends QualifiedEdifactSegment {
 
     public String getPartyId() {
-        return getElementComponent(1, 0);
+        return getAsString(1, 0);
     }
 
     @Override
     public String getQualifier() {
-        return getElementData(0);
+        return getAsString(0);
     }
 
 }

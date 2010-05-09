@@ -8,10 +8,10 @@ public class LocSegment extends QualifiedEdifactSegment {
 
     @Override
     public String getQualifier() {
-        return getElementData(0);
+        return getAsString(0);
     }
 
     public String getNetArea() {
-        return getElementComponent(1, 0);
+        return getAsString(1, 0);
     }
 }

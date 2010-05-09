@@ -2,6 +2,7 @@ package no.statnett.larm.edifact;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,13 +10,26 @@ import java.util.Map;
 
 public class EdifactParser implements SegmentSource {
 
-    private Map<String, Class<? extends EdifactSegment>> segmentClassMap = new HashMap<String, Class<? extends EdifactSegment>>();
+    private Map<String, Class<? extends EdifactSegment>> segmentClassMap;
+
+    {
+        Map<String, Class<? extends EdifactSegment>> map = new HashMap<String, Class<? extends EdifactSegment>>();
+        map.put("UNB", InterchangeHeader.class);
+        map.put("UNZ", InterchangeTrailer.class);
+        map.put("UNH", MessageHeader.class);
+        map.put("UNT", MessageTrailer.class);
+        segmentClassMap = map;
+    }
 
     private final ParserContext ctx = new ParserContext();
     private final EdifactLexer lexer;
 
     public EdifactParser(final Reader input) throws IOException {
         this.lexer = new EdifactLexer(ctx, input, 30);
+    }
+
+    public EdifactParser(final String input) throws IOException {
+        this(new StringReader(input));
     }
 
     EdifactSegment readEdifactSegment() throws IOException {
@@ -27,18 +41,20 @@ public class EdifactParser implements SegmentSource {
         lexer.pushBack();
     }
 
-    public EdifactSegment readOptionalSegment(String segmentName) throws IOException {
+    @SuppressWarnings("unchecked")
+    public <T extends EdifactSegment> T readOptionalSegment(String segmentName) throws IOException {
         EdifactSegment segment = readEdifactSegment();
         if (segment.getSegmentName().equals(segmentName))
-            return segment;
+            return (T) segment;
         pushBack();
         return null;
     }
 
-    public EdifactSegment readMandatorySegment(String segmentName) throws IOException {
+    @SuppressWarnings("unchecked")
+    public <T extends EdifactSegment> T readMandatorySegment(String segmentName) throws IOException {
         EdifactSegment segment = readEdifactSegment();
         if (segment.getSegmentName().equals(segmentName))
-            return segment;
+            return (T) segment;
         pushBack();
         throw new EdifactParserException(lexer.formatPosition(), "Required segment <" + segmentName + "> but was <"
                 + segment.getSegmentName() + ">");
@@ -56,11 +72,11 @@ public class EdifactParser implements SegmentSource {
     EdifactSegment parseSegment(EdifactSegment segment) {
         EdifactSegment edifactSegment = initSegmentClass(segment);
         List<String> dataElements = lexer.getDataElements(segment);
-        edifactSegment.setDataElements(parseElements(dataElements));
+        edifactSegment.setDataElements(parseElements(segment, dataElements));
         return edifactSegment;
     }
 
-    private List<EdifactDataElement> parseElements(final List<String> dataElements) {
+    private List<EdifactDataElement> parseElements(final EdifactSegment segment, final List<String> dataElements) {
 
         List<EdifactDataElement> result = new ArrayList<EdifactDataElement>();
         for (String element : dataElements) {
@@ -93,6 +109,7 @@ public class EdifactParser implements SegmentSource {
         toSegment.lineNum = fromSegment.lineNum;
         toSegment.columnNum = fromSegment.columnNum;
         toSegment.segmentNum = fromSegment.segmentNum;
+        toSegment.ctx = fromSegment.ctx;
         toSegment.setDataElements(fromSegment.getDataElements());
     }
 
@@ -118,7 +135,7 @@ public class EdifactParser implements SegmentSource {
         if (segmentClass.getAnnotation(Segment.class) == null) {
             throw new IllegalArgumentException(segmentClass + " must be annotated with " + Segment.class);
         }
-        EdifactSegment basicSegment = lexer.readSegment();
+        EdifactSegment basicSegment = readEdifactSegment();
 
         if (!basicSegment.getSegmentName().equals(segmentClass.getAnnotation(Segment.class).value())) {
             pushBack();
@@ -134,9 +151,7 @@ public class EdifactParser implements SegmentSource {
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
-        edifactSegment.setSegmentName(basicSegment.getSegmentName());
-        List<String> dataElements = lexer.getDataElements(basicSegment);
-        edifactSegment.setDataElements(parseElements(dataElements));
+
         return edifactSegment;
     }
 

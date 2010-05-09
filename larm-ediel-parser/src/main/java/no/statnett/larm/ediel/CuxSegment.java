@@ -7,7 +7,7 @@ import no.statnett.larm.edifact.Segment;
 public class CuxSegment extends EdifactSegment {
 
     public String getCurrencyCode() {
-        return getElementComponent(0, 1);
+        return getAsString(0, 1);
     }
 
 }

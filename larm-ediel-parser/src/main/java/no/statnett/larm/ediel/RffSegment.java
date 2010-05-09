@@ -8,11 +8,11 @@ public class RffSegment extends QualifiedEdifactSegment {
 
     @Override
     public String getQualifier() {
-        return getElementComponent(0, 0);
+        return getAsString(0, 0);
     }
 
     public String getReference() {
-        return getElementComponent(0, 1);
+        return getAsString(0, 1);
     }
 
 }

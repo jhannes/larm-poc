@@ -1,9 +1,12 @@
 package no.statnett.larm.edifact;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class EdifactSegment {
 
+    ParserContext ctx;
     int lineNum, columnNum, segmentNum;
     String segmentBody;
 
@@ -13,21 +16,35 @@ public class EdifactSegment {
     public EdifactSegment() {
     }
 
-    public EdifactSegment(String segmentName, String segmentBody) {
+    EdifactSegment(String segmentName, String segmentBody) {
         this.segmentName = segmentName;
         this.segmentBody = segmentBody;
     }
 
-    List<EdifactDataElement> getDataElements() {
-        return elements;
+    public Integer getAsInt(int elementIndex, int componentIndex) {
+        EdifactDataElement element = getDataElement(elementIndex);
+        return (element != null) ? element.getAsInt(componentIndex) : null;
     }
 
-    public String getElementComponent(int elementIndex, int componentIndex) {
-        return getDataElements().get(elementIndex).getComponentData().get(componentIndex);
-    }
-
-    public String getElementData(int elementIndex) {
+    public String getAsString(int elementIndex) {
         return getDataElements().get(elementIndex).toString();
+    }
+
+    public String getAsString(int elementIndex, int componentIndex) {
+        EdifactDataElement element = getDataElement(elementIndex);
+        return (element != null) ? element.getAsString(componentIndex) : null;
+    }
+
+    protected EdifactDataElement getDataElement(int index) {
+        List<EdifactDataElement> lst = getDataElements();
+        return (index < lst.size()) ? lst.get(index) : null;
+    }
+
+    public List<EdifactDataElement> getDataElements() {
+        if (elements == null) {
+            return Collections.emptyList();
+        }
+        return elements;
     }
 
     public String getSegmentName() {
@@ -35,7 +52,7 @@ public class EdifactSegment {
     }
 
     public void setDataElements(List<EdifactDataElement> elements) {
-        this.elements = elements;
+        this.elements = elements != null ? elements : new ArrayList<EdifactDataElement>(2);
     }
 
     public void setSegmentName(String segmentName) {

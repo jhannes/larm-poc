@@ -14,7 +14,7 @@ public class PriSegment extends EdifactSegment {
     private RngSegment range;
 
     public String getPrice() {
-        return getElementComponent(0, 1);
+        return getAsString(0, 1);
     }
 
     public RngSegment getRange() {

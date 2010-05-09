@@ -7,24 +7,24 @@ import no.statnett.larm.edifact.Segment;
 public class DtmSegment extends QualifiedEdifactSegment {
 
     public String getTime() {
-        return getElementComponent(0, 1);
+        return getAsString(0, 1);
     }
 
     public String getHour() {
-        return getElementComponent(0, 1);
+        return getAsString(0, 1);
     }
 
     @Override
     public String getQualifier() {
-        return getElementComponent(0, 0);
+        return getAsString(0, 0);
     }
 
     public String getMinutes() {
-        return getElementComponent(0, 1);
+        return getAsString(0, 1);
     }
 
     public String getRange() {
-        return getElementComponent(0, 1);
+        return getAsString(0, 1);
     }
 
 }

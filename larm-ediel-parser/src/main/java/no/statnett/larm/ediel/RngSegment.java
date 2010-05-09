@@ -8,11 +8,11 @@ import no.statnett.larm.edifact.Segment;
 public class RngSegment extends EdifactSegment {
 
     public String getUnit() {
-        return getElementComponent(1, 0);
+        return getAsString(1, 0);
     }
 
     public String getMinimum() {
-        return getElementComponent(1, 1);
+        return getAsString(1, 1);
     }
 
 }

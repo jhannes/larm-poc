@@ -15,41 +15,43 @@ public class EdifactParserTest {
 
     @Test
     public void shouldSplitIntoSegments() throws Exception {
-        String edifactFile = // "UNA:+.? '\n" +
-                "UNB+UNOC:glarb'" +
+        String edifactFile = /* "UNA:+.? '\n" */
+        "UNB+UNOC:glarb'" +
                 "UNH+1+QUOTES:D:96A:UN:EDIEL2+S'" +
                 "CUX+2:NOK'NAD+FR+7080005053136::9+++++++NO'LIN+1++1608:::SM'\n" +
                 "UNT+169+1'\n" +
                 "UNZ+1+gabba'";
         EdifactParser parser = new EdifactParser(new StringReader(edifactFile));
         assertThat(segmentNames(parser))
-            .containsExactly("UNB", "UNH", "CUX", "NAD", "LIN", "UNT", "UNZ");
+                .containsExactly("UNB", "UNH", "CUX", "NAD", "LIN", "UNT", "UNZ");
     }
 
     @Test
     public void shouldReadServiceStringAdvice() throws Exception {
-        String edifactFile = "UNA:+.? '\n" +
-            "UNB+UNOC:glarb'" +
-            "UNH+1+GABBA'" +
-            "UNT+169+1'\n" +
-            "UNZ+1+gabba'";
+        String edifactFile =
+                "UNA:+.? '\n" +
+                "UNB+UNOC:glarb'" +
+                "UNH+1+GABBA'" +
+                "UNT+169+1'\n" +
+                "UNZ+1+gabba'";
 
         EdifactParser parser = new EdifactParser(new StringReader(edifactFile));
         assertThat(segmentNames(parser))
-            .containsExactly("UNA", "UNB", "UNH", "UNT", "UNZ");
+                .containsExactly("UNA", "UNB", "UNH", "UNT", "UNZ");
     }
 
     @Test
     public void shouldReadServiceStringAdviceChars() throws Exception {
-        String edifactFile = "UNA|,*/ ^\n" +
-            "UNB,UNOC|glarb^" +
-            "UNH,1,GABBA^" +
-            "UNT,169,1^\n" +
-            "UNZ,1,gabba^";
+        String edifactFile =
+                "UNA|,*/ ^\n" +
+                "UNB,UNOC|glarb^" +
+                "UNH,1,GABBA^" +
+                "UNT,169,1^\n" +
+                "UNZ,1,gabba^";
 
         EdifactParser parser = new EdifactParser(new StringReader(edifactFile));
         assertThat(segmentNames(parser))
-            .containsExactly("UNA", "UNB", "UNH", "UNT", "UNZ");
+                .containsExactly("UNA", "UNB", "UNH", "UNT", "UNZ");
     }
 
     @Test
@@ -58,7 +60,7 @@ public class EdifactParserTest {
         EdifactSegment segment = parser.parseSegment(new EdifactSegment("IFT", "3+NO MORE FLIGHTS"));
         assertThat(segment.getSegmentName()).isEqualTo("IFT");
         assertThat(collect(segment.getDataElements(), on(EdifactSegment.class).toString()))
-            .containsExactly("3", "NO MORE FLIGHTS");
+                .containsExactly("3", "NO MORE FLIGHTS");
     }
 
     @Test
@@ -82,9 +84,9 @@ public class EdifactParserTest {
     @Test
     public void shouldReadOptionalSegmentBySegmentName() throws Exception {
         String edifactFile =
-            "UNB+UNOC:glarb'" +
-            "UNH+1+GABBA'" +
-            "PDI++C:3+Y::3+F::1'";
+                "UNB+UNOC:glarb'" +
+                "UNH+1+GABBA'" +
+                "PDI++C:3+Y::3+F::1'";
         EdifactParser parser = new EdifactParser(new StringReader(edifactFile));
 
         assertThat(parser.readEdifactSegment().getSegmentName()).isEqualTo("UNB");
@@ -97,7 +99,10 @@ public class EdifactParserTest {
 
     @Test
     public void shouldReadOptionalSegmentByNameAndQualifier() throws Exception {
-        String edifactFile = "UNB+UNOC:glarb'" + "UNH+1+GABBA'" + "PDI+FOO+C:3+Y::3+F::1'";
+        String edifactFile =
+                "UNB+UNOC:glarb'" +
+                "UNH+1+GABBA'" +
+                "PDI+FOO+C:3+Y::3+F::1'";
         EdifactParser parser = new EdifactParser(new StringReader(edifactFile));
         assertThat(parser.readEdifactSegment().getSegmentName()).isEqualTo("UNB");
         assertThat(parser.readOptionalSegment(PdiEdifactSegment.class, "BAR")).isNull();
@@ -109,7 +114,10 @@ public class EdifactParserTest {
 
     @Test
     public void shouldPushBack() throws Exception {
-        String edifactFile = "UNB+UNOC:glarb'" + "UNH+1+GABBA'" + "PDI++C:3+Y::3+F::1'";
+        String edifactFile =
+                "UNB+UNOC:glarb'" +
+                "UNH+1+GABBA'" +
+                "PDI++C:3+Y::3+F::1'";
         EdifactParser parser = new EdifactParser(new StringReader(edifactFile));
 
         assertThat(parser.readEdifactSegment().getSegmentName()).isEqualTo("UNB");
@@ -121,8 +129,13 @@ public class EdifactParserTest {
 
     @Test
     public void shouldReadOptionalStuff() throws Exception {
-        String edifactFile = "UNA:+.? '\n" + "UNB+UNOC:glarb'" + "UNH+1+GABBA'" + "PDI++C:3+Y::3+F::1'" + "UNT+169+1'\n"
-                + "UNZ+1+gabba'";
+        String edifactFile =
+                "UNA:+.? '\n" +
+                "UNB+UNOC:glarb'" +
+                "UNH+1+GABBA'" +
+                "PDI++C:3+Y::3+F::1'" +
+                "UNT+169+1'\n" +
+                "UNZ+1+gabba'";
         SegmentSource parser = new EdifactParser(new StringReader(edifactFile));
 
         assertThat(parser.readOptionalSegment("UNA").getSegmentName()).isEqualTo("UNA");
@@ -146,6 +159,50 @@ public class EdifactParserTest {
         }
 
         assertThat(parser.readEdifactSegment().getSegmentName()).isEqualTo("UNH");
+    }
+
+    @Test
+    public void shouldParseInterchangeAndMessageHeaderTrailer() throws Exception {
+        String edifactFile =
+                "UNA:+.? '\n" +
+                "UNB+UNOC:glarb'" +
+                "UNH+1+GABBA'" +
+                "PDI++C:3+Y::3+F::1'" +
+                "UNT+169+1'\n" +
+                "UNZ+1+gabba'";
+
+        EdifactParser parser = new EdifactParser(edifactFile);
+        parser.readOptionalSegment("UNA");
+        InterchangeHeader interchangeHeader = parser.readMandatorySegment("UNB");
+        assertThat(interchangeHeader).isNotNull();
+        assertThat(interchangeHeader.ctx).isNotNull();
+        assertThat(interchangeHeader.columnNum).isEqualTo(0);
+        assertThat(interchangeHeader.getSyntaxIdentifier().getSyntaxIdentifier()).isEqualTo("UNOC");
+        assertThat(interchangeHeader.getSyntaxIdentifier().getSyntaxVersionNumber()).isEqualTo("glarb");
+
+        MessageHeader messageHeader = parser.readOptionalSegment("UNH");
+        assertThat(messageHeader).isNotNull();
+        assertThat(messageHeader.columnNum).isEqualTo(15);
+        assertThat(messageHeader.lineNum).isEqualTo(1);
+        assertThat(messageHeader.segmentNum).isEqualTo(3);
+        assertThat(messageHeader.ctx).isNotNull();
+        assertThat(messageHeader.getMessageReferenceNumber()).isEqualTo("1");
+        assertThat(messageHeader.getMessageIdentifier().getMessageType()).isEqualTo("GABBA");
+
+        EdifactSegment pdiSegment = parser.readOptionalSegment("PDI");
+        assertThat(pdiSegment).isNotNull();
+        assertThat(pdiSegment.ctx).isNotNull();
+
+        MessageTrailer messageTrailer = parser.readOptionalSegment("UNT");
+        assertThat(messageTrailer).isNotNull();
+        assertThat(messageTrailer.ctx).isNotNull();
+
+        InterchangeTrailer interchangeTrailer = parser.readMandatorySegment("UNZ");
+        assertThat(interchangeTrailer).isNotNull();
+        assertThat(interchangeTrailer.ctx).isNotNull();
+        assertThat(interchangeTrailer.getControlCount()).isEqualTo(1);
+        assertThat(interchangeTrailer.getControlReference()).isEqualTo("gabba");
+
     }
 
     private List<String> segmentNames(EdifactParser parser) throws IOException {
