@@ -3,6 +3,7 @@ package no.statnett.larm.poc.web;
 import no.statnett.larm.core.repository.Repository;
 
 import org.junit.BeforeClass;
+import org.junit.Test;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.webapp.WebAppContext;
 
@@ -29,5 +30,8 @@ public class WebTest {
         return null;
     }
 
+    @Test
+    public void shouldHaveATestHereOrJUnitThrowsaFit() throws Exception {
+    }
 
 }
