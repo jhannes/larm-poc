@@ -11,7 +11,13 @@ public class LocSegment extends QualifiedEdifactSegment {
         return getElementData(0);
     }
 
-    public String getNetArea() {
+    public String getLocationIdentification() {
         return getElementComponent(1, 0);
     }
+
+	public void setLocationIdentification(String locationIdentification) {
+		setElementComponent(1, 0, locationIdentification);
+	}
+
+
 }

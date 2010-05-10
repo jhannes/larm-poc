@@ -64,7 +64,7 @@ public class QuoteParserTest {
         priceDetails = lineItem.getPriceDetails().get(1);
         assertThat(priceDetails.getProcessingTime().getRange()).isEqualTo("200912010100200912010200");
         assertThat(lineItem.getPriceQuote().getReference()).isEqualTo("2009492-3-1");
-        assertThat(lineItem.getLocation().getNetArea()).isEqualTo("NOKG00049");
+        assertThat(lineItem.getLocation().getLocationIdentification()).isEqualTo("NOKG00049");
     }
 
     @Test

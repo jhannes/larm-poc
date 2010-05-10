@@ -15,6 +15,11 @@
         <servlet-name>jnlp</servlet-name>
         <servlet-class>no.statnett.larm.core.jnlp.JnlpServlet</servlet-class>
     </servlet>
+    
+    <servlet>
+        <servlet-name>edielServlet</servlet-name>
+        <servlet-class>no.statnett.larm.ediel.EdielServlet</servlet-class>
+    </servlet>
 
 
     <servlet>
@@ -35,6 +40,11 @@
     <servlet-mapping>
         <servlet-name>serviceFrontServlet</servlet-name>
         <url-pattern>/service/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>edielServlet</servlet-name>
+        <url-pattern>/ediel/*</url-pattern>
     </servlet-mapping>
 
 </web-app>

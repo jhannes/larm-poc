@@ -1,5 +1,6 @@
 package no.statnett.larm.edifact;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class EdifactDataElement {
@@ -12,7 +13,11 @@ public class EdifactDataElement {
         this.componentData = componentData;
     }
 
-    public List<String> getComponentData() {
+    public EdifactDataElement() {
+    	this.componentData = new ArrayList<String>();
+	}
+
+	public List<String> getComponentData() {
         return componentData;
     }
 

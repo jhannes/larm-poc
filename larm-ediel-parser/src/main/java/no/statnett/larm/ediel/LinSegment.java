@@ -63,5 +63,9 @@ public class LinSegment extends EdifactSegment {
         location = segmentSource.readMandatorySegment(LocSegment.class, "90");
     }
 
+	public void setLocation(LocSegment locSegment) {
+		this.location = locSegment;
+	}
+
 
 }

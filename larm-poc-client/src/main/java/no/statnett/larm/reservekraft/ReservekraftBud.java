@@ -50,6 +50,10 @@ public class ReservekraftBud {
         // TODO Auto-generated method stub
         return null;
     }
+    
+    public Stasjonsgruppe getStasjonsgruppe() {
+		return stasjonsgruppe;
+	}
 
     public String getStasjonsgruppeId() {
         // TODO Auto-generated method stub
