@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.StringReader;
 
+import org.joda.time.DateTime;
+import org.joda.time.Interval;
 import org.joda.time.Period;
 import org.junit.Test;
 
@@ -60,10 +62,12 @@ public class QuoteParserTest {
         assertThat(priceDetails.getPrice()).isEqualTo("450");
         assertThat(priceDetails.getRange().getUnit()).isEqualTo("Z01");
         assertThat(priceDetails.getRange().getMinimum()).isEqualTo("-39");
-        assertThat(priceDetails.getProcessingTime().getPeriod()).isEqualTo("200912010000200912010100");
+        assertThat(priceDetails.getProcessingTime().getPeriod()).isEqualTo(
+                new Interval(new DateTime(2009, 12, 1, 0, 0, 0, 0), new DateTime(2009, 12, 1, 1, 0, 0, 0)));
 
         priceDetails = lineItem.getPriceDetails().get(1);
-        assertThat(priceDetails.getProcessingTime().getPeriod()).isEqualTo("200912010100200912010200");
+        assertThat(priceDetails.getProcessingTime().getPeriod()).isEqualTo(
+                new Interval(new DateTime(2009, 12, 1, 1, 0, 0, 0), new DateTime(2009, 12, 1, 2, 0, 0, 0)));
         assertThat(lineItem.getPriceQuote().getReference()).isEqualTo("2009492-3-1");
         assertThat(lineItem.getLocation().getLocationIdentification()).isEqualTo("NOKG00049");
     }
