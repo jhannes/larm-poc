@@ -78,11 +78,11 @@ public class EdifactLexerTest {
         tokens = lexer.splitToStringList("  ", '+', '?');
         assertThat(tokens).containsExactly("  ");
 
-        tokens = lexer.splitToStringList("A++Å:?+?C", '+', '?');
-        assertThat(tokens).containsExactly("A", "", "Å:+?C");
+        tokens = lexer.splitToStringList("A++Ã…:?+?C", '+', '?');
+        assertThat(tokens).containsExactly("A", "", "Ã…:+?C");
 
-        tokens = lexer.splitToStringList("A++Å:?+?C+", '+', '?');
-        assertThat(tokens).containsExactly("A", "", "Å:+?C", "");
+        tokens = lexer.splitToStringList("A++Ã…:?+?C+", '+', '?');
+        assertThat(tokens).containsExactly("A", "", "Ã…:+?C", "");
 
         tokens = lexer.splitToStringList("A++B:?+C+", ':', '?');
         assertThat(tokens).containsExactly("A++B", "?+C+");
