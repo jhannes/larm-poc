@@ -57,7 +57,7 @@ public class EdifactParserTest {
         EdifactParser parser = new EdifactParser(new StringReader(""));
         EdifactSegment segment = parser.parseSegment(new EdifactSegment("IFT", "3+NO MORE FLIGHTS"));
         assertThat(segment.getSegmentName()).isEqualTo("IFT");
-        assertThat(collect(segment.getDataElements(), on(EdifactSegment.class).toString()))
+        assertThat(collect(segment.getDataElements(), on(EdifactDataElement.class).toString()))
             .containsExactly("3", "NO MORE FLIGHTS");
     }
 
