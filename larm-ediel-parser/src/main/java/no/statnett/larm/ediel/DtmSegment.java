@@ -3,21 +3,23 @@ package no.statnett.larm.ediel;
 import no.statnett.larm.edifact.QualifiedEdifactSegment;
 import no.statnett.larm.edifact.Segment;
 
-import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.joda.time.Period;
 import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeParser;
-import org.joda.time.format.DateTimeParserBucket;
+import org.joda.time.format.DateTimeFormatter;
 
 @Segment("DTM")
 public class DtmSegment extends QualifiedEdifactSegment {
 
-    public static DtmSegment withMinutes(Period period) {
+    public static DtmSegment withValueAndFormat(String value, String formatQualifier) {
         DtmSegment dtmSegment = new DtmSegment();
-        dtmSegment.setValueAndFormat(String.valueOf(period.getMinutes()), "806");
+        dtmSegment.setValueAndFormat(value, formatQualifier);
         return dtmSegment;
+    }
+
+    public static DtmSegment withMinutes(Period period) {
+        return withValueAndFormat(String.valueOf(period.getMinutes()), "806");
     }
 
     public DtmSegment() {
@@ -45,8 +47,8 @@ public class DtmSegment extends QualifiedEdifactSegment {
     public Interval getPeriod() {
         String data = getValueAsString();
         verifyFormatQualifier("Z13");
-        DateTime dateStart = DateTimeFormat.forPattern("yyyyMMddHHmm").parseDateTime(data.substring(0, 12));
-        DateTime dateEnd = DateTimeFormat.forPattern("yyyyMMddHHmm").parseDateTime(data.substring(12));
+        DateTime dateStart = parseDateTime(data.substring(0, 12));
+        DateTime dateEnd = parseDateTime(data.substring(12));
         return new Interval(dateStart, dateEnd);
     }
 
@@ -88,10 +90,19 @@ public class DtmSegment extends QualifiedEdifactSegment {
 
     public DateTime getDateTime() {
         if ("203".equals(getFormatQualifier())) {
-            return DateTimeFormat.forPattern("yyyyMMddHHmm").parseDateTime(getValueAsString());
+            return parseDateTime(getValueAsString());
         }
         throw new IllegalArgumentException("No support for format qualifier " + getFormatQualifier());
 
+    }
+
+    private DateTime parseDateTime(String valueAsString) {
+        DateTimeFormatter yyyyMMdd = DateTimeFormat.forPattern("yyyyMMdd");
+        DateTimeFormatter yyyyMMddHHmm = DateTimeFormat.forPattern("yyyyMMddHHmm");
+        if (valueAsString.endsWith("2400")) {
+            return yyyyMMdd.parseDateTime(valueAsString.substring(0,8)).plusDays(1);
+        }
+        return yyyyMMddHHmm.parseDateTime(valueAsString);
     }
 
 }

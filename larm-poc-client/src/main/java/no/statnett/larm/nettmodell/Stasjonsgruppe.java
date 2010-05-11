@@ -17,8 +17,9 @@ public class Stasjonsgruppe {
 	@ManyToOne
 	private Elspotområde elspotområde;
 
-	private String beskrivelse;
-	
+	@SuppressWarnings("unused")
+    private String beskrivelse;
+
 	Stasjonsgruppe() {
 	}
 
@@ -36,11 +37,11 @@ public class Stasjonsgruppe {
 	public String toString() {
 		return "Stasjonsgruppe<" + navn + "," + elspotområde + ">";
 	}
-	
+
 	public Integer getId() {
 		return id;
 	}
-	
+
 	public String getNavn() {
 		return navn;
 	}
@@ -48,12 +49,12 @@ public class Stasjonsgruppe {
 	public Elspotområde getElspotområde() {
 		return elspotområde;
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof Stasjonsgruppe)) return false;
 		Stasjonsgruppe other = (Stasjonsgruppe)obj;
-		
+
 		return nullSafeEquals(getNavn(), other.getNavn()) &&
 			nullSafeEquals(id, other.getId());
 	}

@@ -7,6 +7,7 @@ import javax.persistence.Id;
 @Entity
 public class Elspotområde {
 
+    @SuppressWarnings("unused")
     @Id @GeneratedValue
     private Integer id;
 

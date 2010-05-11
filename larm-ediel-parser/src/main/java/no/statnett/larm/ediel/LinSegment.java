@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.joda.time.Period;
-
 import no.statnett.larm.edifact.EdifactSegment;
 import no.statnett.larm.edifact.Segment;
 import no.statnett.larm.edifact.SegmentSource;
@@ -85,7 +83,7 @@ public class LinSegment extends EdifactSegment {
         this.duration = duration;
         this.duration.setQualifier("48");
     }
-    
+
     public DtmSegment getDuration() {
         return duration;
     }

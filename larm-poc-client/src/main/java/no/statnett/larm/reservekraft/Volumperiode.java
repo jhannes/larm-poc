@@ -11,6 +11,7 @@ import org.joda.time.Interval;
 
 @Entity
 public class Volumperiode {
+    @SuppressWarnings("unused")
     @Id @GeneratedValue
     private Integer id;
 
@@ -21,6 +22,7 @@ public class Volumperiode {
 
     private Long tilgjengeligVolum;
 
+    @SuppressWarnings("unused")
     @ManyToOne
     private ReservekraftBud reservekraftBud;
 
