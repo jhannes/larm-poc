@@ -38,15 +38,15 @@ public class EdielUploadWebTest extends WebTest {
         assertThat(responseCode).isEqualTo(200);
 
         AperakParser parser = new AperakParser(new InputStreamReader(request.getResponseBodyAsStream(), request.getResponseCharSet()));
-        //AperakMessage aperakMessage = parser.parseMessage();
-        //assertThat(aperakMessage.getErrorCodes()).isEmpty();
+        AperakMessage aperakMessage = parser.parseMessage();
+        assertThat(aperakMessage.getErrorCodes()).isEmpty();
 
         getRepository().execute(new RepositoryCallback() {
             @Override
             public void doInSession(Repository repository) {
                 assertThat(repository.findAll(ReservekraftBud.class)).hasSize(2);
                 ReservekraftBud reservekraftBud = repository.findAll(ReservekraftBud.class).get(0);
-                assertThat(reservekraftBud.getStasjonsgruppeId()).isEqualTo("NOKG00116");
+                assertThat(reservekraftBud.getStasjonsgruppe().getNavn()).isEqualTo("NOKG00116");
                 assertThat(reservekraftBud.getBudreferanse()).isEqualTo("2009492-3-1");
             }
         });

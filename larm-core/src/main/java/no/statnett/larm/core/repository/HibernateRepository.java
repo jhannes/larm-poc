@@ -59,15 +59,13 @@ public class HibernateRepository implements Repository {
         }
     }
 
-    public void insertAll(Object... entities) {
-        Session session = sessionFactory.openSession();
-        try {
-            for (Object entity : entities) {
-                session.save(entity);
+    public void insertAll(final Object... entities) {
+        execute(new RepositoryCallback() {
+            @Override
+            public void doInSession(Repository repository) {
+                repository.insertAll(entities);
             }
-        } finally {
-            session.close();
-        }
+        });
     }
 
     public static HibernateRepository withDatabase(String databaseUrl, Class<?>... entities) {
@@ -97,14 +95,23 @@ public class HibernateRepository implements Repository {
     }
 
     @Override
-    public void deleteAll(Class<?> entityType) {
-        Session session = sessionFactory.openSession();
-        session.createQuery("delete " + entityType.getName());
+    public void deleteAll(final Class<?> entityType) {
+        execute(new RepositoryCallback() {
+            @Override
+            public void doInSession(Repository repository) {
+                repository.deleteAll(entityType);
+            }
+        });
     }
 
     @Override
     public void execute(RepositoryCallback repositoryCallback) {
-        // TODO Auto-generated method stub on May 8, 2010
-        throw new UnsupportedOperationException("Not implemented yet");
+        Session session = sessionFactory.openSession();
+        HibernateSessionRepository repository = new HibernateSessionRepository(session);
+        try {
+            repositoryCallback.doInSession(repository);
+        } finally {
+            session.close();
+        }
     }
 }
