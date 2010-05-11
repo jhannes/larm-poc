@@ -9,7 +9,7 @@ import org.mortbay.jetty.Server;
 import org.mortbay.jetty.plus.naming.EnvEntry;
 import org.mortbay.jetty.webapp.WebAppContext;
 
-public class WebTest {
+public abstract class WebTest {
 
     private static String applicationUrl;
 	private static Repository repository;
