@@ -104,4 +104,19 @@ public class EdielServletTest {
         assertThat(bud.getBudperiode()).isEqualTo(new Interval(driftsdøgn, driftsdøgn.plusDays(1)));
     }
 
+    @Test
+    public void shouldParseAllTestQuotesFiles() throws Exception {
+        repository.insert(new Stasjonsgruppe("NOKG00049", elspotområde));
+        repository.insert(new Stasjonsgruppe("NOKG00056", elspotområde));
+
+        File quotesFileTestDir = new File("src/test/ediel/quotes");
+        assertThat(quotesFileTestDir.listFiles()).isNotEmpty();
+        for (File quotesFile : quotesFileTestDir.listFiles()) {
+            repository.deleteAll(ReservekraftBud.class);
+            servlet.read(new FileReader(quotesFile));
+            assertThat(repository.findAll(ReservekraftBud.class)).isNotEmpty();
+        }
+    }
+
+
 }

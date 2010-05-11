@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import no.statnett.larm.LarmHibernateRepository;
 import no.statnett.larm.core.repository.Repository;
 import no.statnett.larm.nettmodell.Stasjonsgruppe;
 import no.statnett.larm.nettmodell.StasjonsgruppeSpecification;
@@ -29,6 +30,10 @@ public class EdielServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Reader reader = req.getReader();
+        read(reader);
+    }
+
+    void read(Reader reader) throws IOException {
         QuoteParser quoteParser = new QuoteParser(reader);
         QuoteMessage quoteMessage = quoteParser.parseMessage();
         DateTime processingStartTime = quoteMessage.getProcessingStartTime().getDateTime();
@@ -37,17 +42,14 @@ public class EdielServlet extends HttpServlet {
         for (LinSegment linSegment : quoteMessage.getLineItems()) {
             repository.insert(lesBud(linSegment, processingStartTime, processingEndTime));
         }
-
     }
 
     ReservekraftBud lesBud(LinSegment linSegment, DateTime processingStartTime, DateTime processingEndTime) {
         String stasjonsGruppeNavn = linSegment.getLocation().getLocationIdentification();
-        List<Stasjonsgruppe> list = repository.find(StasjonsgruppeSpecification.medLocationId(stasjonsGruppeNavn));
-
-        ReservekraftBud reserveKraftBud = new ReservekraftBud(list.get(0));
+        ReservekraftBud reserveKraftBud = new ReservekraftBud(findStasjonsgruppeByNavn(stasjonsGruppeNavn));
         reserveKraftBud.setBudreferanse(linSegment.getPriceQuote().getReference());
-        reserveKraftBud.setVarighet(linSegment.getDuration().getQuantity());
-        reserveKraftBud.setHviletid(linSegment.getRestingTime().getQuantity());
+        if (linSegment.getDuration() != null) reserveKraftBud.setVarighet(linSegment.getDuration().getQuantity());
+        if (linSegment.getRestingTime() != null) reserveKraftBud.setHviletid(linSegment.getRestingTime().getQuantity());
         reserveKraftBud.setBudperiode(new Interval(processingStartTime, processingEndTime));
 
         for (PriSegment priSegment : linSegment.getPriceDetails()) {
@@ -56,4 +58,16 @@ public class EdielServlet extends HttpServlet {
         return reserveKraftBud;
     }
 
+    private Stasjonsgruppe findStasjonsgruppeByNavn(String stasjonsGruppeNavn) {
+        List<Stasjonsgruppe> list = repository.find(StasjonsgruppeSpecification.medLocationId(stasjonsGruppeNavn));
+        if (list.isEmpty()) {
+            throw new IllegalArgumentException("Fant ingen stasjonsgruppe med navn " + stasjonsGruppeNavn);
+        }
+        return list.get(0);
+    }
+
+    @Override
+    public void init() throws ServletException {
+        repository = new LarmHibernateRepository("jdbc/primaryDs");
+    }
 }
