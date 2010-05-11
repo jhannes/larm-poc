@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.StringReader;
 
+import org.joda.time.Period;
 import org.junit.Test;
 
 public class QuoteParserTest {
@@ -52,17 +53,17 @@ public class QuoteParserTest {
         LinSegment lineItem = message.getLineItems().get(0);
         assertThat(lineItem.getItemNumber()).isEqualTo("1608");
         assertThat(lineItem.getResponsibleAgency()).isEqualTo("SM");
-        assertThat(lineItem.getAvailability().getMinutes()).isEqualTo("120");
-        assertThat(lineItem.getRestingTime().getMinutes()).isEqualTo("180");
+        assertThat(lineItem.getAvailability().getQuantity()).isEqualTo(Period.minutes(120));
+        assertThat(lineItem.getRestingTime().getQuantity()).isEqualTo(Period.minutes(180));
 
         PriSegment priceDetails = lineItem.getPriceDetails().get(0);
         assertThat(priceDetails.getPrice()).isEqualTo("450");
         assertThat(priceDetails.getRange().getUnit()).isEqualTo("Z01");
         assertThat(priceDetails.getRange().getMinimum()).isEqualTo("-39");
-        assertThat(priceDetails.getProcessingTime().getRange()).isEqualTo("200912010000200912010100");
+        assertThat(priceDetails.getProcessingTime().getPeriod()).isEqualTo("200912010000200912010100");
 
         priceDetails = lineItem.getPriceDetails().get(1);
-        assertThat(priceDetails.getProcessingTime().getRange()).isEqualTo("200912010100200912010200");
+        assertThat(priceDetails.getProcessingTime().getPeriod()).isEqualTo("200912010100200912010200");
         assertThat(lineItem.getPriceQuote().getReference()).isEqualTo("2009492-3-1");
         assertThat(lineItem.getLocation().getLocationIdentification()).isEqualTo("NOKG00049");
     }

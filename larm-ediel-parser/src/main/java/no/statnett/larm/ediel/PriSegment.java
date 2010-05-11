@@ -6,6 +6,8 @@ import no.statnett.larm.edifact.EdifactSegment;
 import no.statnett.larm.edifact.Segment;
 import no.statnett.larm.edifact.SegmentSource;
 
+import org.joda.time.Interval;
+
 /** Price details */
 @Segment("PRI")
 public class PriSegment extends EdifactSegment {
@@ -28,6 +30,24 @@ public class PriSegment extends EdifactSegment {
     public void readSegmentGroup(SegmentSource segmentSource) throws IOException {
         range = segmentSource.readOptionalSegment(RngSegment.class);
         processingTime = segmentSource.readOptionalSegment(DtmSegment.class, "324");
+    }
+
+    public PriSegment setProcessingTime(Interval interval) {
+        processingTime= new DtmSegment(interval);
+        processingTime.setQualifier("324");
+        return this;
+    }
+
+    public PriSegment setVolume(Long value) {
+        range = new RngSegment();
+        range.setQuantity(value);
+        range.setUnit("Z01");
+        range.setTypeQualifier("4");    
+        return this;
+    }
+
+    public Long getVolume() {
+        return range.getQuantity();
     }
 
 }

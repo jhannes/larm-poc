@@ -15,4 +15,12 @@ public class RffSegment extends QualifiedEdifactSegment {
         return getElementComponent(0, 1);
     }
 
+    public void setReference(String budreferanse) {
+        setElementComponent(0, 1, budreferanse);
+    }
+
+    public void setQualifier(String data) {
+        setElementComponent(0, 0, data);
+    }
+
 }

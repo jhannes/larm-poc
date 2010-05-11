@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.joda.time.Period;
+
 import no.statnett.larm.edifact.EdifactSegment;
 import no.statnett.larm.edifact.Segment;
 import no.statnett.larm.edifact.SegmentSource;
@@ -16,6 +18,7 @@ public class LinSegment extends EdifactSegment {
     private List<PriSegment> priceDetails = new ArrayList<PriSegment>();
     private RffSegment priceQuote;
     private LocSegment location;
+    private DtmSegment duration;
 
     public String getItemNumber() {
         return getElementComponent(2, 0);
@@ -51,6 +54,7 @@ public class LinSegment extends EdifactSegment {
 
     public void readSegmentGroup(SegmentSource segmentSource) throws IOException {
         availability = segmentSource.readOptionalSegment(DtmSegment.class, "44");
+        duration = segmentSource.readOptionalSegment(DtmSegment.class, "48");
         restingTime = segmentSource.readOptionalSegment(DtmSegment.class, "66");
 
         PriSegment priSegment;
@@ -63,9 +67,31 @@ public class LinSegment extends EdifactSegment {
         location = segmentSource.readMandatorySegment(LocSegment.class, "90");
     }
 
-	public void setLocation(LocSegment locSegment) {
-		this.location = locSegment;
-	}
+    public void setLocation(LocSegment locSegment) {
+        this.location = locSegment;
+    }
 
+    public void setPriceQuote(RffSegment rffSegment) {
+        this.priceQuote = rffSegment;
+        this.priceQuote.setQualifier("PR");
+    }
 
+    public void setAvailability(DtmSegment availability) {
+        this.availability = availability;
+        this.availability.setQualifier("44");
+    }
+
+    public void setDuration(DtmSegment duration) {
+        this.duration = duration;
+        this.duration.setQualifier("48");
+    }
+    
+    public DtmSegment getDuration() {
+        return duration;
+    }
+
+    public void setRestingTime(DtmSegment restingTime) {
+        this.restingTime = restingTime;
+        this.restingTime.setQualifier("66");
+    }
 }

@@ -15,4 +15,20 @@ public class RngSegment extends EdifactSegment {
         return getElementComponent(1, 1);
     }
 
+    public Long getQuantity() {
+        return Long.valueOf(getMinimum());
+    }
+
+    public void setQuantity(Long data) {
+        setElementComponent(1, 1, data.toString());
+    }
+
+    public void setUnit(String unit) {
+        setElementComponent(1, 0, unit);
+    }
+
+    public void setTypeQualifier(String data) {
+        setElementComponent(0, 0, data);
+    }
+
 }
