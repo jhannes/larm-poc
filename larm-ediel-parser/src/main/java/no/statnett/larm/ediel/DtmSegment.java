@@ -22,6 +22,10 @@ public class DtmSegment extends QualifiedEdifactSegment {
         return withValueAndFormat(String.valueOf(period.getMinutes()), "806");
     }
 
+    public static DtmSegment withDateTime(DateTime dateTime) {
+        return withValueAndFormat(dateTime.toString("yyyyMMddHHmm"), "203");
+    }
+
     public DtmSegment() {
     }
 

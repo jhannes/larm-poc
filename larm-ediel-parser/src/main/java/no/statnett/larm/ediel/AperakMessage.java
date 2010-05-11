@@ -1,6 +1,7 @@
 package no.statnett.larm.ediel;
 
 import java.io.IOException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,11 +15,6 @@ public class AperakMessage {
     private DtmSegment arrivalTime;
     private List<ErcSegment> errorCodes = new ArrayList<ErcSegment>();
 
-    public void readSegmentGroup() {
-
-
-    }
-
     public List<ErcSegment> getErrorCodes() {
         return errorCodes;
     }
@@ -30,8 +26,8 @@ public class AperakMessage {
         arrivalTime = edifactParser.readMandatorySegment(DtmSegment.class, "178");
 
         referencedMessage = edifactParser.readMandatorySegment(RffSegment.class);
-        edifactParser.readMandatorySegmentGroup(NadSegment.class, "FR");
-        edifactParser.readMandatorySegmentGroup(NadSegment.class, "DO");
+        edifactParser.readOptionalSegmentGroup(NadSegment.class, "FR");
+        edifactParser.readOptionalSegmentGroup(NadSegment.class, "DO");
         edifactParser.readOptionalSegmentGroup(NadSegment.class, "C1");
         edifactParser.readOptionalSegmentGroup(NadSegment.class, "C2");
 
@@ -43,20 +39,45 @@ public class AperakMessage {
         edifactParser.readOptionalSegment(RffSegment.class);
     }
 
+    public void write(Writer writer) throws IOException {
+        beginMessage.write(writer);
+        messageDate.write(writer);
+        arrivalTime.write(writer);
+        referencedMessage.write(writer);
+    }
+
     public BgmSegment getBeginMessage() {
         return beginMessage;
+    }
+
+    public void setBeginMessage(BgmSegment beginMessage) {
+        this.beginMessage = beginMessage;
     }
 
     public RffSegment getReferencedMessage() {
         return referencedMessage;
     }
 
+    public void setReferencedMessage(RffSegment referencedMessage) {
+        this.referencedMessage = referencedMessage;
+    }
+
     public DtmSegment getMessageDate() {
         return messageDate;
     }
 
+    public void setMessageDate(DtmSegment messageDate) {
+        this.messageDate = messageDate;
+        messageDate.setQualifier("137");
+    }
+
     public DtmSegment getArrivalTime() {
         return arrivalTime;
+    }
+
+    public void setArrivalTime(DtmSegment arrivalTime) {
+        this.arrivalTime = arrivalTime;
+        arrivalTime.setQualifier("178");
     }
 
 }

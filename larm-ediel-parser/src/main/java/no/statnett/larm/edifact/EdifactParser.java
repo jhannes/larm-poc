@@ -29,6 +29,7 @@ public class EdifactParser implements SegmentSource {
 
     public EdifactSegment readOptionalSegment(String segmentName) throws IOException {
         EdifactSegment segment = readEdifactSegment();
+        if (segment == null) return null;
         if (segment.getSegmentName().equals(segmentName))
             return segment;
         pushBack();
@@ -37,11 +38,11 @@ public class EdifactParser implements SegmentSource {
 
     public EdifactSegment readMandatorySegment(String segmentName) throws IOException {
         EdifactSegment segment = readEdifactSegment();
-        if (segment.getSegmentName().equals(segmentName))
+        if (segment != null && segment.getSegmentName().equals(segmentName))
             return segment;
         pushBack();
         throw new EdifactParserException(lexer.formatPosition(), "Required segment <" + segmentName + "> but was <"
-                + segment.getSegmentName() + ">");
+                + segment + ">");
     }
 
     public Iterable<EdifactSegment> eachSegment() throws IOException {

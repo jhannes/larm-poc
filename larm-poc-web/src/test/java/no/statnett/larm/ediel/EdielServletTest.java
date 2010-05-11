@@ -7,6 +7,9 @@ import static org.mockito.Mockito.when;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.PrintWriter;
+import java.io.StringReader;
+import java.io.StringWriter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,7 +42,6 @@ public class EdielServletTest {
 
     @Test
     public void shouldParseQuotesMessageToRkBud() throws Exception {
-
         HttpServletRequest req = mock(HttpServletRequest.class);
         HttpServletResponse resp = mock(HttpServletResponse.class);
 
@@ -47,6 +49,7 @@ public class EdielServletTest {
         File quotesFile = new File("src/test/ediel/quotes/QuoteNordkraft.edi");
 
         when(req.getReader()).thenReturn(new BufferedReader(new FileReader(quotesFile)));
+        when(resp.getWriter()).thenReturn(new PrintWriter(new StringWriter()));
 
         servlet.service(req, resp);
 
@@ -56,7 +59,6 @@ public class EdielServletTest {
         assertThat(bud.getBudperiode()).isEqualTo(
                 new Interval(new DateMidnight(2009, 12, 1).toDateTime(),
                         new DateMidnight(2009, 12, 2).toDateTime()));
-
     }
 
     @Test
@@ -118,5 +120,23 @@ public class EdielServletTest {
         }
     }
 
+    @Test
+    public void skalGenerereAperak() throws Exception {
+        HttpServletRequest req = mock(HttpServletRequest.class);
+        HttpServletResponse resp = mock(HttpServletResponse.class);
+
+        when(req.getMethod()).thenReturn("POST");
+        File quotesFile = new File("src/test/ediel/quotes/QuoteNordkraft.edi");
+
+        when(req.getReader()).thenReturn(new BufferedReader(new FileReader(quotesFile)));
+
+        StringWriter response = new StringWriter();
+        when(resp.getWriter()).thenReturn(new PrintWriter(response));
+
+        servlet.doPost(req, resp);
+
+        AperakParser aperakParser = new AperakParser(new StringReader(response.toString()));
+        assertThat(aperakParser.parseMessage()).isNotNull();
+    }
 
 }

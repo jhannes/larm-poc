@@ -1,6 +1,7 @@
 package no.statnett.larm.ediel;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Reader;
 import java.util.List;
 
@@ -11,6 +12,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import no.statnett.larm.LarmHibernateRepository;
 import no.statnett.larm.core.repository.Repository;
+import no.statnett.larm.edifact.UnaSegment;
+import no.statnett.larm.edifact.UnbSegment;
+import no.statnett.larm.edifact.UnhSegment;
+import no.statnett.larm.edifact.UntSegment;
+import no.statnett.larm.edifact.UnzSegment;
 import no.statnett.larm.nettmodell.Stasjonsgruppe;
 import no.statnett.larm.nettmodell.StasjonsgruppeSpecification;
 import no.statnett.larm.reservekraft.ReservekraftBud;
@@ -31,6 +37,23 @@ public class EdielServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Reader reader = req.getReader();
         read(reader);
+        writeAperak(resp.getWriter());
+    }
+
+    private void writeAperak(PrintWriter writer) throws IOException {
+        new UnaSegment(":+.? '").write(writer);
+        new UnbSegment().write(writer);
+        new UnhSegment("APERAK", "D", "96A", "UN", "EDIEL2").write(writer);
+
+        AperakMessage aperakMessage = new AperakMessage();
+        aperakMessage.setBeginMessage(new BgmSegment());
+        aperakMessage.setArrivalTime(DtmSegment.withDateTime(new DateTime()));
+        aperakMessage.setMessageDate(DtmSegment.withDateTime(new DateTime()));
+        aperakMessage.setReferencedMessage(new RffSegment());
+        aperakMessage.write(writer);
+
+        new UntSegment("7", "1").write(writer); // TODO: Must count segments!
+        new UnzSegment("1", "29").write(writer);
     }
 
     void read(Reader reader) throws IOException {

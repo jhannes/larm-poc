@@ -1,5 +1,7 @@
 package no.statnett.larm.edifact;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +48,10 @@ public class EdifactSegment {
     }
 
     public String getSegmentName() {
+        if (segmentName == null) {
+            Segment annotation = getClass().getAnnotation(Segment.class);
+            if (annotation != null) segmentName = annotation.value();
+        }
         return segmentName;
     }
 
@@ -55,5 +61,25 @@ public class EdifactSegment {
 
     public void setSegmentName(String segmentName) {
         this.segmentName = segmentName;
+    }
+
+    public void write(Writer writer) throws IOException {
+        writer.append(getSegmentName());
+        for (EdifactDataElement element : getDataElements()) {
+            // TODO: Get from ParserContext
+            writer.append("+");
+            boolean first = true;
+            for (String component : element.getComponentData()) {
+                if (!first) writer.append(":");
+                writer.append(component);
+                first = false;
+            }
+        }
+        writer.append("'\n");
+    }
+
+    @Override
+    public String toString() {
+        return segmentName;
     }
 }
