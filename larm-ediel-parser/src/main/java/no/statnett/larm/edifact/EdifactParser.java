@@ -151,4 +151,24 @@ public class EdifactParser implements SegmentSource {
         return segment;
     }
 
+    @Override
+    public <T extends QualifiedEdifactSegmentGroup> T readMandatorySegmentGroup(Class<T> segmentClass, String qualifier) throws IOException {
+        return readSegmentGroup(readMandatorySegment(segmentClass, qualifier));
+    }
+
+    @Override
+    public <T extends QualifiedEdifactSegmentGroup> T readOptionalSegmentGroup(Class<T> segmentClass, String qualifier) throws IOException {
+        return readSegmentGroup(readOptionalSegment(segmentClass, qualifier));
+    }
+
+    @Override
+    public <T extends EdifactSegmentGroup> T readOptionalSegmentGroup(Class<T> segmentClass) throws IOException {
+        return readSegmentGroup(readOptionalSegment(segmentClass));
+    }
+
+    private <T extends SegmentGroup> T readSegmentGroup(T segmentGroup) throws IOException {
+        if (segmentGroup != null) segmentGroup.readSegmentGroup(this);
+        return segmentGroup;
+    }
+
 }

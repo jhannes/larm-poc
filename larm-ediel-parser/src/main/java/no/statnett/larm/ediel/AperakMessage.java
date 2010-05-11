@@ -30,14 +30,13 @@ public class AperakMessage {
         arrivalTime = edifactParser.readMandatorySegment(DtmSegment.class, "178");
 
         referencedMessage = edifactParser.readMandatorySegment(RffSegment.class);
-        edifactParser.readMandatorySegment(NadSegment.class, "FR").readSegmentGroup(edifactParser);
-        edifactParser.readMandatorySegment(NadSegment.class, "DO").readSegmentGroup(edifactParser);
-        //edifactParser.readOptionalSegment(NadSegment.class, "C1").readSegmentGroup(edifactParser);
-        //edifactParser.readOptionalSegment(NadSegment.class, "C2").readSegmentGroup(edifactParser);
+        edifactParser.readMandatorySegmentGroup(NadSegment.class, "FR");
+        edifactParser.readMandatorySegmentGroup(NadSegment.class, "DO");
+        edifactParser.readOptionalSegmentGroup(NadSegment.class, "C1");
+        edifactParser.readOptionalSegmentGroup(NadSegment.class, "C2");
 
         ErcSegment ercSegment;
-        while ((ercSegment = edifactParser.readOptionalSegment(ErcSegment.class)) != null) {
-            ercSegment.readSegmentGroup(edifactParser);
+        while ((ercSegment = edifactParser.readOptionalSegmentGroup(ErcSegment.class)) != null) {
             errorCodes.add(ercSegment);
         }
 

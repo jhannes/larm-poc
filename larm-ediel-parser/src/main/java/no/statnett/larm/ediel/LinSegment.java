@@ -4,12 +4,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import no.statnett.larm.edifact.EdifactSegment;
+import no.statnett.larm.edifact.EdifactSegmentGroup;
 import no.statnett.larm.edifact.Segment;
 import no.statnett.larm.edifact.SegmentSource;
 
 @Segment("LIN")
-public class LinSegment extends EdifactSegment {
+public class LinSegment extends EdifactSegmentGroup {
 
     private DtmSegment restingTime;
     private DtmSegment availability;
@@ -56,8 +56,7 @@ public class LinSegment extends EdifactSegment {
         restingTime = segmentSource.readOptionalSegment(DtmSegment.class, "66");
 
         PriSegment priSegment;
-        while ((priSegment = segmentSource.readOptionalSegment(PriSegment.class)) != null) {
-            priSegment.readSegmentGroup(segmentSource);
+        while ((priSegment = segmentSource.readOptionalSegmentGroup(PriSegment.class)) != null) {
             priceDetails.add(priSegment);
         }
 

@@ -70,9 +70,8 @@ public class QuoteMessage {
         documentRecipient = segmentSource.readMandatorySegment(NadSegment.class, "DO");
 
         LinSegment linSegment;
-        while ((linSegment = segmentSource.readOptionalSegment(LinSegment.class)) != null) {
+        while ((linSegment = segmentSource.readOptionalSegmentGroup(LinSegment.class)) != null) {
             lineItems.add(linSegment);
-            linSegment.readSegmentGroup(segmentSource);
         }
     }
 }

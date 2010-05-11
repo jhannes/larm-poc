@@ -13,13 +13,23 @@ public interface SegmentSource {
     <T extends EdifactSegment> T readOptionalSegment(Class<T> segmentClass)
             throws IOException;
 
+    <T extends EdifactSegmentGroup> T readOptionalSegmentGroup(Class<T> segmentClass)
+            throws IOException;
+
     <T extends QualifiedEdifactSegment> T readOptionalSegment(Class<T> segmentClass, String qualifier)
             throws IOException;
+
+    <T extends QualifiedEdifactSegmentGroup> T readOptionalSegmentGroup(Class<T> segmentClass, String qualifier)
+        throws IOException;
 
     <T extends EdifactSegment> T readMandatorySegment(Class<T> segmentClass)
             throws IOException;
 
     <T extends QualifiedEdifactSegment> T readMandatorySegment(Class<T> segmentClass, String qualifier)
             throws IOException;
+
+    <T extends QualifiedEdifactSegmentGroup> T readMandatorySegmentGroup(Class<T> segmentClass, String qualifier)
+            throws IOException;
+
 
 }

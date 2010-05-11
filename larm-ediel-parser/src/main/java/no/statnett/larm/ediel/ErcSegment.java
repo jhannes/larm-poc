@@ -2,12 +2,12 @@ package no.statnett.larm.ediel;
 
 import java.io.IOException;
 
-import no.statnett.larm.edifact.EdifactSegment;
+import no.statnett.larm.edifact.EdifactSegmentGroup;
 import no.statnett.larm.edifact.Segment;
 import no.statnett.larm.edifact.SegmentSource;
 
 @Segment("ERC")
-public class ErcSegment extends EdifactSegment {
+public class ErcSegment extends EdifactSegmentGroup {
 
     private FtxSegment freeText;
 
