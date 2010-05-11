@@ -1,5 +1,6 @@
 package no.statnett.larm.reservekraft;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,25 +19,33 @@ import no.statnett.larm.nettmodell.Stasjonsgruppe;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
+import org.joda.time.Period;
 
 @Entity
 public class ReservekraftBud {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     private Integer id;
 
     @ManyToOne
     private Stasjonsgruppe stasjonsgruppe;
 
-    @Type(type="org.joda.time.contrib.hibernate.PersistentDateTime")
+    @Type(type = "org.joda.time.contrib.hibernate.PersistentDateTime")
     private DateTime startTid;
 
-    @Type(type="org.joda.time.contrib.hibernate.PersistentDateTime")
+    @Type(type = "org.joda.time.contrib.hibernate.PersistentDateTime")
     private DateTime sluttTid;
 
-    @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @OrderBy("startTid")
     private List<Volumperiode> volumPerioder = new ArrayList<Volumperiode>();
+
+    private String budreferanse;
+
+    private Period aktiveringstid;
+
+    private Period hviletid;
 
     ReservekraftBud() {
     }
@@ -47,13 +56,16 @@ public class ReservekraftBud {
     }
 
     public String getBudreferanse() {
-        // TODO Auto-generated method stub
-        return null;
+        return budreferanse;
     }
-    
+
+    public void setBudreferanse(String budreferanse) {
+        this.budreferanse = budreferanse;
+    }
+
     public Stasjonsgruppe getStasjonsgruppe() {
-		return stasjonsgruppe;
-	}
+        return stasjonsgruppe;
+    }
 
     public String getStasjonsgruppeId() {
         // TODO Auto-generated method stub
@@ -68,7 +80,11 @@ public class ReservekraftBud {
         this.sluttTid = sluttTid;
     }
 
-    public void setVolumForTidsrom(DateTime startTid, DateTime sluttTid, int tilgjengeligMw) {
+    public void setVolumForTidsrom(Interval period, Long volum) {
+        setVolumForTidsrom(period.getStart(), period.getEnd(), volum);
+    }
+
+    public void setVolumForTidsrom(DateTime startTid, DateTime sluttTid, Long tilgjengeligMw) {
         volumPerioder.add(new Volumperiode(this, startTid, sluttTid, tilgjengeligMw));
     }
 
@@ -79,10 +95,12 @@ public class ReservekraftBud {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof ReservekraftBud)) return false;
-        ReservekraftBud bud = (ReservekraftBud)obj;
+        if (!(obj instanceof ReservekraftBud))
+            return false;
+        ReservekraftBud bud = (ReservekraftBud) obj;
 
-        if (id == null) return (this == bud);
+        if (id == null)
+            return (this == bud);
         return id.equals(bud.id);
     }
 
@@ -99,8 +117,29 @@ public class ReservekraftBud {
         return new Interval(startTid, sluttTid);
     }
 
+    public void setBudperiode(Interval interval) {
+        this.startTid = interval.getStart();
+        this.sluttTid = interval.getEnd();
+    }
+
     public List<Volumperiode> getVolumPerioder() {
         return volumPerioder;
+    }
+
+    public Period getAktiveringstid() {
+        return aktiveringstid;
+    }
+
+    public Period getHviletid() {
+        return hviletid;
+    }
+
+    public void setVarighet(Period aktiveringstid) {
+        this.aktiveringstid = aktiveringstid;
+    }
+
+    public void setHviletid(Period hviletid) {
+        this.hviletid = hviletid;
     }
 
 }

@@ -49,8 +49,8 @@ public class ReservekraftBudSpecification implements HibernateSpecification<Rese
         }
         if (driftsperiode != null) {
             criteria.createAlias("volumPerioder", "volumperiode");
-            criteria.add(Restrictions.le("volumperiode.startTid", driftsperiode.getEnd()));
-            criteria.add(Restrictions.ge("volumperiode.sluttTid", driftsperiode.getStart()));
+            criteria.add(Restrictions.ge("volumperiode.startTid", driftsperiode.getEnd()));
+            criteria.add(Restrictions.le("volumperiode.sluttTid", driftsperiode.getStart()));
             criteria.add(Restrictions.gt("volumperiode.tilgjengeligVolum", 0));
         }
 

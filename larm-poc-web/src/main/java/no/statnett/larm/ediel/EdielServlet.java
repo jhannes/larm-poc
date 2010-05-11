@@ -14,39 +14,46 @@ import no.statnett.larm.nettmodell.Stasjonsgruppe;
 import no.statnett.larm.nettmodell.StasjonsgruppeSpecification;
 import no.statnett.larm.reservekraft.ReservekraftBud;
 
-import org.joda.time.DateMidnight;
+import org.joda.time.DateTime;
+import org.joda.time.Interval;
 
 public class EdielServlet extends HttpServlet {
 
-	private static final long serialVersionUID = -8962987923221263389L;
-	private Repository repository;
+    private static final long serialVersionUID = -8962987923221263389L;
+    private Repository repository;
 
-	public void setRepository(Repository repository) {
-		this.repository = repository;
-	}
-	
-	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		Reader reader = req.getReader();
-		QuoteParser quoteParser= new QuoteParser(reader);
-		QuoteMessage quoteMessage = quoteParser.parseMessage();
-		
-		for (LinSegment linSegment : quoteMessage.getLineItems()) {
-			repository.insert(lesBud(linSegment));
-		}
-		
-	}
+    public void setRepository(Repository repository) {
+        this.repository = repository;
+    }
 
-	ReservekraftBud lesBud(LinSegment linSegment) {
-		String stasjonsGruppeNavn = linSegment.getLocation().getLocationIdentification();
-		List<Stasjonsgruppe> list = repository.find(StasjonsgruppeSpecification.medLocationId(stasjonsGruppeNavn));
-		
-		ReservekraftBud reserveKraftBud = new ReservekraftBud(list.get(0));
-		
-		for (PriSegment priSegment : linSegment.getPriceDetails()) {
-			reserveKraftBud.setVolumForTidsrom(new DateMidnight().toDateTime(), new DateMidnight().toDateTime(), 360);
-		}
-		return reserveKraftBud;
-	}
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        Reader reader = req.getReader();
+        QuoteParser quoteParser = new QuoteParser(reader);
+        QuoteMessage quoteMessage = quoteParser.parseMessage();
+        DateTime processingStartTime = quoteMessage.getProcessingStartTime().getDateTime();
+        DateTime processingEndTime = quoteMessage.getProcessingEndTime().getDateTime();
+
+        for (LinSegment linSegment : quoteMessage.getLineItems()) {
+            repository.insert(lesBud(linSegment, processingStartTime, processingEndTime));
+        }
+
+    }
+
+    ReservekraftBud lesBud(LinSegment linSegment, DateTime processingStartTime, DateTime processingEndTime) {
+        String stasjonsGruppeNavn = linSegment.getLocation().getLocationIdentification();
+        List<Stasjonsgruppe> list = repository.find(StasjonsgruppeSpecification.medLocationId(stasjonsGruppeNavn));
+
+        ReservekraftBud reserveKraftBud = new ReservekraftBud(list.get(0));
+        reserveKraftBud.setBudreferanse(linSegment.getPriceQuote().getReference());
+        reserveKraftBud.setVarighet(linSegment.getDuration().getQuantity());
+        reserveKraftBud.setHviletid(linSegment.getRestingTime().getQuantity());
+        reserveKraftBud.setBudperiode(new Interval(processingStartTime, processingEndTime));
+
+        for (PriSegment priSegment : linSegment.getPriceDetails()) {
+            reserveKraftBud.setVolumForTidsrom(priSegment.getProcessingTime().getPeriod(), priSegment.getVolume());
+        }
+        return reserveKraftBud;
+    }
 
 }

@@ -19,7 +19,7 @@ public class Volumperiode {
     @Type(type="org.joda.time.contrib.hibernate.PersistentDateTime")
     private DateTime sluttTid;
 
-    private int tilgjengeligVolum;
+    private Long tilgjengeligVolum;
 
     @ManyToOne
     private ReservekraftBud reservekraftBud;
@@ -27,7 +27,7 @@ public class Volumperiode {
     Volumperiode() {
     }
 
-    public Volumperiode(ReservekraftBud reservekraftBud, DateTime startTid, DateTime sluttTid, int tilgjengeligVolum) {
+    public Volumperiode(ReservekraftBud reservekraftBud, DateTime startTid, DateTime sluttTid, Long tilgjengeligVolum) {
         this.reservekraftBud = reservekraftBud;
         this.startTid = startTid;
         this.sluttTid = sluttTid;
@@ -42,7 +42,7 @@ public class Volumperiode {
         return sluttTid;
     }
 
-    public int getTilgjengeligVolum() {
+    public Long getTilgjengeligVolum() {
         return tilgjengeligVolum;
     }
 
