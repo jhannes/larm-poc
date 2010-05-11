@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import no.statnett.larm.LarmHibernateRepository;
-import no.statnett.larm.core.repository.HibernateRepository;
 import no.statnett.larm.core.repository.Repository;
 import no.statnett.larm.poc.client.stasjon.Stasjon;
 
@@ -66,7 +65,7 @@ public class ServiceFrontServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        HibernateRepository repository = new LarmHibernateRepository("jdbc/primaryDs");
+        Repository repository = LarmHibernateRepository.withJndiUrl("jdbc/primaryDs");
         repository.insert(Stasjon.medNavnOgFastområde("Stasjon 1", "F01"));
         repository.insert(Stasjon.medNavnOgFastområde("Stasjon 2", "F01"));
         repository.insert(Stasjon.medNavnOgFastområde("Stasjon 3", "F02"));
@@ -74,7 +73,7 @@ public class ServiceFrontServlet extends HttpServlet {
         addService("repositoryService", Repository.class, repository);
     }
 
-    private void addService(String serviceName, Class<Repository> serviceInterface, HibernateRepository serviceDelegate) {
+    private void addService(String serviceName, Class<Repository> serviceInterface, Repository serviceDelegate) {
         if (getServletContext().getAttribute(serviceName) != null) {
             serviceMap.put(serviceName, (HessianSkeleton) getServletContext().getAttribute(serviceName));
         } else {

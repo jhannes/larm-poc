@@ -16,12 +16,9 @@ import javax.swing.table.DefaultTableModel;
 import no.statnett.larm.LarmHibernateRepository;
 import no.statnett.larm.core.async.AsyncCallback;
 import no.statnett.larm.core.async.SyncAsyncProxy;
-import no.statnett.larm.core.repository.HibernateRepository;
+import no.statnett.larm.core.repository.Repository;
 import no.statnett.larm.core.repository.RepositoryAsync;
 import no.statnett.larm.poc.client.ApplicationFrame;
-
-import org.h2.jdbcx.JdbcConnectionPool;
-import org.mortbay.jetty.plus.naming.EnvEntry;
 
 public class StasjonListDialog extends JPanel {
     private static final long serialVersionUID = 3377211805587015468L;
@@ -89,9 +86,7 @@ public class StasjonListDialog extends JPanel {
     }
 
     public static void main(String[] args) throws NamingException {
-        new EnvEntry("jdbc/primaryDs", JdbcConnectionPool.create("jdbc:h2:file:target/testdb;MODE=Oracle", "", ""));
-
-        HibernateRepository repository = new LarmHibernateRepository("jdbc/primaryDs");
+        Repository repository = LarmHibernateRepository.withFileDb();
         repository.insert(Stasjon.medNavnOgFastområde("Stasjon 1", "F01"));
         repository.insert(Stasjon.medNavnOgFastområde("Stasjon 2", "F01"));
         repository.insert(Stasjon.medNavnOgFastområde("Stasjon 3", "F02"));

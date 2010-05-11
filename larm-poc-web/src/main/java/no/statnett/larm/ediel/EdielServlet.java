@@ -68,6 +68,6 @@ public class EdielServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        repository = new LarmHibernateRepository("jdbc/primaryDs");
+        repository = LarmHibernateRepository.withJndiUrl("jdbc/primaryDs");
     }
 }

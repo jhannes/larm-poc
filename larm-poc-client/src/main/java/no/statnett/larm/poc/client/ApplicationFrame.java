@@ -12,9 +12,6 @@ import no.statnett.larm.core.web.service.LarmHessianProxyFactory;
 import no.statnett.larm.poc.client.stasjon.Stasjon;
 import no.statnett.larm.poc.client.stasjon.StasjonListDialog;
 
-import org.h2.jdbcx.JdbcConnectionPool;
-import org.mortbay.jetty.plus.naming.EnvEntry;
-
 public class ApplicationFrame {
     public static void display(final String title, final JPanel panel) {
         final int height = 600;
@@ -40,10 +37,7 @@ public class ApplicationFrame {
 
     private static RepositoryAsync createClientRepository(String clientUrl) throws NamingException {
         if (clientUrl == null) {
-            clientUrl = "jdbc:h2:file:target/testdb;MODE=Oracle";
-            new EnvEntry("jdbc/primaryDs", JdbcConnectionPool.create(clientUrl, "", ""));
-
-            Repository repository = new LarmHibernateRepository("jdbc/primaryDs");
+            Repository repository = LarmHibernateRepository.withFileDb();
             repository.insert(Stasjon.medNavnOgFastområde("Stasjon 1", "F01"));
             repository.insert(Stasjon.medNavnOgFastområde("Stasjon 2", "F01"));
             repository.insert(Stasjon.medNavnOgFastområde("Stasjon 3", "F02"));
@@ -51,8 +45,7 @@ public class ApplicationFrame {
             return SwingWorkerAsyncProxy.createAsyncProxy(RepositoryAsync.class, repository);
         }
         if (clientUrl.startsWith("jdbc:")) {
-            new EnvEntry("jdbc/primaryDs", JdbcConnectionPool.create(clientUrl, "", ""));
-            return SwingWorkerAsyncProxy.createAsyncProxy(RepositoryAsync.class, new LarmHibernateRepository("jdbc/primaryDs"));
+            return SwingWorkerAsyncProxy.createAsyncProxy(RepositoryAsync.class, LarmHibernateRepository.withJdbcUrl(clientUrl));
         } else if (clientUrl.startsWith("http:") || clientUrl.startsWith("https:")) {
             return SwingWorkerAsyncProxy.createAsyncProxy(RepositoryAsync.class, LarmHessianProxyFactory.createProxy(Repository.class, clientUrl));
         } else {

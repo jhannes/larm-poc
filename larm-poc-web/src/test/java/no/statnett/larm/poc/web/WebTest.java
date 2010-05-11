@@ -1,7 +1,6 @@
 package no.statnett.larm.poc.web;
 
 import no.statnett.larm.LarmHibernateRepository;
-import no.statnett.larm.core.repository.HibernateRepository;
 import no.statnett.larm.core.repository.Repository;
 
 import org.h2.jdbcx.JdbcConnectionPool;
@@ -13,7 +12,7 @@ import org.mortbay.jetty.webapp.WebAppContext;
 public class WebTest {
 
     private static String applicationUrl;
-	private static HibernateRepository repository;
+	private static Repository repository;
 
     @BeforeClass
     public static void startWebServer() throws Exception {
@@ -27,7 +26,7 @@ public class WebTest {
         int serverPort = server.getConnectors()[0].getLocalPort();
         applicationUrl = "http://localhost:" + serverPort + "/";
 
-        repository = new LarmHibernateRepository("jdbc/primaryDs");
+        repository = LarmHibernateRepository.withJndiUrl("jdbc/primaryDs");
     }
 
     public String getApplicationUrl() {

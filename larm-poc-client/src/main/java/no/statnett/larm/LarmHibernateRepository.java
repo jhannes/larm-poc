@@ -1,6 +1,7 @@
 package no.statnett.larm;
 
 import no.statnett.larm.core.repository.HibernateRepository;
+import no.statnett.larm.core.repository.Repository;
 import no.statnett.larm.nettmodell.Elspotområde;
 import no.statnett.larm.nettmodell.Stasjonsgruppe;
 import no.statnett.larm.poc.client.stasjon.Stasjon;
@@ -19,19 +20,38 @@ public class LarmHibernateRepository extends HibernateRepository {
         Stasjon.class
     };
 
-    public LarmHibernateRepository(String jndiName) {
-        super(createSessionFactory(jndiName));
+    private LarmHibernateRepository(SessionFactory sessionFactory) {
+        super(sessionFactory);
     }
 
-    private static SessionFactory createSessionFactory(String jndiName) {
-        AnnotationConfiguration cfg = new AnnotationConfiguration();
-        cfg.setProperty(Environment.DATASOURCE, jndiName)
+    public static Repository withJndiUrl(String jndiName) {
+        AnnotationConfiguration cfg = new AnnotationConfiguration()
+            .setProperty(Environment.DATASOURCE, jndiName)
             .setProperty(Environment.HBM2DDL_AUTO, "update");
+        addEntityTypes(cfg);
+        return new LarmHibernateRepository(cfg.buildSessionFactory());
+    }
 
+    public static Repository withJdbcUrl(String jdbcUrl) {
+        AnnotationConfiguration cfg = new AnnotationConfiguration()
+            .setProperty(Environment.URL, jdbcUrl)
+            .setProperty(Environment.HBM2DDL_AUTO, "update");
+        addEntityTypes(cfg);
+        return new LarmHibernateRepository(cfg.buildSessionFactory());
+    }
+
+    public static Repository withInmemoryDb() {
+        return withJdbcUrl("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;MODE=Oracle;MVCC=true");
+    }
+
+    public static Repository withFileDb() {
+        return withJdbcUrl("jdbc:h2:file:target/testdb;MODE=Oracle");
+    }
+
+    private static void addEntityTypes(AnnotationConfiguration cfg) {
         for (Class<?> entityType : ALL_ENTITIES) {
             cfg.addAnnotatedClass(entityType);
         }
-        return cfg.buildSessionFactory();
     }
 
 }
