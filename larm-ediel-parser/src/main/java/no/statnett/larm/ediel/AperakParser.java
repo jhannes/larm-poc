@@ -10,23 +10,19 @@ public class AperakParser {
     private SegmentSource edifactParser;
 
     public AperakParser(Reader reader) throws IOException {
-            this.edifactParser = new EdifactParser(reader);
+        this.edifactParser = new EdifactParser(reader);
     }
 
     public AperakMessage parseMessage() throws IOException {
-            edifactParser.readOptionalSegment("UNA");
-            edifactParser.readMandatorySegment("UNB");
-            edifactParser.readMandatorySegment("UNH");
+        edifactParser.readOptionalSegment("UNA");
+        edifactParser.readMandatorySegment("UNB");
+        edifactParser.readMandatorySegment("UNH");
 
-            AperakMessage message = new AperakMessage();
-            message.readSegmentGroup();
-            edifactParser.readMandatorySegment("UNS");
-            edifactParser.readMandatorySegment("CNT");
-            edifactParser.readMandatorySegment("CNT");
-            edifactParser.readMandatorySegment("UNT");
-            edifactParser.readMandatorySegment("UNZ");
-            return message;
+        AperakMessage message = new AperakMessage();
+        message.readSegmentGroup(edifactParser);
+        edifactParser.readMandatorySegment("UNT");
+        edifactParser.readMandatorySegment("UNZ");
+        return message;
     }
-
 
 }

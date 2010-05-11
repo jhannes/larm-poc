@@ -10,5 +10,9 @@ public class BgmSegment extends EdifactSegment {
         return getElementData(1);
     }
 
+    public String getMessageFunction() {
+        return getElementData(2);
+    }
+
 
 }

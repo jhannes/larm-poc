@@ -75,6 +75,7 @@ public class QuoteParserTest {
     @Test
     public void shouldParseAllTestQuotesFiles() throws Exception {
         File quotesFileTestDir = new File("src/test/ediel/quotes");
+        assertThat(quotesFileTestDir.listFiles()).isNotEmpty();
         for (File quotesFile : quotesFileTestDir.listFiles()) {
             QuoteParser quoteParser = new QuoteParser(new FileReader(quotesFile));
             QuoteMessage message = quoteParser.parseMessage();
