@@ -1,15 +1,19 @@
 package no.statnett.larm.poc.client;
 
+import javax.naming.NamingException;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import no.statnett.larm.LarmHibernateRepository;
 import no.statnett.larm.core.async.SwingWorkerAsyncProxy;
-import no.statnett.larm.core.repository.HibernateRepository;
 import no.statnett.larm.core.repository.Repository;
 import no.statnett.larm.core.repository.RepositoryAsync;
 import no.statnett.larm.core.web.service.LarmHessianProxyFactory;
 import no.statnett.larm.poc.client.stasjon.Stasjon;
 import no.statnett.larm.poc.client.stasjon.StasjonListDialog;
+
+import org.h2.jdbcx.JdbcConnectionPool;
+import org.mortbay.jetty.plus.naming.EnvEntry;
 
 public class ApplicationFrame {
     public static void display(final String title, final JPanel panel) {
@@ -26,7 +30,7 @@ public class ApplicationFrame {
         });
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws NamingException {
         String clientUrl = args.length > 0 ? args[0] : null;
 
         StasjonListDialog dialog = new StasjonListDialog(createClientRepository(clientUrl));
@@ -34,10 +38,12 @@ public class ApplicationFrame {
 
     }
 
-    private static RepositoryAsync createClientRepository(String clientUrl) {
+    private static RepositoryAsync createClientRepository(String clientUrl) throws NamingException {
         if (clientUrl == null) {
             clientUrl = "jdbc:h2:file:target/testdb;MODE=Oracle";
-            Repository repository = HibernateRepository.withDatabase(clientUrl, Stasjon.class);
+            new EnvEntry("jdbc/primaryDs", JdbcConnectionPool.create(clientUrl, "", ""));
+
+            Repository repository = new LarmHibernateRepository("jdbc/primaryDs");
             repository.insert(Stasjon.medNavnOgFastområde("Stasjon 1", "F01"));
             repository.insert(Stasjon.medNavnOgFastområde("Stasjon 2", "F01"));
             repository.insert(Stasjon.medNavnOgFastområde("Stasjon 3", "F02"));
@@ -45,7 +51,8 @@ public class ApplicationFrame {
             return SwingWorkerAsyncProxy.createAsyncProxy(RepositoryAsync.class, repository);
         }
         if (clientUrl.startsWith("jdbc:")) {
-            return SwingWorkerAsyncProxy.createAsyncProxy(RepositoryAsync.class, HibernateRepository.withDatabase(clientUrl, Stasjon.class));
+            new EnvEntry("jdbc/primaryDs", JdbcConnectionPool.create(clientUrl, "", ""));
+            return SwingWorkerAsyncProxy.createAsyncProxy(RepositoryAsync.class, new LarmHibernateRepository("jdbc/primaryDs"));
         } else if (clientUrl.startsWith("http:") || clientUrl.startsWith("https:")) {
             return SwingWorkerAsyncProxy.createAsyncProxy(RepositoryAsync.class, LarmHessianProxyFactory.createProxy(Repository.class, clientUrl));
         } else {

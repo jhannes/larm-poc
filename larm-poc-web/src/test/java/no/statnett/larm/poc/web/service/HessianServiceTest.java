@@ -12,6 +12,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.UndeclaredThrowableException;
 
 import no.statnett.larm.core.web.service.LarmHessianProxyFactory;
+import no.statnett.larm.poc.web.WebTest;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -22,7 +23,7 @@ import org.mortbay.jetty.webapp.WebAppContext;
 import com.caucho.hessian.HessianException;
 import com.caucho.hessian.server.HessianSkeleton;
 
-public class HessianServiceTest {
+public class HessianServiceTest extends WebTest {
     private static ServiceInterface service = mock(ServiceInterface.class);
     private static String applicationUrl;
 

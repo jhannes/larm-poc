@@ -3,6 +3,7 @@ package no.statnett.larm;
 import no.statnett.larm.core.repository.HibernateRepository;
 import no.statnett.larm.nettmodell.Elspotområde;
 import no.statnett.larm.nettmodell.Stasjonsgruppe;
+import no.statnett.larm.poc.client.stasjon.Stasjon;
 import no.statnett.larm.reservekraft.ReservekraftBud;
 import no.statnett.larm.reservekraft.Volumperiode;
 
@@ -14,7 +15,8 @@ public class LarmHibernateRepository extends HibernateRepository {
 
     private static final Class<?>[] ALL_ENTITIES = new Class[] {
         Stasjonsgruppe.class, Elspotområde.class,
-        ReservekraftBud.class, Volumperiode.class
+        ReservekraftBud.class, Volumperiode.class,
+        Stasjon.class
     };
 
     public LarmHibernateRepository(String jndiName) {

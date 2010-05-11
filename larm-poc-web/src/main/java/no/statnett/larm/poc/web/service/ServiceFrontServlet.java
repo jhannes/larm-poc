@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import no.statnett.larm.LarmHibernateRepository;
 import no.statnett.larm.core.repository.HibernateRepository;
 import no.statnett.larm.core.repository.Repository;
 import no.statnett.larm.poc.client.stasjon.Stasjon;
@@ -65,7 +66,7 @@ public class ServiceFrontServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        HibernateRepository repository = HibernateRepository.withDatabase("jdbc:h2:file:target/testdb;MODE=Oracle", Stasjon.class);
+        HibernateRepository repository = new LarmHibernateRepository("jdbc/primaryDs");
         repository.insert(Stasjon.medNavnOgFastområde("Stasjon 1", "F01"));
         repository.insert(Stasjon.medNavnOgFastområde("Stasjon 2", "F01"));
         repository.insert(Stasjon.medNavnOgFastområde("Stasjon 3", "F02"));

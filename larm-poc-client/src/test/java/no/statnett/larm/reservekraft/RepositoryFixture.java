@@ -5,24 +5,29 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-import no.statnett.larm.core.repository.HibernateRepository;
+import javax.naming.NamingException;
+
+import no.statnett.larm.LarmHibernateRepository;
 import no.statnett.larm.core.repository.Repository;
 import no.statnett.larm.core.repository.RepositoryCallback;
 import no.statnett.larm.core.repository.Specification;
 import no.statnett.larm.core.repository.inmemory.InmemoryRepository;
-import no.statnett.larm.nettmodell.Elspotområde;
-import no.statnett.larm.nettmodell.Stasjonsgruppe;
 
+import org.h2.jdbcx.JdbcConnectionPool;
 import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
+import org.mortbay.jetty.plus.naming.EnvEntry;
 
 public class RepositoryFixture implements Repository, MethodRule {
 
-    private static final Class<?>[] ALL_ENTITIES = new Class[] {
-        Stasjonsgruppe.class, Elspotområde.class,
-        ReservekraftBud.class, Volumperiode.class
-    };
+    static {
+        try {
+            new EnvEntry("jdbc/inmemory", JdbcConnectionPool.create("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;MODE=Oracle;MVCC=true", "", ""));
+        } catch (NamingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     private List<Repository> repositories = new ArrayList<Repository>();
 
@@ -62,7 +67,7 @@ public class RepositoryFixture implements Repository, MethodRule {
     }
 
     public RepositoryFixture withInmemRepo() {
-        repositories.add(HibernateRepository.inmemoryDatabase(ALL_ENTITIES));
+        repositories.add(new LarmHibernateRepository("jdbc/inmemory"));
         return this;
     }
 

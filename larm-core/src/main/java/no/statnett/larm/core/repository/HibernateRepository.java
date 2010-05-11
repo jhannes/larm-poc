@@ -7,8 +7,6 @@ import no.statnett.larm.core.repository.hibernate.HibernateSpecification;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.AnnotationConfiguration;
-import org.hibernate.cfg.Environment;
 
 public class HibernateRepository implements Repository {
     private SessionFactory sessionFactory;
@@ -66,32 +64,6 @@ public class HibernateRepository implements Repository {
                 repository.insertAll(entities);
             }
         });
-    }
-
-    public static HibernateRepository withDatabase(String databaseUrl, Class<?>... entities) {
-        AnnotationConfiguration cfg = new AnnotationConfiguration();
-        cfg
-                .setProperty(Environment.URL, databaseUrl)
-                .setProperty(Environment.DRIVER, "org.h2.Driver")
-                .setProperty(Environment.HBM2DDL_AUTO, "update");
-        addAnnotatedEntities(cfg, entities);
-        return new HibernateRepository(cfg.buildSessionFactory());
-    }
-
-    private static void addAnnotatedEntities(AnnotationConfiguration cfg, Class<?>[] entities) {
-        for (Class<?> entity : entities) {
-            cfg.addAnnotatedClass(entity);
-        }
-    }
-
-    public static HibernateRepository inmemoryDatabase(Class<?>... entities) {
-        AnnotationConfiguration cfg = new AnnotationConfiguration();
-        cfg
-                .setProperty(Environment.URL, "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;MODE=Oracle;MVCC=true")
-                .setProperty(Environment.DRIVER, "org.h2.Driver")
-                .setProperty(Environment.HBM2DDL_AUTO, "update");
-        addAnnotatedEntities(cfg, entities);
-        return new HibernateRepository(cfg.buildSessionFactory());
     }
 
     @Override

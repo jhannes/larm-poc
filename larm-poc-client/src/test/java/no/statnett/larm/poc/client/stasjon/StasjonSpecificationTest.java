@@ -5,13 +5,17 @@ import static org.fest.assertions.Assertions.assertThat;
 import java.util.ArrayList;
 import java.util.List;
 
-import no.statnett.larm.core.repository.HibernateRepository;
+import javax.naming.NamingException;
+
+import no.statnett.larm.LarmHibernateRepository;
 import no.statnett.larm.core.repository.Repository;
 import no.statnett.larm.core.repository.inmemory.InmemoryRepository;
 
+import org.h2.jdbcx.JdbcConnectionPool;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.mortbay.jetty.plus.naming.EnvEntry;
 
 @RunWith(Parameterized.class)
 public class StasjonSpecificationTest {
@@ -22,9 +26,11 @@ public class StasjonSpecificationTest {
         this.repository = repository;
     }
 
-    @Parameterized.Parameters public static List<Object[]> repositories() {
+    @Parameterized.Parameters public static List<Object[]> repositories() throws NamingException {
+        new EnvEntry("jdbc/inmemory", JdbcConnectionPool.create("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;MODE=Oracle;MVCC=true", "", ""));
+
         List<Object[]> result = new ArrayList<Object[]>();
-        result.add(new Object[] { HibernateRepository.inmemoryDatabase(Stasjon.class) });
+        result.add(new Object[] { new LarmHibernateRepository("jdbc/inmemory") });
         result.add(new Object[] { new InmemoryRepository() });
         return result;
     }
