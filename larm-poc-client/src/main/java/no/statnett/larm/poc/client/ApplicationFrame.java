@@ -45,7 +45,7 @@ public class ApplicationFrame {
             return SwingWorkerAsyncProxy.createAsyncProxy(RepositoryAsync.class, repository);
         }
         if (clientUrl.startsWith("jdbc:")) {
-            return SwingWorkerAsyncProxy.createAsyncProxy(RepositoryAsync.class, LarmHibernateRepository.withJdbcUrl(clientUrl));
+            return SwingWorkerAsyncProxy.createAsyncProxy(RepositoryAsync.class, LarmHibernateRepository.withJdbcUrl(clientUrl, "org.h2.Driver"));
         } else if (clientUrl.startsWith("http:") || clientUrl.startsWith("https:")) {
             return SwingWorkerAsyncProxy.createAsyncProxy(RepositoryAsync.class, LarmHessianProxyFactory.createProxy(Repository.class, clientUrl));
         } else {
