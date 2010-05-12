@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
@@ -37,6 +38,7 @@ public class ReservekraftBud {
     private DateTime sluttTid;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "reserveKraftBud_id", nullable = false)
     @OrderBy("startTid")
     private List<Volumperiode> volumPerioder = new ArrayList<Volumperiode>();
 
@@ -51,7 +53,6 @@ public class ReservekraftBud {
 
     public ReservekraftBud(Stasjonsgruppe stasjonsgruppe) {
         this.stasjonsgruppe = stasjonsgruppe;
-        // TODO Auto-generated constructor stub
     }
 
     public String getBudreferanse() {
@@ -67,8 +68,7 @@ public class ReservekraftBud {
     }
 
     public String getStasjonsgruppeId() {
-        // TODO Auto-generated method stub
-        return null;
+        return stasjonsgruppe != null ? stasjonsgruppe.getNavn() : null;
     }
 
     public void setStartTid(DateTime startTid) {
@@ -83,8 +83,10 @@ public class ReservekraftBud {
         setVolumForTidsrom(period.getStart(), period.getEnd(), volum);
     }
 
-    public void setVolumForTidsrom(DateTime startTid, DateTime sluttTid, Long tilgjengeligMw) {
-        volumPerioder.add(new Volumperiode(this, startTid, sluttTid, tilgjengeligMw));
+    public void setVolumForTidsrom(DateTime startTid, DateTime sluttTid,
+            Long tilgjengeligMw) {
+        volumPerioder.add(new Volumperiode(this, startTid, sluttTid,
+                tilgjengeligMw));
     }
 
     @Override

@@ -1,6 +1,8 @@
 package no.statnett.larm.reservekraft;
 
 import static no.statnett.larm.core.repository.inmemory.ObjectMatching.blankOrContains;
+import static org.hibernate.criterion.Restrictions.gt;
+import static org.hibernate.criterion.Restrictions.lt;
 
 import java.util.Collection;
 
@@ -13,13 +15,15 @@ import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateMidnight;
 import org.joda.time.Interval;
 
-public class ReservekraftBudSpecification implements HibernateSpecification<ReservekraftBud>, InmemorySpecification<ReservekraftBud> {
+public class ReservekraftBudSpecification implements HibernateSpecification<ReservekraftBud>,
+        InmemorySpecification<ReservekraftBud> {
 
     private Collection<Elspotområde> elspotområder;
     private DateMidnight driftsdøgn;
     private Interval driftsperiode;
 
-    public static ReservekraftBudSpecification forOmråder(Collection<Elspotområde> elspotområder) {
+    public static ReservekraftBudSpecification forOmråder(
+            Collection<Elspotområde> elspotområder) {
         ReservekraftBudSpecification specification = new ReservekraftBudSpecification();
         specification.elspotområder = elspotområder;
         return specification;
@@ -48,39 +52,46 @@ public class ReservekraftBudSpecification implements HibernateSpecification<Rese
             criteria.add(Restrictions.ge("sluttTid", driftsdøgn.toDateTime()));
         }
         if (driftsperiode != null) {
-            criteria.createAlias("volumPerioder", "volumperiode");
-            criteria.add(Restrictions.ge("volumperiode.startTid", driftsperiode.getEnd()));
-            criteria.add(Restrictions.le("volumperiode.sluttTid", driftsperiode.getStart()));
-            criteria.add(Restrictions.gt("volumperiode.tilgjengeligVolum", 0));
+            criteria.createCriteria("volumPerioder", "volumperiode")
+                    .add(lt("volumperiode.startTid", driftsperiode.getEnd()))
+                    .add(gt("volumperiode.sluttTid", driftsperiode.getStart()))
+                    .add(gt("volumperiode.tilgjengeligVolum", 0L));
         }
 
         return criteria;
     }
 
-    private<T> void addInUnlessBlank(DetachedCriteria criteria, String propertyName, Collection<T> values) {
-        if (values == null || values.isEmpty()) return;
+    private <T> void addInUnlessBlank(DetachedCriteria criteria,
+            String propertyName, Collection<T> values) {
+        if (values == null || values.isEmpty())
+            return;
         criteria.add(Restrictions.in(propertyName, values));
     }
 
     @Override
     public boolean matches(ReservekraftBud entity) {
-        return blankOrContains(elspotområder, entity.getElspotområde()) &&
-            inneholderDriftsdøgn(driftsdøgn, entity.getBudperiode()) &&
-            harVolumIPeriode(driftsperiode, entity.getVolumPerioder());
+        return blankOrContains(elspotområder, entity.getElspotområde())
+                && inneholderDriftsdøgn(driftsdøgn, entity.getBudperiode())
+                && harVolumIPeriode(driftsperiode, entity.getVolumPerioder());
     }
 
-    private boolean harVolumIPeriode(Interval interval, Collection<Volumperiode> volumPerioder) {
-        if (interval == null) return true;
+    private boolean harVolumIPeriode(Interval interval,
+            Collection<Volumperiode> volumPerioder) {
+        if (interval == null)
+            return true;
         for (Volumperiode volumperiode : volumPerioder) {
-            if (interval.overlaps(volumperiode.getPeriode()) && volumperiode.getTilgjengeligVolum() > 0) {
+            if (interval.overlaps(volumperiode.getPeriode())
+                    && volumperiode.getTilgjengeligVolum() > 0) {
                 return true;
             }
         }
         return false;
     }
 
-    private boolean inneholderDriftsdøgn(DateMidnight aktueltDøgn, Interval budperiode) {
-        if (aktueltDøgn == null) return true;
+    private boolean inneholderDriftsdøgn(DateMidnight aktueltDøgn,
+            Interval budperiode) {
+        if (aktueltDøgn == null)
+            return true;
         return aktueltDøgn.toInterval().overlaps(budperiode);
     }
 
