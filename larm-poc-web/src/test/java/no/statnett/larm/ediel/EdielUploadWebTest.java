@@ -44,7 +44,7 @@ public class EdielUploadWebTest extends WebTest {
         getRepository().execute(new RepositoryCallback() {
             @Override
             public void doInSession(Repository repository) {
-                assertThat(repository.findAll(ReservekraftBud.class)).hasSize(2);
+                assertThat(repository.findAll(ReservekraftBud.class)).hasSize(48);
                 ReservekraftBud reservekraftBud = repository.findAll(ReservekraftBud.class).get(0);
                 assertThat(reservekraftBud.getStasjonsgruppe().getNavn()).isEqualTo("NOKG00116");
                 assertThat(reservekraftBud.getBudreferanse()).isEqualTo("2009492-3-1");
