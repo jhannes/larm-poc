@@ -1,44 +1,42 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>no.statnett.larm</groupId>
-        <artifactId>larm-poc</artifactId>
-        <version>1.0-SNAPSHOT</version>
-    </parent>
-    <artifactId>larm-poc-client</artifactId>
-    <name>larm-poc-client</name>
-    <packaging>jar</packaging>
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>no.statnett.larm</groupId>
+    <artifactId>larm-poc</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>larm-poc-client</artifactId>
+  <name>larm-poc-client</name>
+  <packaging>jar</packaging>
 
-    <dependencies>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>larm-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>larm-core-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        
-		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time-hibernate</artifactId>
-		</dependency>
-    
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>compile</scope>
-        </dependency>
-    </dependencies>
+  <dependencies>
+    <dependency>
+      <groupId>no.statnett.larm</groupId>
+      <artifactId>larm-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>no.statnett.larm</groupId>
+      <artifactId>larm-core-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>joda-time</groupId>
+      <artifactId>joda-time</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>joda-time</groupId>
+      <artifactId>joda-time-hibernate</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
 
 
-    <build>
+  <build>
         <plugins>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
