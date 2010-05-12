@@ -9,7 +9,7 @@
   <artifactId>larm-poc-server</artifactId>
   <name>larm-poc-server</name>
   <packaging>jar</packaging>
-  
+
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -20,7 +20,6 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>larm-core-container</artifactId>
-      <version>${project.version}</version>
     </dependency>
   </dependencies>
 
