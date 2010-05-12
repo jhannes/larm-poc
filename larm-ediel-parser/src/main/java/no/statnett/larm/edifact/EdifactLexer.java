@@ -106,6 +106,8 @@ class EdifactLexer {
 
         segment.lineNum = lineNum;
         segment.segmentNum = ++segmentNum;
+        segment.columnNum = columnNum;
+        segment.ctx = ctx;
 
         String segmentName = read(3, SEGMENT_CHARACTERS);
         segment.setSegmentName(segmentName);

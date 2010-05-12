@@ -4,10 +4,10 @@ import java.io.IOException;
 
 public interface SegmentSource {
 
-    EdifactSegment readOptionalSegment(String segmentName)
+    <T extends EdifactSegment> T readOptionalSegment(String segmentName)
             throws IOException;
 
-    EdifactSegment readMandatorySegment(String segmentName)
+    <T extends EdifactSegment> T readMandatorySegment(String segmentName)
             throws IOException;
 
     <T extends EdifactSegment> T readOptionalSegment(Class<T> segmentClass)
