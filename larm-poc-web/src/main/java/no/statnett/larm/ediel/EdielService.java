@@ -20,12 +20,15 @@ import org.joda.time.Interval;
 public class EdielService {
 
     private final Repository repository;
+    @SuppressWarnings("unused")
+    private String fileName;
 
     public EdielService(Repository repository) {
         this.repository = repository;
     }
 
-    public void process(Reader edifactRequest, Appendable edifactResponse) throws IOException {
+    public void process(String fileName, Reader edifactRequest, Appendable edifactResponse) throws IOException {
+        this.fileName = fileName;
         readMessage(edifactRequest);
         writeAperak(edifactResponse);
     }

@@ -5,5 +5,5 @@ import java.io.Reader;
 import java.io.Writer;
 
 public interface FileListener {
-    void processFile(String string, Reader inputFile, Writer outputFile) throws IOException;
+    void processFile(String fileName, Reader inputFile, Writer outputFile) throws IOException;
 }
