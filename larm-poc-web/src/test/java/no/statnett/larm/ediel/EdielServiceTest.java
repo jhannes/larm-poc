@@ -13,6 +13,7 @@ import no.statnett.larm.reservekraft.ReservekraftBud;
 
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
+import org.joda.time.Duration;
 import org.joda.time.Interval;
 import org.joda.time.Period;
 import org.junit.Before;
@@ -39,19 +40,20 @@ public class EdielServiceTest {
         String budreferanse = "Min referanse";
         Period varighet = Period.minutes(180);
         Period hviletid = Period.minutes(120);
+        Duration enTime = Duration.standardHours(1);
 
         LinSegment linSegment = new LinSegment();
         linSegment.setDuration(DtmSegment.withMinutes(varighet));
         linSegment.setRestingTime(DtmSegment.withMinutes(hviletid));
 
         linSegment.addPriceSegment(new PriSegment()
-                .setProcessingTime(new Interval(bud1StartTid, bud1SluttTid))
+                .setProcessingTime(new Interval(bud1StartTid, enTime))
                 .setVolume(800L));
         linSegment.addPriceSegment(new PriSegment()
-                .setProcessingTime(new Interval(bud1StartTid.plusHours(1), bud1SluttTid.plusHours(1)))
+                .setProcessingTime(new Interval(bud1StartTid.plusHours(1), enTime))
                 .setVolume(800L));
         linSegment.addPriceSegment(new PriSegment()
-                .setProcessingTime(new Interval(bud1StartTid.plusHours(2), bud1SluttTid.plusHours(2)))
+                .setProcessingTime(new Interval(bud1StartTid.plusHours(2), enTime))
                 .setVolume(800L));
 
         RffSegment rffSegment = new RffSegment();
@@ -73,7 +75,7 @@ public class EdielServiceTest {
         assertThat(bud.getBudreferanse()).isEqualTo(budreferanse);
         assertThat(bud.getAktiveringstid()).isEqualTo(varighet);
         assertThat(bud.getHviletid()).isEqualTo(hviletid);
-        assertThat(bud.getBudperiode()).isEqualTo(new Interval(driftsdøgn, driftsdøgn.plusDays(1)));
+        assertThat(bud.getBudperiode()).isEqualTo(new Interval(driftsdøgn, Duration.standardDays(1)));
     }
 
     @Test
