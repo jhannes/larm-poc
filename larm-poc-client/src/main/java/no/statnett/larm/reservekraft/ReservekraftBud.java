@@ -67,10 +67,6 @@ public class ReservekraftBud {
         return stasjonsgruppe;
     }
 
-    public String getStasjonsgruppeId() {
-        return stasjonsgruppe != null ? stasjonsgruppe.getNavn() : null;
-    }
-
     public void setStartTid(DateTime startTid) {
         this.startTid = startTid;
     }
