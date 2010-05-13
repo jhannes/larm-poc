@@ -29,27 +29,31 @@ public class EdielService {
 
     public void process(String fileName, Reader edifactRequest, Appendable edifactResponse) throws IOException {
         this.fileName = fileName;
-        readMessage(edifactRequest);
-        writeAperak(edifactResponse);
+        AperakMessage response = readMessage(edifactRequest);
+        writeMessage(edifactResponse, response);
     }
 
-    private void writeAperak(Appendable writer) throws IOException {
+    private void writeMessage(Appendable writer, AperakMessage aperakMessage) throws IOException {
         new UnaSegment(":+.? '").write(writer);
         new UnbSegment().write(writer);
         new UnhSegment("APERAK", "D", "96A", "UN", "EDIEL2").write(writer);
 
-        AperakMessage aperakMessage = new AperakMessage();
-        aperakMessage.setBeginMessage(new BgmSegment());
-        aperakMessage.setArrivalTime(DtmSegment.withDateTime(new DateTime()));
-        aperakMessage.setMessageDate(DtmSegment.withDateTime(new DateTime()));
-        aperakMessage.setReferencedMessage(new RffSegment());
         aperakMessage.write(writer);
 
         new UntSegment("7", "1").write(writer); // TODO: Must count segments!
         new UnzSegment("1", "29").write(writer);
     }
 
-    void readMessage(Reader reader) throws IOException {
+    private AperakMessage createResponse() {
+        AperakMessage aperakMessage = new AperakMessage();
+        aperakMessage.setBeginMessage(new BgmSegment());
+        aperakMessage.setArrivalTime(DtmSegment.withDateTime(new DateTime()));
+        aperakMessage.setMessageDate(DtmSegment.withDateTime(new DateTime()));
+        aperakMessage.setReferencedMessage(new RffSegment());
+        return aperakMessage;
+    }
+
+    AperakMessage readMessage(Reader reader) throws IOException {
         QuoteParser quoteParser = new QuoteParser(reader);
         QuoteMessage quoteMessage = quoteParser.parseMessage();
         DateTime processingStartTime = quoteMessage.getProcessingStartTime().getDateTime();
@@ -58,6 +62,8 @@ public class EdielService {
         for (LinSegment linSegment : quoteMessage.getLineItems()) {
             repository.insert(lesBud(linSegment, processingStartTime, processingEndTime));
         }
+
+        return createResponse();
     }
 
     ReservekraftBud lesBud(LinSegment linSegment, DateTime processingStartTime, DateTime processingEndTime) {
