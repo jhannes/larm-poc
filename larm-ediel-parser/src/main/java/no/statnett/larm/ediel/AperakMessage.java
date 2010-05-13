@@ -1,7 +1,6 @@
 package no.statnett.larm.ediel;
 
 import java.io.IOException;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +38,7 @@ public class AperakMessage {
         edifactParser.readOptionalSegment(RffSegment.class);
     }
 
-    public void write(Writer writer) throws IOException {
+    public void write(Appendable writer) throws IOException {
         beginMessage.write(writer);
         messageDate.write(writer);
         arrivalTime.write(writer);

@@ -1,7 +1,6 @@
 package no.statnett.larm.edifact;
 
 import java.io.IOException;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -74,7 +73,7 @@ public class EdifactSegment {
 		this.segmentName = segmentName;
 	}
 
-	public void write(Writer writer) throws IOException {
+	public void write(Appendable writer) throws IOException {
 		writer.append(getSegmentName());
 		for (EdifactDataElement element : getDataElements()) {
 			// TODO: Get from ParserContext

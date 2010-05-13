@@ -1,7 +1,6 @@
 package no.statnett.larm.edifact;
 
 import java.io.IOException;
-import java.io.Writer;
 
 public class UnaSegment extends EdifactSegment {
 
@@ -17,7 +16,7 @@ public class UnaSegment extends EdifactSegment {
     }
 
     @Override
-    public void write(Writer writer) throws IOException {
-        writer.write(getSegmentName() + serviceAdviceString + "\n");
+    public void write(Appendable writer) throws IOException {
+        writer.append(getSegmentName() + serviceAdviceString + "\n");
     }
 }
