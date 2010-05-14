@@ -7,3 +7,5 @@ server
 .project
 .classpath
 .settings
+
+/larm-fitnesse/velocity.log

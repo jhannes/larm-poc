@@ -38,10 +38,12 @@
 				<artifactId>maven-antrun-plugin</artifactId>
 				<executions>
 					<execution>
+						<phase>pre-integration-test</phase>
+						<goals><goal>run</goal></goals>
 						<configuration>
 							<tasks>
 								<property name="compile_classpath" refid="maven.compile.classpath" />
-								<java classname="fitnesse.FitNesse" fork="true">
+								<java classname="fitnesseMain.FitNesseMain" fork="true">
 									<arg line="-p 80" />
 									<classpath>
 										<pathelement path="${compile_classpath}" />
