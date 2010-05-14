@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +63,12 @@ public class FileScanner {
         }
         log.info("Processed " + file + " ok");
         moveFileToDirectory(file, new File(inputDir, "processed"), true);
-        moveFileToDirectory(answerFile, outputDir, true);
+
+        if (answerFile.length() > 0) {
+            moveFileToDirectory(answerFile, outputDir, true);
+        } else {
+            FileUtils.forceDelete(answerFile);
+        }
     }
 
     private void processFile(File file, File answerFile) throws IOException {

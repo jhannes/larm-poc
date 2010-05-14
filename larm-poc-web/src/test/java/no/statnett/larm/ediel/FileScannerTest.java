@@ -121,6 +121,13 @@ public class FileScannerTest {
     }
 
     @Test
+    public void shouldRemoveEmptyAnswerFile() throws Exception {
+        final File answerFile = new File(outputDir, testFile.getName());
+        fileScanner.scan();
+        assertThat(answerFile).doesNotExist();
+    }
+
+    @Test
     public void shouldHandleErrors() throws Exception {
         doThrow(new RuntimeException("any exception")).when(processor).processFile(anyString(), any(Reader.class), any(Writer.class));
 
