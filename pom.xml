@@ -127,6 +127,7 @@
     <module>larm-core</module>
     <module>larm-core-container</module>
     <module>larm-ediel-parser</module>
+    <module>larm-fitnesse</module>
     <module>larm-poc-client</module>
     <module>larm-poc-web</module>
     <module>larm-poc-server</module>
