@@ -56,6 +56,25 @@
           </execution>
         </executions>
       </plugin>
+      <!-- 
+  	  <plugin>
+		<artifactId>maven-antrun-plugin</artifactId>
+		<executions>
+			<execution>
+				<phase>pre-integration-test</phase>
+				<goals><goal>run</goal></goals>
+				<configuration>
+					<tasks>
+						<copy from="" to="c:\\server\\larm\\integration-test\\" />								
+						<property name="compile_classpath" refid="maven.compile.classpath" />
+						<cd to="c:\\server\\larm\\integration-test\\" ></cd>
+						<java jar="larm-server-onejar.jar" fork="true"/>
+					</tasks>
+				</configuration>
+			</execution>
+		</executions>
+	  </plugin>
+	   -->
     </plugins>
   </build>
 
