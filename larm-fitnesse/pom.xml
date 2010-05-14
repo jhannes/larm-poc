@@ -44,7 +44,7 @@
 							<tasks>
 								<property name="compile_classpath" refid="maven.compile.classpath" />
 								<java classname="fitnesseMain.FitNesseMain" fork="true">
-									<arg line="-p 80" />
+									<arg line="-p 8090" />
 									<classpath>
 										<pathelement path="${compile_classpath}" />
 									</classpath>
