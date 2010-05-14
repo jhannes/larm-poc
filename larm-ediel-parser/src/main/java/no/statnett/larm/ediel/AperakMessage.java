@@ -45,6 +45,12 @@ public class AperakMessage {
         messageDate.write(writer);
         arrivalTime.write(writer);
         referencedMessage.write(writer);
+        messageFrom.write(writer);
+        documentRecipient.write(writer);
+        for (ErcSegment ercSegment : errorCodes) {
+            ercSegment.write(writer);
+        }
+
     }
 
     public BgmSegment getBeginMessage() {
@@ -61,6 +67,7 @@ public class AperakMessage {
 
     public void setReferencedMessage(RffSegment referencedMessage) {
         this.referencedMessage = referencedMessage;
+        referencedMessage.setQualifier("ACW");
     }
 
     public DtmSegment getMessageDate() {
@@ -86,6 +93,7 @@ public class AperakMessage {
     }
 
     public void setMessageFrom(NadSegment messageFrom) {
+        messageFrom.setQualifier("FR");
         this.messageFrom = messageFrom;
     }
 
@@ -95,6 +103,7 @@ public class AperakMessage {
 
     public void setDocumentRecipient(NadSegment documentRecipient) {
         this.documentRecipient = documentRecipient;
+        documentRecipient.setQualifier("DO");
     }
 
 }

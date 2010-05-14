@@ -101,8 +101,7 @@ public class EdielServiceTest {
         String theirPartyId = "7080005050999";
 
         String reference = "statkraft-987";
-        AperakMessage aperak = service.createResponse(reference);
-        aperak.write(System.out);
+        AperakMessage aperak = service.createResponse(reference, theirPartyId);
 
         assertThat(aperak.getBeginMessage().getMessageFunction()).isEqualTo("29"); // Accepted without amendment
         assertThat(aperak.getMessageDate().getDateTime()).isEqualTo(now.withSecondOfMinute(0).withMillisOfSecond(0));
@@ -110,10 +109,12 @@ public class EdielServiceTest {
         assertThat(aperak.getReferencedMessage().getReference()).isEqualTo(reference);
 
         assertThat(aperak.getMessageFrom().getPartyId()).isEqualTo(ourPartyId);
+        assertThat(aperak.getMessageFrom().getResponsibleAgency()).isEqualTo("9");
         assertThat(aperak.getMessageFrom().getCity()).isEqualTo("OSLO");
         assertThat(aperak.getMessageFrom().getCountry()).isEqualTo("NO");
         assertThat(aperak.getMessageFrom().getContactInfo().getDepartment()).isEqualTo("Landsentralen");
 
-        assertThat(aperak.getMessageFrom().getPartyId()).isEqualTo(theirPartyId);
+        assertThat(aperak.getDocumentRecipient().getPartyId()).isEqualTo(theirPartyId);
+        assertThat(aperak.getDocumentRecipient().getResponsibleAgency()).isEqualTo("9");
     }
 }
