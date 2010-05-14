@@ -1,6 +1,9 @@
-package no.statnett.larm.edifact;
+package no.statnett.larm.edifact.segments;
 
 import java.io.IOException;
+
+import no.statnett.larm.edifact.EdifactSegment;
+import no.statnett.larm.edifact.EdifactSegmentWriter;
 
 public class UnaSegment extends EdifactSegment {
 

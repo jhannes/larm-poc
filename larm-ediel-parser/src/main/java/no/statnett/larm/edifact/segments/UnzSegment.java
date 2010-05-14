@@ -1,4 +1,6 @@
-package no.statnett.larm.edifact;
+package no.statnett.larm.edifact.segments;
+
+import no.statnett.larm.edifact.EdifactSegment;
 
 public class UnzSegment extends EdifactSegment {
 

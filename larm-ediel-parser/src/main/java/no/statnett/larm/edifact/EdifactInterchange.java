@@ -3,6 +3,12 @@ package no.statnett.larm.edifact;
 import java.io.IOException;
 import java.util.Random;
 
+import no.statnett.larm.edifact.segments.UnaSegment;
+import no.statnett.larm.edifact.segments.UnbSegment;
+import no.statnett.larm.edifact.segments.UnhSegment;
+import no.statnett.larm.edifact.segments.UntSegment;
+import no.statnett.larm.edifact.segments.UnzSegment;
+
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 
