@@ -2,6 +2,8 @@ package no.statnett.larm.edifact;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -64,7 +66,6 @@ public class EdifactParser implements SegmentSource {
     }
 
     private List<EdifactDataElement> parseElements(final List<String> dataElements) {
-
         List<EdifactDataElement> result = new ArrayList<EdifactDataElement>();
         for (String element : dataElements) {
             List<String> tokens = lexer.getDataElementComponents(element);
@@ -131,11 +132,17 @@ public class EdifactParser implements SegmentSource {
 
         T edifactSegment = null;
         try {
-            edifactSegment = segmentClass.newInstance();
+            Constructor<T> constructor = segmentClass.getDeclaredConstructor();
+            constructor.setAccessible(true);
+            edifactSegment = constructor.newInstance();
             copySegmentDetailsAcross(basicSegment, edifactSegment);
         } catch (InstantiationException e) {
             throw new RuntimeException(e);
         } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
 

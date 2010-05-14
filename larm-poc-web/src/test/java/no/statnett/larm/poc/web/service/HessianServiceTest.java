@@ -14,6 +14,8 @@ import java.lang.reflect.UndeclaredThrowableException;
 import no.statnett.larm.core.web.service.LarmHessianProxyFactory;
 import no.statnett.larm.poc.web.WebTest;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -64,10 +66,12 @@ public class HessianServiceTest extends WebTest {
         ServiceInterface serviceOnClient = LarmHessianProxyFactory.createProxy(ServiceInterface.class,
                 applicationUrl + "service/notAService");
         try {
+            Logger.getLogger(ServiceFrontServlet.class).setLevel(Level.OFF);
             serviceOnClient.doIt("bar");
         } catch (HessianException e) {
             assertThat(e.getCause()).isInstanceOf(FileNotFoundException.class);
         }
+        Logger.getLogger(ServiceFrontServlet.class).setLevel(Level.INFO);
     }
 
     @BeforeClass

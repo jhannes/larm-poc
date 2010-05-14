@@ -34,7 +34,7 @@ public class ServiceFrontServlet extends HttpServlet {
         HessianSkeleton service = serviceMap.get(getServiceName(req));
 
         if (service == null) {
-            log.info("Tried to access unknown service " + getServiceName(req));
+            log.warn("Tried to access unknown service " + getServiceName(req));
             resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Unknown service " + getServiceName(req));
             return;
         }

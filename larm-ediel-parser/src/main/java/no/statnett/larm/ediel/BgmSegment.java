@@ -14,5 +14,9 @@ public class BgmSegment extends EdifactSegment {
         return getElementData(2);
     }
 
+    public BgmSegment setMessageFunction(String messageFunction) {
+        setElementComponent(2, 0, messageFunction);
+        return this;
+    }
 
 }

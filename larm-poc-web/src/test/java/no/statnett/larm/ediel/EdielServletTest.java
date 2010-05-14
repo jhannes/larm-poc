@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -21,9 +22,8 @@ import no.statnett.larm.nettmodell.Stasjonsgruppe;
 import no.statnett.larm.reservekraft.ReservekraftBud;
 
 import org.joda.time.DateMidnight;
-import org.joda.time.DateTime;
+import org.joda.time.Duration;
 import org.joda.time.Interval;
-import org.joda.time.Period;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -34,109 +34,40 @@ public class EdielServletTest {
     private Elspotområde elspotområde = new Elspotområde("NO4");
     private Stasjonsgruppe stasjonsgruppe = new Stasjonsgruppe("NOKG00116", "Sørfjord", elspotområde);
 
+    private HttpServletRequest req = mock(HttpServletRequest.class);
+    private HttpServletResponse resp = mock(HttpServletResponse.class);
+
+    private StringWriter response = new StringWriter();
+    private File quotesFile = new File("src/test/ediel/quotes/QuoteNordkraft.edi");
+
     @Before
-    public void setupServlet() {
+    public void setupServlet() throws IOException {
         servlet.setRepository(repository);
         repository.insert(stasjonsgruppe);
+
+        when(req.getMethod()).thenReturn("POST");
+        when(req.getReader()).thenReturn(new BufferedReader(new FileReader(quotesFile)));
+        when(resp.getWriter()).thenReturn(new PrintWriter(response));
     }
 
     @Test
     public void shouldParseQuotesMessageToRkBud() throws Exception {
-        HttpServletRequest req = mock(HttpServletRequest.class);
-        HttpServletResponse resp = mock(HttpServletResponse.class);
-
-        when(req.getMethod()).thenReturn("POST");
-        File quotesFile = new File("src/test/ediel/quotes/QuoteNordkraft.edi");
-
-        when(req.getReader()).thenReturn(new BufferedReader(new FileReader(quotesFile)));
-        when(resp.getWriter()).thenReturn(new PrintWriter(new StringWriter()));
+        DateMidnight driftsdøgn = new DateMidnight(2009, 12, 1);
+        Duration ettDøgn = Duration.standardDays(1);
 
         servlet.service(req, resp);
 
         ReservekraftBud bud = repository.findAll(ReservekraftBud.class).get(0);
-
         assertThat(bud.getStasjonsgruppe()).isEqualTo(stasjonsgruppe);
-        assertThat(bud.getBudperiode()).isEqualTo(
-                new Interval(new DateMidnight(2009, 12, 1).toDateTime(),
-                        new DateMidnight(2009, 12, 2).toDateTime()));
+        assertThat(bud.getBudperiode()).isEqualTo(new Interval(driftsdøgn, ettDøgn));
     }
 
-    @Test
-    public void shouldLeseVolumPerioder() throws Exception {
-        DateMidnight driftsdøgn = new DateMidnight(2010, 5, 10);
-        DateTime bud1StartTid = driftsdøgn.toDateTime().withHourOfDay(8);
-        DateTime bud1SluttTid = driftsdøgn.toDateTime().withHourOfDay(9);
-        String budreferanse = "Min referanse";
-        Period varighet = Period.minutes(180);
-        Period hviletid = Period.minutes(120);
-
-        LinSegment linSegment = new LinSegment();
-        linSegment.setDuration(DtmSegment.withMinutes(varighet));
-        linSegment.setRestingTime(DtmSegment.withMinutes(hviletid));
-
-        linSegment.addPriceSegment(new PriSegment()
-                .setProcessingTime(new Interval(bud1StartTid, bud1SluttTid))
-                .setVolume(800L));
-        linSegment.addPriceSegment(new PriSegment()
-                .setProcessingTime(new Interval(bud1StartTid.plusHours(1), bud1SluttTid.plusHours(1)))
-                .setVolume(800L));
-        linSegment.addPriceSegment(new PriSegment()
-                .setProcessingTime(new Interval(bud1StartTid.plusHours(2), bud1SluttTid.plusHours(2)))
-                .setVolume(800L));
-
-        RffSegment rffSegment = new RffSegment();
-        rffSegment.setReference(budreferanse);
-        linSegment.setPriceQuote(rffSegment);
-
-        LocSegment locSegment = new LocSegment();
-        locSegment.setLocationIdentification(stasjonsgruppe.getNavn());
-        linSegment.setLocation(locSegment);
-
-        ReservekraftBud bud = servlet.lesBud(linSegment, driftsdøgn.toDateTime(), driftsdøgn.plusDays(1).toDateTime());
-
-        assertThat(bud.getVolumPerioder()).hasSize(3);
-        assertThat(bud.getVolumPerioder().get(0).getStartTid()).isEqualTo(bud1StartTid);
-        assertThat(bud.getVolumPerioder().get(0).getSluttTid()).isEqualTo(bud1SluttTid);
-        assertThat(bud.getVolumPerioder().get(0).getTilgjengeligVolum()).isEqualTo(800);
-
-        assertThat(bud.getStasjonsgruppe()).isEqualTo(stasjonsgruppe);
-        assertThat(bud.getBudreferanse()).isEqualTo(budreferanse);
-        assertThat(bud.getAktiveringstid()).isEqualTo(varighet);
-        assertThat(bud.getHviletid()).isEqualTo(hviletid);
-        assertThat(bud.getBudperiode()).isEqualTo(new Interval(driftsdøgn, driftsdøgn.plusDays(1)));
-    }
-
-    @Test
-    public void shouldParseAllTestQuotesFiles() throws Exception {
-        repository.insert(new Stasjonsgruppe("NOKG00049", elspotområde));
-        repository.insert(new Stasjonsgruppe("NOKG00056", elspotområde));
-
-        File quotesFileTestDir = new File("src/test/ediel/quotes");
-        assertThat(quotesFileTestDir.listFiles()).isNotEmpty();
-        for (File quotesFile : quotesFileTestDir.listFiles()) {
-            repository.deleteAll(ReservekraftBud.class);
-            servlet.read(new FileReader(quotesFile));
-            assertThat(repository.findAll(ReservekraftBud.class)).isNotEmpty();
-        }
-    }
 
     @Test
     public void skalGenerereAperak() throws Exception {
-        HttpServletRequest req = mock(HttpServletRequest.class);
-        HttpServletResponse resp = mock(HttpServletResponse.class);
-
-        when(req.getMethod()).thenReturn("POST");
-        File quotesFile = new File("src/test/ediel/quotes/QuoteNordkraft.edi");
-
-        when(req.getReader()).thenReturn(new BufferedReader(new FileReader(quotesFile)));
-
-        StringWriter response = new StringWriter();
-        when(resp.getWriter()).thenReturn(new PrintWriter(response));
-
         servlet.doPost(req, resp);
 
         AperakParser aperakParser = new AperakParser(new StringReader(response.toString()));
         assertThat(aperakParser.parseMessage()).isNotNull();
     }
-
 }

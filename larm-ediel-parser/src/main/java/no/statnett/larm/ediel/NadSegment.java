@@ -12,8 +12,23 @@ import no.statnett.larm.edifact.SegmentSource;
 @Segment("NAD")
 public class NadSegment extends QualifiedEdifactSegmentGroup {
 
+    private CtaSegment contactInfo;
+
+    NadSegment() {
+    }
+
+    public NadSegment(String partyId, String agency) {
+        setPartyId(partyId);
+        setResponsibleAgency(agency);
+    }
+
     public String getPartyId() {
         return getElementComponent(1, 0);
+    }
+
+    public NadSegment setPartyId(String partyId) {
+        setElementComponent(1, 0, partyId);
+        return this;
     }
 
     @Override
@@ -21,9 +36,51 @@ public class NadSegment extends QualifiedEdifactSegmentGroup {
         return getElementData(0);
     }
 
+    public void setQualifier(String qualifier) {
+        setElementComponent(0, 0, qualifier);
+    }
+
     public void readSegmentGroup(SegmentSource edifactParser) throws IOException {
-        edifactParser.readOptionalSegment(CtaSegment.class);
+        contactInfo = edifactParser.readOptionalSegment(CtaSegment.class);
         edifactParser.readOptionalSegment(ComSegment.class);
+    }
+
+    @Override
+    public void write(Appendable writer) throws IOException {
+        this.writeSegment(writer);
+        if (contactInfo != null) contactInfo.write(writer);
+    }
+
+    public String getCity() {
+        return getElementData(5);
+    }
+
+    public void setCity(String city) {
+        setElementComponent(5, 0, city);
+    }
+
+    public String getCountry() {
+        return getElementData(8);
+    }
+
+    public void setCountry(String country) {
+        setElementComponent(8, 0, country);
+    }
+
+    public CtaSegment getContactInfo() {
+        return contactInfo;
+    }
+
+    public void setContactInfo(CtaSegment contactInfo) {
+        this.contactInfo = contactInfo;
+    }
+
+    public String getResponsibleAgency() {
+        return getElementComponent(1, 2);
+    }
+
+    private void setResponsibleAgency(String agency) {
+        setElementComponent(1, 2, agency);
     }
 
 }

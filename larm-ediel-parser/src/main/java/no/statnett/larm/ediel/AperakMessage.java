@@ -1,18 +1,20 @@
 package no.statnett.larm.ediel;
 
 import java.io.IOException;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
+import no.statnett.larm.edifact.EdifactMessage;
 import no.statnett.larm.edifact.SegmentSource;
 
-public class AperakMessage {
+public class AperakMessage implements EdifactMessage {
 
     private BgmSegment beginMessage;
     private RffSegment referencedMessage;
     private DtmSegment messageDate;
     private DtmSegment arrivalTime;
+    private NadSegment messageFrom;
+    private NadSegment documentRecipient;
     private List<ErcSegment> errorCodes = new ArrayList<ErcSegment>();
 
     public List<ErcSegment> getErrorCodes() {
@@ -26,8 +28,8 @@ public class AperakMessage {
         arrivalTime = edifactParser.readMandatorySegment(DtmSegment.class, "178");
 
         referencedMessage = edifactParser.readMandatorySegment(RffSegment.class);
-        edifactParser.readOptionalSegmentGroup(NadSegment.class, "FR");
-        edifactParser.readOptionalSegmentGroup(NadSegment.class, "DO");
+        messageFrom = edifactParser.readOptionalSegmentGroup(NadSegment.class, "FR");
+        documentRecipient = edifactParser.readOptionalSegmentGroup(NadSegment.class, "DO");
         edifactParser.readOptionalSegmentGroup(NadSegment.class, "C1");
         edifactParser.readOptionalSegmentGroup(NadSegment.class, "C2");
 
@@ -39,11 +41,17 @@ public class AperakMessage {
         edifactParser.readOptionalSegment(RffSegment.class);
     }
 
-    public void write(Writer writer) throws IOException {
+    @Override
+    public void write(Appendable writer) throws IOException {
         beginMessage.write(writer);
         messageDate.write(writer);
         arrivalTime.write(writer);
         referencedMessage.write(writer);
+        messageFrom.write(writer);
+        documentRecipient.write(writer);
+        for (ErcSegment ercSegment : errorCodes) {
+            ercSegment.write(writer);
+        }
     }
 
     public BgmSegment getBeginMessage() {
@@ -60,6 +68,7 @@ public class AperakMessage {
 
     public void setReferencedMessage(RffSegment referencedMessage) {
         this.referencedMessage = referencedMessage;
+        referencedMessage.setQualifier("ACW");
     }
 
     public DtmSegment getMessageDate() {
@@ -78,6 +87,24 @@ public class AperakMessage {
     public void setArrivalTime(DtmSegment arrivalTime) {
         this.arrivalTime = arrivalTime;
         arrivalTime.setQualifier("178");
+    }
+
+    public NadSegment getMessageFrom() {
+        return messageFrom;
+    }
+
+    public void setMessageFrom(NadSegment messageFrom) {
+        messageFrom.setQualifier("FR");
+        this.messageFrom = messageFrom;
+    }
+
+    public NadSegment getDocumentRecipient() {
+        return documentRecipient;
+    }
+
+    public void setDocumentRecipient(NadSegment documentRecipient) {
+        this.documentRecipient = documentRecipient;
+        documentRecipient.setQualifier("DO");
     }
 
 }
