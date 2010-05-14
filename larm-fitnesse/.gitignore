@@ -1,0 +1,8 @@
+# These files are extracted by fitnesse on first run
+FitNesseRoot/FitNesse
+FitNesseRoot/files
+
+# These files are generated nilly willy and we don't like them!
+FitNesseRoot/ErrorLogs
+FitNesseRoot/files/testResults
+*.zip
