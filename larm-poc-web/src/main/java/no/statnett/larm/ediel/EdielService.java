@@ -44,12 +44,12 @@ public class EdielService {
         new UnzSegment("1", "29").write(writer);
     }
 
-    private AperakMessage createResponse() {
+    AperakMessage createResponse(String reference) {
         AperakMessage aperakMessage = new AperakMessage();
-        aperakMessage.setBeginMessage(new BgmSegment());
+        aperakMessage.setBeginMessage(new BgmSegment().setMessageFunction("29"));
         aperakMessage.setArrivalTime(DtmSegment.withDateTime(new DateTime()));
         aperakMessage.setMessageDate(DtmSegment.withDateTime(new DateTime()));
-        aperakMessage.setReferencedMessage(new RffSegment());
+        aperakMessage.setReferencedMessage(new RffSegment().setReference(reference));
         return aperakMessage;
     }
 
@@ -63,7 +63,7 @@ public class EdielService {
             repository.insert(lesBud(linSegment, processingStartTime, processingEndTime));
         }
 
-        return createResponse();
+        return createResponse("");
     }
 
     ReservekraftBud lesBud(LinSegment linSegment, DateTime processingStartTime, DateTime processingEndTime) {

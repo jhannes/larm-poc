@@ -13,6 +13,7 @@ import no.statnett.larm.reservekraft.ReservekraftBud;
 
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeUtils;
 import org.joda.time.Duration;
 import org.joda.time.Interval;
 import org.joda.time.Period;
@@ -92,4 +93,27 @@ public class EdielServiceTest {
         }
     }
 
+    @Test
+    public void shouldCreateAperakWithReference() throws Exception {
+        DateTime now = new DateTime(2010, 1, 12, 10, 11, 2, 1);
+        DateTimeUtils.setCurrentMillisFixed(now.getMillis());
+        String ourPartyId   = "7080000923168";
+        String theirPartyId = "7080005050999";
+
+        String reference = "statkraft-987";
+        AperakMessage aperak = service.createResponse(reference);
+        aperak.write(System.out);
+
+        assertThat(aperak.getBeginMessage().getMessageFunction()).isEqualTo("29"); // Accepted without amendment
+        assertThat(aperak.getMessageDate().getDateTime()).isEqualTo(now.withSecondOfMinute(0).withMillisOfSecond(0));
+        assertThat(aperak.getArrivalTime().getDateTime()).isEqualTo(now.withSecondOfMinute(0).withMillisOfSecond(0));
+        assertThat(aperak.getReferencedMessage().getReference()).isEqualTo(reference);
+
+        assertThat(aperak.getMessageFrom().getPartyId()).isEqualTo(ourPartyId);
+        assertThat(aperak.getMessageFrom().getCity()).isEqualTo("OSLO");
+        assertThat(aperak.getMessageFrom().getCountry()).isEqualTo("NO");
+        assertThat(aperak.getMessageFrom().getContactInfo().getDepartment()).isEqualTo("Landsentralen");
+
+        assertThat(aperak.getMessageFrom().getPartyId()).isEqualTo(theirPartyId);
+    }
 }
