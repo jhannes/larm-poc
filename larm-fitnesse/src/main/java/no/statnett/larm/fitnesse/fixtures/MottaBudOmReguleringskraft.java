@@ -1,5 +1,6 @@
 package no.statnett.larm.fitnesse.fixtures;
 
+@SuppressWarnings("unused")
 public class MottaBudOmReguleringskraft {
 
     public void setMeldingsref(String meldingsref) {
