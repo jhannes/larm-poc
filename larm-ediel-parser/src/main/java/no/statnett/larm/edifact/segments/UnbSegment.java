@@ -1,13 +1,14 @@
 package no.statnett.larm.edifact.segments;
 
 import no.statnett.larm.edifact.EdifactSegment;
+import no.statnett.larm.edifact.Segment;
 
 import org.joda.time.DateTime;
 
+@Segment("UNB")
 public class UnbSegment extends EdifactSegment {
 
     public UnbSegment() {
-        setSegmentName("UNB");
     }
 
     public void setSyntax(String syntax, String version) {

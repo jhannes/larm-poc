@@ -73,7 +73,7 @@ public class EdifactSegment {
         this.segmentName = segmentName;
     }
 
-    public void write(EdifactSegmentWriter writer) throws IOException {
+    public void writeTo(EdifactSegmentWriter writer) throws IOException {
         writer.writeSegment(this);
     }
 

@@ -18,29 +18,34 @@ public class EdielService {
     private final Repository repository;
     @SuppressWarnings("unused")
     private String fileName;
+    private QuoteParser quoteParser = new QuoteParser();
 
     public EdielService(Repository repository) {
         this.repository = repository;
     }
 
-    public void process(String fileName, Reader edifactRequest, Appendable edifactResponse) throws IOException {
+    public void process(String fileName, Reader edifactReader, Appendable edifactWriter) throws IOException {
         this.fileName = fileName;
-        QuoteParser quoteParser = new QuoteParser(edifactRequest);
-        QuoteMessage quoteMessage = quoteParser.parseMessage();
-        AperakMessage response = readMessage(quoteMessage);
-        writeMessage(edifactResponse, response);
+        EdifactInterchange interchange = quoteParser.parseInterchange(edifactReader);
+        EdifactInterchange response = readInterchange(interchange);
+        response.writeTo(edifactWriter);
     }
 
-    private void writeMessage(Appendable writer, AperakMessage aperakMessage) throws IOException {
-        EdifactInterchange interchange = new EdifactInterchange(aperakMessage);
-        interchange.setSyntax("UNOB", "2");
-        interchange.setSender(aperakMessage.getMessageFrom().getPartyId(), "14", "REGULERKRAFT");
-        interchange.setRecipient(aperakMessage.getDocumentRecipient().getPartyId(), "14", "REGULERKRAFT");
-        interchange.setControlReference(String.valueOf(System.currentTimeMillis()));
-        interchange.write(writer);
+    EdifactInterchange readInterchange(EdifactInterchange interchange) throws IOException {
+        QuoteMessage quoteMessage = (QuoteMessage)interchange.getMessage();
+
+        DateTime processingStartTime = quoteMessage.getProcessingStartTime().getDateTime();
+        DateTime processingEndTime = quoteMessage.getProcessingEndTime().getDateTime();
+
+        for (LinSegment linSegment : quoteMessage.getLineItems()) {
+            repository.insert(lesBud(linSegment, processingStartTime, processingEndTime));
+        }
+
+        String senderPartyId = quoteMessage.getMessageFrom().getPartyId();
+        return createResponse(interchange.getControlReference(), senderPartyId);
     }
 
-    AperakMessage createResponse(String reference, String senderPartyId) {
+    EdifactInterchange createResponse(String reference, String senderPartyId) {
         AperakMessage aperakMessage = new AperakMessage();
         aperakMessage.setBeginMessage(new BgmSegment().setMessageFunction("29"));
         aperakMessage.setArrivalTime(DtmSegment.withDateTime(new DateTime()));
@@ -54,18 +59,13 @@ public class EdielService {
         aperakMessage.setMessageFrom(messageFrom);
 
         aperakMessage.setDocumentRecipient(new NadSegment(senderPartyId, "9"));
-        return aperakMessage;
-    }
 
-    AperakMessage readMessage(QuoteMessage quoteMessage) throws IOException {
-        DateTime processingStartTime = quoteMessage.getProcessingStartTime().getDateTime();
-        DateTime processingEndTime = quoteMessage.getProcessingEndTime().getDateTime();
-
-        for (LinSegment linSegment : quoteMessage.getLineItems()) {
-            repository.insert(lesBud(linSegment, processingStartTime, processingEndTime));
-        }
-
-        return createResponse("", "");
+        EdifactInterchange response = new EdifactInterchange(aperakMessage);
+        response.setSyntax("UNOB", "2");
+        response.setSender(aperakMessage.getMessageFrom().getPartyId(), "14", "REGULERKRAFT");
+        response.setRecipient(aperakMessage.getDocumentRecipient().getPartyId(), "14", "REGULERKRAFT");
+        response.setControlReference(String.valueOf(System.currentTimeMillis()));
+        return response;
     }
 
     ReservekraftBud lesBud(LinSegment linSegment, DateTime processingStartTime, DateTime processingEndTime) {

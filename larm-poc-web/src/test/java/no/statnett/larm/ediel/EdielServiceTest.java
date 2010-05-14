@@ -102,7 +102,7 @@ public class EdielServiceTest {
         String theirPartyId = "7080005050999";
 
         String reference = "statkraft-987";
-        AperakMessage aperak = service.createResponse(reference, theirPartyId);
+        AperakMessage aperak = (AperakMessage) service.createResponse(reference, theirPartyId).getMessage();
 
         assertThat(aperak.getBeginMessage().getMessageFunction()).isEqualTo("29"); // Accepted without amendment
         assertThat(aperak.getMessageDate().getDateTime()).isEqualTo(now.withSecondOfMinute(0).withMillisOfSecond(0));

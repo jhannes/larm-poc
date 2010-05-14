@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import no.statnett.larm.edifact.EdifactMessage;
+import no.statnett.larm.edifact.EdifactSegmentWriter;
 import no.statnett.larm.edifact.SegmentSource;
 
-public class QuoteMessage {
+public class QuoteMessage implements EdifactMessage {
 
     private BgmSegment beginMessage;
     private DtmSegment messageDate;
@@ -74,5 +76,47 @@ public class QuoteMessage {
             lineItems.add(linSegment);
         }
     }
+
+    @Override
+    public void write(EdifactSegmentWriter writer) throws IOException {
+        writer.writeSegment(beginMessage);
+        writer.writeSegment(messageDate);
+        writer.writeSegment(processingStartTime);
+        writer.writeSegment(processingEndTime);
+        writer.writeSegment(offsetToUTC);
+        writer.writeSegment(currency);
+        writer.writeSegment(messageFrom);
+        writer.writeSegment(documentRecipient);
+
+        for (LinSegment linSegment : lineItems) {
+            linSegment.writeTo(writer);
+        }
+    }
+
+    @Override
+    public String getAgency() {
+        return "UN";
+    }
+
+    @Override
+    public String getAssociatedCode() {
+        return "EDIEL2";
+    }
+
+    @Override
+    public String getMessageType() {
+        return "QUOTES";
+    }
+
+    @Override
+    public String getRelease() {
+        return "96A";
+    }
+
+    @Override
+    public String getVersion() {
+        return "D";
+    }
+
 }
 

@@ -47,9 +47,9 @@ public class NadSegment extends QualifiedEdifactSegmentGroup {
     }
 
     @Override
-    public void write(EdifactSegmentWriter writer) throws IOException {
+    public void writeTo(EdifactSegmentWriter writer) throws IOException {
         writer.writeSegment(this);
-        if (contactInfo != null) contactInfo.write(writer);
+        if (contactInfo != null) contactInfo.writeTo(writer);
     }
 
     public String getCity() {

@@ -23,7 +23,7 @@ public class UnaSegment extends EdifactSegment {
     }
 
     @Override
-    public void write(EdifactSegmentWriter writer) throws IOException {
+    public void writeTo(EdifactSegmentWriter writer) throws IOException {
         throw new UnsupportedOperationException(this + " must be written without segment writer");
     }
 }

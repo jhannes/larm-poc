@@ -6,12 +6,16 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.StringReader;
 
+import no.statnett.larm.edifact.EdifactInterchange;
+
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.joda.time.Period;
 import org.junit.Test;
 
 public class QuoteParserTest {
+
+    private QuoteParser quoteParser = new QuoteParser();
 
     private String exampleFile =
         "UNA:+.? '" +
@@ -40,9 +44,8 @@ public class QuoteParserTest {
 
     @Test
     public void shouldParseQuotes() throws Exception {
-        QuoteParser quoteParser = new QuoteParser(new StringReader(exampleFile));
+        QuoteMessage message = (QuoteMessage) quoteParser.parseInterchange(new StringReader(exampleFile)).getMessage();
 
-        QuoteMessage message = quoteParser.parseMessage();
         assertThat(message.getBeginMessage().getMessageTime()).isEqualTo("2009113000025305");
         assertThat(message.getMessageDate().getTime()).isEqualTo("200911301554");
         assertThat(message.getProcessingStartTime().getTime()).isEqualTo("200912010000");
@@ -73,13 +76,20 @@ public class QuoteParserTest {
     }
 
     @Test
+    public void shouldParseInterchange() throws Exception {
+        StringReader reader = new StringReader(exampleFile);
+        EdifactInterchange interchange = new QuoteParser().parseInterchange(reader);
+
+        assertThat(interchange.getControlReference()).isEqualTo("statkraft-987");
+    }
+
+    @Test
     public void shouldParseAllTestQuotesFiles() throws Exception {
         File quotesFileTestDir = new File("src/test/ediel/quotes");
         assertThat(quotesFileTestDir.listFiles()).isNotEmpty();
         for (File quotesFile : quotesFileTestDir.listFiles()) {
-            QuoteParser quoteParser = new QuoteParser(new FileReader(quotesFile));
-            QuoteMessage message = quoteParser.parseMessage();
-            assertThat(message).isNotNull();
+            EdifactInterchange interchange = quoteParser.parseInterchange(new FileReader(quotesFile));
+            assertThat(interchange).isNotNull();
         }
     }
 

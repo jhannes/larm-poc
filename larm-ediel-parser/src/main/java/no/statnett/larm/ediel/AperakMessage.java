@@ -44,14 +44,14 @@ public class AperakMessage implements EdifactMessage {
 
     @Override
     public void write(EdifactSegmentWriter writer) throws IOException {
-        beginMessage.write(writer);
-        messageDate.write(writer);
-        arrivalTime.write(writer);
-        referencedMessage.write(writer);
-        messageFrom.write(writer);
-        documentRecipient.write(writer);
+        beginMessage.writeTo(writer);
+        messageDate.writeTo(writer);
+        arrivalTime.writeTo(writer);
+        referencedMessage.writeTo(writer);
+        messageFrom.writeTo(writer);
+        documentRecipient.writeTo(writer);
         for (ErcSegment ercSegment : errorCodes) {
-            ercSegment.write(writer);
+            ercSegment.writeTo(writer);
         }
     }
 

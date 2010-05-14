@@ -55,7 +55,7 @@ public class EdifactWriterTest {
         return new EdifactMessage() {
             @Override
             public void write(EdifactSegmentWriter writer) throws IOException {
-                new EdifactSegment("FOO", "").write(writer);
+                new EdifactSegment("FOO", "").writeTo(writer);
             }
 
             @Override
@@ -87,7 +87,7 @@ public class EdifactWriterTest {
 
     private String serialize(EdifactInterchange interchange) throws IOException {
         StringWriter interchangeAsString = new StringWriter();
-        interchange.write(interchangeAsString);
+        interchange.writeTo(interchangeAsString);
         return interchangeAsString.toString();
     }
 
@@ -96,7 +96,7 @@ public class EdifactWriterTest {
             @Override
             public void write(EdifactSegmentWriter writer) throws IOException {
                 for (int i=0; i<segmentCount; i++) {
-                    new EdifactSegment("FOO", "").write(writer);
+                    new EdifactSegment("FOO", "").writeTo(writer);
                 }
             }
 

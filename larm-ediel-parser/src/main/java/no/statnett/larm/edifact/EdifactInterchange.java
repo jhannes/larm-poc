@@ -15,13 +15,17 @@ import org.joda.time.DateTime;
 
 public class EdifactInterchange {
 
-    private final EdifactMessage message;
+    private EdifactMessage message;
     private UnbSegment unbSegment = new UnbSegment();
 
     public EdifactInterchange(EdifactMessage message) {
         this.message = message;
         this.unbSegment.setTimestamp(new DateTime());
         this.unbSegment.setControlReference(getDefaultControlReference());
+    }
+
+    public EdifactInterchange() {
+        // TODO Auto-generated constructor stub
     }
 
     private String getDefaultControlReference() {
@@ -37,18 +41,18 @@ public class EdifactInterchange {
         return result.toString();
     }
 
-    public void write(Appendable writer) throws IOException {
+    public void writeTo(Appendable writer) throws IOException {
         new UnaSegment(":+.? '").write(writer);
 
         EdifactSegmentWriter segmentWriter = new EdifactSegmentWriter(writer);
-        unbSegment.write(segmentWriter);
-        new UnhSegment(message).write(segmentWriter);
+        unbSegment.writeTo(segmentWriter);
+        new UnhSegment(message).writeTo(segmentWriter);
 
         segmentWriter.resetSegmentCount();
         message.write(segmentWriter);
 
-        new UntSegment(String.valueOf(segmentWriter.getSegmentCount()+2), "1").write(segmentWriter); // TODO: Must count segments!
-        new UnzSegment("1", unbSegment.getControlReference()).write(segmentWriter);
+        new UntSegment(String.valueOf(segmentWriter.getSegmentCount()+2), "1").writeTo(segmentWriter); // TODO: Must count segments!
+        new UnzSegment("1", unbSegment.getControlReference()).writeTo(segmentWriter);
     }
 
     public void setSyntax(String syntax, String version) {
@@ -63,7 +67,24 @@ public class EdifactInterchange {
         this.unbSegment.setRecipient(partyId, qualifier, internalId);
     }
 
+    public String getControlReference() {
+        return unbSegment.getControlReference();
+    }
+
     public void setControlReference(String reference) {
         this.unbSegment.setControlReference(reference);
     }
+
+    public void setUnbSegment(UnbSegment unbSegment) {
+        this.unbSegment = unbSegment;
+    }
+
+    public EdifactMessage getMessage() {
+        return message;
+    }
+
+    public void setMessage(EdifactMessage message) {
+        this.message = message;
+    }
+
 }
