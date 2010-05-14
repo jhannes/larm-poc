@@ -65,9 +65,10 @@
 				<goals><goal>run</goal></goals>
 				<configuration>
 					<tasks>
-						<copy from="" to="c:\\server\\larm\\integration-test\\" />								
+						<mkdir dir="/opt/larm/integration-test/" />								
+						<copy from="" to="/opt/larm/integration-test/" />								
 						<property name="compile_classpath" refid="maven.compile.classpath" />
-						<cd to="c:\\server\\larm\\integration-test\\" ></cd>
+						<cd to="/opt/larm/integration-test/" ></cd>
 						<java jar="larm-server-onejar.jar" fork="true"/>
 					</tasks>
 				</configuration>
