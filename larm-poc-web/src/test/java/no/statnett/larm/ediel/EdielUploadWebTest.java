@@ -40,6 +40,9 @@ public class EdielUploadWebTest extends WebTest {
         AperakParser parser = new AperakParser(new InputStreamReader(request.getResponseBodyAsStream(), request.getResponseCharSet()));
         AperakMessage aperakMessage = parser.parseMessage();
         assertThat(aperakMessage.getErrorCodes()).isEmpty();
+        assertThat(aperakMessage.getMessageFrom().getPartyId()).isEqualTo("7080000923168");
+//        assertThat(aperakMessage.getReferencedMessage().getReference()).isEqualTo("nordkraft-123");
+//        assertThat(aperakMessage.getDocumentRecipient().getPartyId()).isEqualTo("7080005050838");
 
         getRepository().execute(new RepositoryCallback() {
             @Override

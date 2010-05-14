@@ -28,7 +28,7 @@ public class EdielServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("Application/EDIFACT");
-        new EdielService(repository).process(req.getPathInfo(), req.getReader(), resp.getWriter());
+        process(req.getPathInfo(), req.getReader(), resp.getWriter());
     }
 
     @Override

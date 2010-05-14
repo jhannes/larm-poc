@@ -5,11 +5,7 @@ import java.io.Reader;
 import java.util.List;
 
 import no.statnett.larm.core.repository.Repository;
-import no.statnett.larm.edifact.UnaSegment;
-import no.statnett.larm.edifact.UnbSegment;
-import no.statnett.larm.edifact.UnhSegment;
-import no.statnett.larm.edifact.UntSegment;
-import no.statnett.larm.edifact.UnzSegment;
+import no.statnett.larm.edifact.EdifactInterchange;
 import no.statnett.larm.nettmodell.Stasjonsgruppe;
 import no.statnett.larm.nettmodell.StasjonsgruppeSpecification;
 import no.statnett.larm.reservekraft.ReservekraftBud;
@@ -34,14 +30,12 @@ public class EdielService {
     }
 
     private void writeMessage(Appendable writer, AperakMessage aperakMessage) throws IOException {
-        new UnaSegment(":+.? '").write(writer);
-        new UnbSegment().write(writer);
-        new UnhSegment("APERAK", "D", "96A", "UN", "EDIEL2").write(writer);
-
-        aperakMessage.write(writer);
-
-        new UntSegment("7", "1").write(writer); // TODO: Must count segments!
-        new UnzSegment("1", "29").write(writer);
+        EdifactInterchange interchange = new EdifactInterchange(aperakMessage);
+        interchange.setSyntax("UNOB", "2");
+        interchange.setSender(aperakMessage.getMessageFrom().getPartyId(), "14", "REGULERKRAFT");
+        interchange.setRecipient(aperakMessage.getDocumentRecipient().getPartyId(), "14", "REGULERKRAFT");
+        interchange.setReference(String.valueOf(System.currentTimeMillis()));
+        interchange.write(writer);
     }
 
     AperakMessage createResponse(String reference, String senderPartyId) {

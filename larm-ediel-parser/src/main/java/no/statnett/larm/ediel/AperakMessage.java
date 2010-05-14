@@ -4,9 +4,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import no.statnett.larm.edifact.EdifactMessage;
 import no.statnett.larm.edifact.SegmentSource;
 
-public class AperakMessage {
+public class AperakMessage implements EdifactMessage {
 
     private BgmSegment beginMessage;
     private RffSegment referencedMessage;
@@ -40,6 +41,7 @@ public class AperakMessage {
         edifactParser.readOptionalSegment(RffSegment.class);
     }
 
+    @Override
     public void write(Appendable writer) throws IOException {
         beginMessage.write(writer);
         messageDate.write(writer);
@@ -50,7 +52,6 @@ public class AperakMessage {
         for (ErcSegment ercSegment : errorCodes) {
             ercSegment.write(writer);
         }
-
     }
 
     public BgmSegment getBeginMessage() {
