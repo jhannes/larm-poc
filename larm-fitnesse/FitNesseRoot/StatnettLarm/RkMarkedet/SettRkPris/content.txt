@@ -1,0 +1,35 @@
+!contents
+
+'''Brukertilfelle:''' 	Sett RK-pris
+
+-----
+!2 Brukerhistorie:	Som LARM operatør vil jeg beregne priser for reguleringer gjort i Norge
+'''Forklaring:'''
+
+'''Forhåndsbetingelser:'''
+1. Driftstimen er passert
+2. Elspotpriser er tilgjengelige i systemet
+
+'''Testkriterier:'''
+Kun frekvensreguleringer i Valgt område benyttes for å sette pris og dominerende retning
+Marginal RK-pris opp = pris satt av høyeste aktiverte frekvensregulering
+Marginal RK-pris ned = pris satt av laveste aktiverte frekvensregulering
+Marginal RK pris opp/ned = ELSPOT-pris når det ikke finnes frekvensreguleringer
+Dominerende retning = retning med størst kvantum (energi) av frekvensregulering
+Dominerende retning = INGEN når det ikke finnes frekvensreguleringer
+Dominerende retning = INGEN når kvantum er like stort i begge retninger
+Ubalansepris = Marinal RK-pris i dominerende retning
+Ubalansepris = ELSPOT-pris når dominerende retning er INGEN
+
+!2 Brukerhistorie:	Som LARM operatør vil jeg verifisere at reguleringer har fått riktig status for avregning
+'''Forklaring:'''
+En skiller mellom to typer reguleringer; en for å håndtere balansen (frekvensregulering) og en for å håndtere flaskehalser (systemregulering).
+Reguleringstype registreres i brukstilfellet "Velge RK-bud for regulering". Når RK-pris settes skal alle reguleringer få en avregningsstatus som enten er ordinær eller spesial, dette kalles for "omdøping" av reguleringer.
+
+'''Forhåndsbetingelser:'''
+1. Driftstimen er passert
+2. RK-priser må være beregnet
+
+'''Testkriterier:'''
+Alle reguleringer (både frekvensreguleringer og systemreguleringer) som ligger innenfor marginalpris for respektive retning får status ordinær regulering
+Systemreguleringer som ligger utenfor marginalpris får status spesialregulering

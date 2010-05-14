@@ -1,0 +1,46 @@
+!contents
+'''Brukertilfelle:''' 	Motta bud for RK-markedet
+
+-----
+!3 '''Brukerhistorie:''' Som Balanseansvarlig vil jeg sende inn et gyldig bud til Statnett slik at jeg kan være med i RKM
+'''Forklaring:'''	
+Bud i RKM må oppfylle regler for priser
+	Balanseansvarlig skal motta kvittering for ugyldig innsendt bud
+'''Forhåndsbetingelser:'''	
+1. Aktør og balanseansvarlig må være registrert med stasjonsgruppe i LARM
+	2. RK-uken er opprettet Elspotområdene må være opprettet for uken
+	3. RK-døgnet er opprettet Elspotpriser, valuta og netto utveksling mellom Elspotområdene må være mottatt fra Nordpool
+
+Tester først at når følgende elementer er riktige i meldingen så returneres en positiv APERAK:
+!|budgiver|meldingsdato|start|stopp|stasjonsgruppe|elspotområde|tidsrom|kvantum|pris|
+
+!3 '''Brukerhistorie:''' Som Balanseansvarlig vil jeg motta kvittering om ugyldig bud dersom jeg sender bud med ugyldig pris
+'''Forklaring:'''	
+Bud i RKM må oppfylle regler for priser
+	Balanseansvarlig skal motta kvittering for ugyldig innsendt bud
+
+'''Forhåndsbetingelser:'''	
+1. Aktør og balanseansvarlig må være registrert med stasjonsgruppe i LARM
+	2. RK-uken er opprettet (Elspotområdene må være opprettet for uken)
+	3. RK-døgnet er opprettet (Elspotpriser, valuta og netto utveksling mellom Elspotområdene må være mottatt fra Nordpool)
+
+Testkriterier:
+ * Beløpet er ikke i hele 5 kroner
+ * Budet har priser over maks grense (5000 Euro)
+ * Budet har feil pris ved nedregulering i forhold til spot-pris i ett eller flere intervaller: Skal ikke være høyere enn nærmeste hele 5 kroner under elspot
+ * Budet har feil pris ved oppregulering i forhold til spot-pris i ett eller flere intervaller: Skal ikke være lavere enn nærmeste hele 5 kroner over elspot
+ * Budet har ikke samme pris på alle intervallene
+
+Sjekker da her at en negativ APERAK med riktig forklaring av feil pris returneres
+
+!3 '''Brukerhistorie:''' Som LARM operatør vil jeg at norske RK-bud sendes til NOIS slik at jeg kan se en samlet liste med RK-bud for det nordiske synkronområdet
+'''Forklaring:'''	
+LARM skal sende budrapport til NOIS
+
+'''Forhåndsbetingelser:'''	
+1. Gyldige bud har blitt mottatt og er er lagret i LARM
+
+'''Testkriterier:'''
+ * NOIS skal motta budrapport med alle innkomne bud uten aktørinformasjon
+ * NOIS skal mottta første rapport kl 23:00 dagen før driftsdøgnet
+

@@ -1,0 +1,20 @@
+!contents
+
+!|table:stasjonsgrupper|
+|Stasjonsgruppe|Elspotområde|
+|NOKG00049|NO1|
+
+!|table:budmelding|
+|budgiver|meldingsdato|start|slutt|
+|7080005050999|200811301505|200912010000|200912012400|
+
+!|table:bud|
+|stasjonsgruppe|pris| t1|t2|t3|t4|t5|t6|t7|t8|t9|t10|t11|t12|t13|t14|t15t|t16|t17|t18|t19|t20|t21|t22|t23|24|
+|NOKG00049|700      | 29|29|  |29 |   |  |  |  |  |44 |44 |44 |   |   |    |   |   |   |   |   |   |   |   |  |
+|NOKG00049|400      |   |  |  |-50|-50|  |  |  |  |   |   |   |   |   |    |   |-12|   |   |   |   |   |   |  |
+
+
+
+!|Query:PositiveAPERAK|
+|Melding|Resultat|Budgiver|Id-ref|
+|APERAK|29|||

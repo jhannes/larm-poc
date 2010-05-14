@@ -1,0 +1,31 @@
+!contents
+
+'''Brukertilfelle:''' 	Velg RK-bud for regulering
+-----
+!2 Brukerhistorie:	Som LARM operatør vil jeg velge et bud for å aktivere en regulering
+'''Forklaring:'''
+LARM operatør markerer et bud i sortert liste for aktivering av regulering. Da må følgende data kunne presenteres for aktiveringen av budet: dato, starttidspunkt, sluttidspunkt, effekt, frekvensregulering, systemregulering, pris og følg anmelding.
+Operatør kan godta forslag fra systemet eller manuelt endre disse.
+
+'''Forhåndsbetingelser:'''
+
+'''Testkriterier:'''
+Når et bud/anmelding aktiveres skal det lagres som en regulering i LARM database
+Ved nedregulering vises effekt med negativt fortegn
+Forslag til starttid er nåtid + 5 min.
+Forslag til type regulering skal være frekvensregulering og ikke systemregulering
+Forslag til følg anmelding/bud skal være valgt
+Forslag til stopptid skal ikke settes
+
+!2 Brukerhistorie:	Som LARM operatør vil jeg stoppe en regulering
+'''Forklaring:'''
+LARM operatør markerer en aktiv regulering i sortert liste for å avslutte reguleringen.
+Da må følgende data kunne presenteres for aktiveringen av budet: dato, starttidspunkt, sluttidspunkt, effekt, frekvensregulering, systemregulering, pris og følg anmelding.
+
+'''Forhåndsbetingelser:'''
+ 
+'''Testkriterier:'''
+Hvis operatør velger å stoppe regulering skal system foreslå stopptidspunkt = t+5 minutter (hvor t er nåtidspunkt)
+Når operatør har trykket OK skal reguleringen endre status til stoppet i LARM database
+
+

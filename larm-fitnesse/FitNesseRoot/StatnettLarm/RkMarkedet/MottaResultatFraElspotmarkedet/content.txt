@@ -1,0 +1,15 @@
+!contents
+
+'''Brukertilfelle:''' 	Motta resultat fra Elspotmarkedet
+-----
+!2 Brukerhistorie:	Nordpool sender Elspotpriser til LARM slik at RK-døgn kan opprettes
+'''Forklaring:'''	
+Elspotpriser brukes i LARM for å validere RK-bud samt å opprette fellesprisområder. Definisjoner på fellesprisområde: automatisk sammenslåtte elspotområder (av LARM) basert på elspotpris per time i regulerkraftmarkedet
+
+'''Forhåndsbetingelser:'''	1. Elspotområder må være definert i databasen
+
+'''Testkriterier:'''
+Gyldig melding med Elspotpriser for neste døgn lagres i LARM
+Fellesprisområder skal defineres for hver time
+
+

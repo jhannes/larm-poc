@@ -1,0 +1,46 @@
+!contents
+
+'''Brukertilfelle:''' 	Vis sortert liste
+
+-----
+!2 Brukerhistorie:	Som LARM operatør vil jeg se sortert liste slik at jeg kan få oversikt over priser på bud, opp- og ned-reguleringer og kvantiteter
+'''Forklaring:'''
+LARM operatøren trenger å se priser på bud og tilhørende kvantiteter pr. stasjonsgruppe per driftsdøgn sortert riktig for å kunne utføre reguleringene i RK markedet.
+Definisjoner på fellesprisområde: automatisk sammenslåtte elspotområder (av LARM) i driftsdøgnet basert på elspotpris per time i regulerkraftmarkedet
+
+'''Forhåndsbetingelser:'''
+1. Aktører må være definert i databasen
+2. Bud må være mottatt og lagret i databasen
+3. Bud må inneholde driftsdøgn, stasjonsgruppe, elspotområde, pris, kvantum og tidsintervall (time 1-24), retning, evt også varighet og hviletid (dette brukes av noen aktører)
+4. Elspotområder må være definert i databasen
+5.  Alle priser er norsk valuta
+
+'''Testkriterier:'''
+Listen skal være sortert med oppreguleringer først, og med nedreguleringer sist
+Innenfor oppreguleringer skal høyeste pris være øverst.
+Innenfor nedreguleringer skal høyeste pris være øverst
+Sortert liste må kunne vises per elspotområde og for hele Norge (alle elspotområdene) samt for valgfrie elspotområder sammen
+Sortert liste skal per bud vise stasjonsgruppe, pris, varighet, hviletid, kvantum per time
+Sortert liste skal vise hvilket driftsdøgn som det vises bud for.
+Feltet med oppreguleringer skal skilles grafisk fra nedreguleringer (i Sareg er det 2 forskjellige bakgrunnsfarger)
+
+!2 Brukerhistorie:	Som LARM operatør vil jeg se dimensjonerende feil markert i sortert liste
+'''Forklaring:'''
+LARM operatøren skal se dimensjonerende feil markert på de dyreste budene i sortert liste
+
+'''Forhåndsbetingelser:'''
+1. Aktører må være definert i databasen
+2. Bud må være mottatt og lagret i databasen
+3. Bud må inneholde driftsdøgn, stasjonsgruppe, elspotområde(?), pris, kvantum og tidsintervall (time 1-24), evt også varighet og hviletid (dette brukes av noen aktører)
+4. Elspotområder må være definert i databasen
+5. Elspot priser må være mottatt fra Nordpool
+6. Alle priser er norsk valuta
+
+
+'''Testkriterier:'''
+De dyreste oppreguleringsbudene i hele Norge innenfor time som i sum er større eller lik dimensjonerende feil, skal markeres.
+Innenfor samme prisintervall skal minste volum som oppfyller kriteriene velges
+Dersom listen vises for et elspotområde skal de budene som er markert som dimensjonerende feil for hele Norge fremdeles være markert.
+Dimensjonerende feil skal kunne endres i sortert liste
+Operatør skal kunne plukke ut stasjonsgruppe som ikke skal inngå i beregning av dimensjonerende feil.
+
