@@ -2,6 +2,7 @@ package no.statnett.larm.ediel;
 
 import java.io.IOException;
 
+import no.statnett.larm.edifact.EdifactSegmentWriter;
 import no.statnett.larm.edifact.QualifiedEdifactSegmentGroup;
 import no.statnett.larm.edifact.Segment;
 import no.statnett.larm.edifact.SegmentSource;
@@ -46,8 +47,8 @@ public class NadSegment extends QualifiedEdifactSegmentGroup {
     }
 
     @Override
-    public void write(Appendable writer) throws IOException {
-        this.writeSegment(writer);
+    public void write(EdifactSegmentWriter writer) throws IOException {
+        writer.writeSegment(this);
         if (contactInfo != null) contactInfo.write(writer);
     }
 

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import no.statnett.larm.edifact.EdifactMessage;
+import no.statnett.larm.edifact.EdifactSegmentWriter;
 import no.statnett.larm.edifact.SegmentSource;
 
 public class AperakMessage implements EdifactMessage {
@@ -42,7 +43,7 @@ public class AperakMessage implements EdifactMessage {
     }
 
     @Override
-    public void write(Appendable writer) throws IOException {
+    public void write(EdifactSegmentWriter writer) throws IOException {
         beginMessage.write(writer);
         messageDate.write(writer);
         arrivalTime.write(writer);
@@ -105,6 +106,31 @@ public class AperakMessage implements EdifactMessage {
     public void setDocumentRecipient(NadSegment documentRecipient) {
         this.documentRecipient = documentRecipient;
         documentRecipient.setQualifier("DO");
+    }
+
+    @Override
+    public String getAgency() {
+        return "UN";
+    }
+
+    @Override
+    public String getAssociatedCode() {
+        return "EDIEL2";
+    }
+
+    @Override
+    public String getMessageType() {
+        return "APERAK";
+    }
+
+    @Override
+    public String getRelease() {
+        return "96A";
+    }
+
+    @Override
+    public String getVersion() {
+        return "D";
     }
 
 }

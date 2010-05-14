@@ -4,6 +4,16 @@ import java.io.IOException;
 
 public interface EdifactMessage {
 
-    void write(Appendable writer) throws IOException;
+    void write(EdifactSegmentWriter writer) throws IOException;
+
+    String getMessageType();
+
+    String getVersion();
+
+    String getRelease();
+
+    String getAgency();
+
+    String getAssociatedCode();
 
 }

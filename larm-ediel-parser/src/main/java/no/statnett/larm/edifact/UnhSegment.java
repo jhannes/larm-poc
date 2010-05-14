@@ -6,14 +6,13 @@ public class UnhSegment extends EdifactSegment {
         setSegmentName("UNH");
     }
 
-    public UnhSegment(String messageType, String version, String release, String agency, String associatedCode) {
+    public UnhSegment(EdifactMessage message) {
         this();
         setElementComponent(0, 0, "1");
-        setElementComponent(1, 0, messageType);
-        setElementComponent(1, 1, version);
-        setElementComponent(1, 2, release);
-        setElementComponent(1, 3, agency);
-        setElementComponent(1, 4, associatedCode);
+        setElementComponent(1, 0, message.getMessageType());
+        setElementComponent(1, 1, message.getVersion());
+        setElementComponent(1, 2, message.getRelease());
+        setElementComponent(1, 3, message.getAgency());
+        setElementComponent(1, 4, message.getAssociatedCode());
     }
-
 }

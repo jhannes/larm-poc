@@ -15,8 +15,12 @@ public class UnaSegment extends EdifactSegment {
         this.serviceAdviceString = serviceAdviceString;
     }
 
-    @Override
     public void write(Appendable writer) throws IOException {
         writer.append(getSegmentName() + serviceAdviceString + "\n");
+    }
+
+    @Override
+    public void write(EdifactSegmentWriter writer) throws IOException {
+        throw new UnsupportedOperationException(this + " must be written without segment writer");
     }
 }

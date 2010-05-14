@@ -4,6 +4,7 @@ import static org.fest.assertions.Assertions.assertThat;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.StringWriter;
 
 import no.statnett.larm.core.repository.Repository;
 import no.statnett.larm.core.repository.inmemory.InmemoryRepository;
@@ -88,7 +89,7 @@ public class EdielServiceTest {
         assertThat(quotesFileTestDir.listFiles()).isNotEmpty();
         for (File quotesFile : quotesFileTestDir.listFiles()) {
             repository.deleteAll(ReservekraftBud.class);
-            service.readMessage(new FileReader(quotesFile));
+            service.process("", new FileReader(quotesFile), new StringWriter());
             assertThat(repository.findAll(ReservekraftBud.class)).isNotEmpty();
         }
     }
@@ -110,7 +111,7 @@ public class EdielServiceTest {
 
         assertThat(aperak.getMessageFrom().getPartyId()).isEqualTo(ourPartyId);
         assertThat(aperak.getMessageFrom().getResponsibleAgency()).isEqualTo("9");
-        assertThat(aperak.getMessageFrom().getCity()).isEqualTo("OSLO");
+        assertThat(aperak.getMessageFrom().getCity()).isEqualTo("Oslo");
         assertThat(aperak.getMessageFrom().getCountry()).isEqualTo("NO");
         assertThat(aperak.getMessageFrom().getContactInfo().getDepartment()).isEqualTo("Landsentralen");
 

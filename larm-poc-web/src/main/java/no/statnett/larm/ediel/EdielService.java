@@ -25,7 +25,9 @@ public class EdielService {
 
     public void process(String fileName, Reader edifactRequest, Appendable edifactResponse) throws IOException {
         this.fileName = fileName;
-        AperakMessage response = readMessage(edifactRequest);
+        QuoteParser quoteParser = new QuoteParser(edifactRequest);
+        QuoteMessage quoteMessage = quoteParser.parseMessage();
+        AperakMessage response = readMessage(quoteMessage);
         writeMessage(edifactResponse, response);
     }
 
@@ -34,7 +36,7 @@ public class EdielService {
         interchange.setSyntax("UNOB", "2");
         interchange.setSender(aperakMessage.getMessageFrom().getPartyId(), "14", "REGULERKRAFT");
         interchange.setRecipient(aperakMessage.getDocumentRecipient().getPartyId(), "14", "REGULERKRAFT");
-        interchange.setReference(String.valueOf(System.currentTimeMillis()));
+        interchange.setControlReference(String.valueOf(System.currentTimeMillis()));
         interchange.write(writer);
     }
 
@@ -46,7 +48,7 @@ public class EdielService {
         aperakMessage.setReferencedMessage(new RffSegment().setReference(reference));
 
         NadSegment messageFrom = new NadSegment("7080000923168", "9");
-        messageFrom.setCity("OSLO");
+        messageFrom.setCity("Oslo");
         messageFrom.setCountry("NO");
         messageFrom.setContactInfo(new CtaSegment("MR").setDepartment("Landsentralen"));
         aperakMessage.setMessageFrom(messageFrom);
@@ -55,9 +57,7 @@ public class EdielService {
         return aperakMessage;
     }
 
-    AperakMessage readMessage(Reader reader) throws IOException {
-        QuoteParser quoteParser = new QuoteParser(reader);
-        QuoteMessage quoteMessage = quoteParser.parseMessage();
+    AperakMessage readMessage(QuoteMessage quoteMessage) throws IOException {
         DateTime processingStartTime = quoteMessage.getProcessingStartTime().getDateTime();
         DateTime processingEndTime = quoteMessage.getProcessingEndTime().getDateTime();
 

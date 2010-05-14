@@ -73,19 +73,8 @@ public class EdifactSegment {
         this.segmentName = segmentName;
     }
 
-    public void write(Appendable writer) throws IOException {
-        writer.append(getSegmentName());
-        for (EdifactDataElement element : getDataElements()) {
-            // TODO: Get from ParserContext
-            writer.append("+");
-            boolean first = true;
-            for (String component : element.getComponentData()) {
-                if (!first) writer.append(":");
-                writer.append(component);
-                first = false;
-            }
-        }
-        writer.append("'\n");
+    public void write(EdifactSegmentWriter writer) throws IOException {
+        writer.writeSegment(this);
     }
 
     @Override
