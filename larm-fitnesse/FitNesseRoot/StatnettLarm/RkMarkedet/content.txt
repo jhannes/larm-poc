@@ -1,1 +1,51 @@
-!contents
+!contents -R2 -g -p -f -h
+
+!2 Overordnet scenario
+
+ 1 Trigger: NordPool sender Elspotpriser til LARM etter at Elspotmarkedet har stengt
+ 2 LARM klargjør automatisk RK-markedet for neste driftsdøgn
+ 3 Aktør i RK-markedet sender bud for regulerkraft fram til 1 minutt før driftstimen
+ 4 LARM sender akkumulert budrapport til NordPool
+ 5 LARM sender bud til NOIS
+ 6 Trigger: Behov for regulering oppstår under driftstimen
+ 7 LARM Operatør aktiverer bud fra liste
+ 8 LARM aktiverer budet hos aktøren
+ 9 LARM sender informasjon om aktiveringen til NOIS
+ 0 Trigger: NOIS sender RK-pris til LARM etter at driftstimen er over
+ 0 LARM sender avregningsgrunnlag til avregningsansvarlig
+
+!2 Overordnet scenario (med kommentarer)
+
+ 1 Trigger: NordPool sender Elspotpriser til LARM etter at Elspotmarkedet har stengt
+   * Markedet stenger 12:00, prisene kommer til LARM som en SLSRPT så snart de er klare og innen 14:00.
+ 2 LARM klargjør automatisk RK-markedet for neste driftsdøgn
+   * Alternativ: Operatør klargjør RK-markedet manuelt
+ 3 Aktør i RK-markedet sender bud for regulerkraft fram til 1 minutt før driftstimen
+   * Variant: Aktør oppdaterer sitt bud
+     1 Aktør kan oppdatere tilgjengelig volum for hele eller deler av perioden
+     2 Aktør kan slette budet ved å sette volum = 0 og sende et nytt bud for å endre pris
+   * Bud inneholder: Pris, evt maks/min varighet og hviletid mellom aktiveringer, om budet er oppregulering (produsere mer eller forbruke mindre) eller nedregulering (produsere mindre), tilgjengelig volum for hver time gjennom døgnet
+   * Aktør i RK-markedet kan oppdatere bud inntil 1 minutt før driftstimen.
+   * Aktør kan oppdatere pris og tilgjengelig volum for hele eller deler av perioden
+   * Variant: Bud etter 23:00 døgnet før driftsdøgnet må manuelt godkjennes av operatør
+ 4 LARM sender akkumulert budrapport til NordPool
+   * Budene akkumuleres fram til budfristen (19:30)
+   * Endringer etter budfristen akkumuleres og sendes per time
+   * Dette steget kan hende utgår til fordel for at NOIS sender info til NordPool
+ 5 LARM sender bud til NOIS
+   * Budene akkumuleres fram til 23:00
+   * Etter 23:00 akkumuleres oppdateringer i budene per hele halvtime
+ 6 Trigger: Behov for regulering oppstår under driftstimen
+   * Operatør ser dette på grunnlag av frekvensavvik eller meldinger fra SCADA
+ 7 LARM Operatør aktiverer bud fra liste
+   * "LARM brukes kun nå laveste bud ligger i Norge. Øvrige bud håndteres i NOIS" (2.16.1.2)
+   * Operatøren kan endre på en aktiv aktivering
+   * Aktiveringen inneholder: Starttidspunkt, type regulering (frekvens/system) og volum
+   * Operatør kan etterregistrere en aktivering
+ 8 LARM aktiverer budet hos aktøren
+   * Alternativ (dagens løsning): LARM Operatør ringer aktør for å aktivere budet
+ 9 LARM sender informasjon om aktiveringen til NOIS
+   * "LARM skal også gjøre dette med automatisk oppstart ved hvert timeskift for å få med reguleringer som i ettertid er omdøpt"
+ 0 Trigger: NOIS sender RK-pris til LARM etter at driftstimen er over
+   * LARM operatør kan overstyre RK-prisen
+ 0 LARM sender avregningsgrunnlag til avregningsansvarlig
