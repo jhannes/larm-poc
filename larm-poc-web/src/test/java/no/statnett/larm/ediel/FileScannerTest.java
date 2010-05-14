@@ -28,7 +28,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 public class FileScannerTest {
-    private int index = 0;
+    private static int index = 0;
     private File testDir = new File("target/file-test/" + System.currentTimeMillis() + "-" + index++);
     private File inputDir = new File(testDir, "input");
     private File outputDir = new File(testDir, "output");
