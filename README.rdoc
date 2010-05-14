@@ -49,6 +49,12 @@ These files are the starting points for the runtime:
 * <tt>no.statnett.larm.poc.client.ApplicationFrame</tt>
   * Locates the server Repository (can be two-tier or three-tier, based on URL)
   * Sets up the client's panels in the application frame
+  
+== FITNESSE
+
+* Run fitnesseMain.FitNesseMain from the larm-fitnesse project, or execute larm-poc/larm-fitnesse/run-fitnesse.bat
+* Access FitNesse at http://localhost:8090
+  
 
 == STYLE GUIDE (ECLIPSE)
 
