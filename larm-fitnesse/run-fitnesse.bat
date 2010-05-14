@@ -1,3 +1,3 @@
 cd %~dp0
 
-mvn antrun:run
+mvn pre-integration-test -Dfitnesse.spawn=false

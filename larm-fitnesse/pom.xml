@@ -1,67 +1,77 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>no.statnett.larm</groupId>
-	<artifactId>larm-fitnesse</artifactId>
-	<version>1.0-SNAPSHOT</version>
-	<name>larm-fitnesse</name>
-	<packaging>jar</packaging>
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+      <groupId>no.statnett.larm</groupId>
+      <artifactId>larm-poc</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>larm-fitnesse</artifactId>
+    <name>larm-fitnesse</name>
+    <packaging>jar</packaging>
 
-	<dependencies>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>larm-poc-client</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>larm-poc-web</artifactId>
-			<version>${project.version}</version>
-			<type>war</type>
-		</dependency>
-		<dependency>
-			<groupId>org.fitnesse</groupId>
-			<artifactId>fitnesse</artifactId>
-			<version>20100303</version>
-			<scope>compile</scope>
-		</dependency>
-		<!--
-			<dependency> <groupId>org.fitnesse</groupId>
-			<artifactId>fitlibrary</artifactId> <version>20080812</version>
-			<scope>compile</scope> </dependency>
-		-->
-	</dependencies>
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>larm-poc-client</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>larm-poc-web</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <groupId>org.fitnesse</groupId>
+            <artifactId>fitnesse</artifactId>
+            <version>20100303</version>
+            <scope>compile</scope>
+        </dependency>
+        <!--
+            <dependency> <groupId>org.fitnesse</groupId>
+            <artifactId>fitlibrary</artifactId> <version>20080812</version>
+            <scope>compile</scope> </dependency>
+        -->
+    </dependencies>
 
-	<build>
-		<plugins>
-			<plugin>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<executions>
-					<execution>
-						<goals><goal>run</goal></goals>
-						<configuration>
-							<tasks>
-								<property name="compile_classpath" refid="maven.compile.classpath" />
-								<java classname="fitnesseMain.FitNesseMain" fork="true">
-									<arg line="-p 8090" />
-									<classpath>
-										<pathelement path="${compile_classpath}" />
-									</classpath>
-								</java>
-							</tasks>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-				</configuration>
-			</plugin>
-		</plugins>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>pre-integration-test</phase>
+                        <goals><goal>run</goal></goals>
+                        <configuration>
+                            <tasks>
+                                <property name="compile_classpath" refid="maven.compile.classpath" />
+                                <java classname="fitnesse.Shutdown" fork="true">
+                                  <arg line="-p ${fitnesse.port}" />
+                                  <classpath>
+                                    <pathelement path="${compile_classpath}" />
+                                  </classpath>
+                                </java>
+                                <java classname="fitnesseMain.FitNesseMain" fork="true" spawn="${fitnesse.spawn}">
+                                    <arg line="-p ${fitnesse.port}" />
+                                    <classpath>
+                                        <pathelement path="${compile_classpath}" />
+                                    </classpath>
+                                </java>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+        </plugins>
 
-	</build>
+    </build>
 
 </project>
