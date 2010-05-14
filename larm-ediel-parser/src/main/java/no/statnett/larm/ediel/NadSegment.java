@@ -12,6 +12,8 @@ import no.statnett.larm.edifact.SegmentSource;
 @Segment("NAD")
 public class NadSegment extends QualifiedEdifactSegmentGroup {
 
+    private CtaSegment contactInfo;
+
     public String getPartyId() {
         return getElementComponent(1, 0);
     }
@@ -22,8 +24,20 @@ public class NadSegment extends QualifiedEdifactSegmentGroup {
     }
 
     public void readSegmentGroup(SegmentSource edifactParser) throws IOException {
-        edifactParser.readOptionalSegment(CtaSegment.class);
+        contactInfo = edifactParser.readOptionalSegment(CtaSegment.class);
         edifactParser.readOptionalSegment(ComSegment.class);
+    }
+
+    public String getCity() {
+        return getElementData(5);
+    }
+
+    public String getCountry() {
+        return getElementData(8);
+    }
+
+    public CtaSegment getContactInfo() {
+        return contactInfo;
     }
 
 }

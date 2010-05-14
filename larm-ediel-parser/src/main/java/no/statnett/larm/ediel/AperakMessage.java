@@ -12,6 +12,8 @@ public class AperakMessage {
     private RffSegment referencedMessage;
     private DtmSegment messageDate;
     private DtmSegment arrivalTime;
+    private NadSegment messageFrom;
+    private NadSegment documentRecipient;
     private List<ErcSegment> errorCodes = new ArrayList<ErcSegment>();
 
     public List<ErcSegment> getErrorCodes() {
@@ -25,8 +27,8 @@ public class AperakMessage {
         arrivalTime = edifactParser.readMandatorySegment(DtmSegment.class, "178");
 
         referencedMessage = edifactParser.readMandatorySegment(RffSegment.class);
-        edifactParser.readOptionalSegmentGroup(NadSegment.class, "FR");
-        edifactParser.readOptionalSegmentGroup(NadSegment.class, "DO");
+        messageFrom = edifactParser.readOptionalSegmentGroup(NadSegment.class, "FR");
+        documentRecipient = edifactParser.readOptionalSegmentGroup(NadSegment.class, "DO");
         edifactParser.readOptionalSegmentGroup(NadSegment.class, "C1");
         edifactParser.readOptionalSegmentGroup(NadSegment.class, "C2");
 
@@ -77,6 +79,22 @@ public class AperakMessage {
     public void setArrivalTime(DtmSegment arrivalTime) {
         this.arrivalTime = arrivalTime;
         arrivalTime.setQualifier("178");
+    }
+
+    public NadSegment getMessageFrom() {
+        return messageFrom;
+    }
+
+    public void setMessageFrom(NadSegment messageFrom) {
+        this.messageFrom = messageFrom;
+    }
+
+    public NadSegment getDocumentRecipient() {
+        return documentRecipient;
+    }
+
+    public void setDocumentRecipient(NadSegment documentRecipient) {
+        this.documentRecipient = documentRecipient;
     }
 
 }

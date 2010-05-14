@@ -14,16 +14,25 @@ public class EdifactDataElement {
     }
 
     public EdifactDataElement() {
-    	this.componentData = new ArrayList<String>();
-	}
+        this.componentData = new ArrayList<String>();
+    }
 
-	public List<String> getComponentData() {
+    public List<String> getComponentData() {
         return componentData;
     }
 
     @Override
     public String toString() {
         return dataElement;
+    }
+
+    public void update(String componentSeparator) {
+        StringBuilder newDataElement = new StringBuilder();
+        for (String component : componentData) {
+            if (newDataElement.length() > 0) newDataElement.append(componentSeparator);
+            newDataElement.append(component);
+        }
+        this.dataElement = newDataElement.toString();
     }
 
 }

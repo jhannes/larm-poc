@@ -64,7 +64,6 @@ public class EdifactParser implements SegmentSource {
     }
 
     private List<EdifactDataElement> parseElements(final List<String> dataElements) {
-
         List<EdifactDataElement> result = new ArrayList<EdifactDataElement>();
         for (String element : dataElements) {
             List<String> tokens = lexer.getDataElementComponents(element);
