@@ -20,6 +20,8 @@
         	<exclude>LICENSE</exclude>
         	<exclude>NOTICE</exclude>
      		<exclude>META-INF/*.txt</exclude>
+            <exclude>META-INF/LICENSE</exclude>
+            <exclude>META-INF/NOTICE</exclude>
      	</excludes>
       </unpackOptions>
       <scope>runtime</scope>
