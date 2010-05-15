@@ -1,18 +1,18 @@
 package no.statnett.larm.poc.client.stasjon;
 
 import java.util.List;
-import java.util.Vector;
 
 import javax.naming.NamingException;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import no.statnett.larm.LarmHibernateRepository;
 import no.statnett.larm.client.ListDialog;
+import no.statnett.larm.client.PropertyTableModel;
 import no.statnett.larm.core.async.SyncAsyncProxy;
 import no.statnett.larm.core.repository.Repository;
 import no.statnett.larm.core.repository.RepositoryAsync;
 import no.statnett.larm.poc.client.ApplicationFrame;
+import ch.lambdaj.Lambda;
 
 public class StasjonListDialog extends ListDialog<Stasjon> {
     private static final long serialVersionUID = 3377211805587015468L;
@@ -21,26 +21,13 @@ public class StasjonListDialog extends ListDialog<Stasjon> {
         super(repositoryAsync, new StasjonSpecificationPanel());
     }
 
-    private Vector<Object> getRowData(Stasjon stasjon) {
-        Vector<Object> vector = new Vector<Object>();
-        vector.add(stasjon.getNavn());
-        vector.add(stasjon.getFastområde());
-        return vector;
-    }
-
     @Override
     protected TableModel createTableModel(List<Stasjon> searchResults) {
-        DefaultTableModel tableModel = new DefaultTableModel();
-        tableModel.addColumn("Stasjonsnavn");
-        tableModel.addColumn("Fastområde");
-
-        for (Stasjon stasjon : searchResults) {
-            tableModel.addRow(getRowData(stasjon));
-        }
-
+        PropertyTableModel<Stasjon> tableModel = new PropertyTableModel<Stasjon>(searchResults);
+        tableModel.addLambdaColumn("Stasjonsnavn", Lambda.on(Stasjon.class).getNavn());
+        tableModel.addLambdaColumn("Fastområde", Lambda.on(Stasjon.class).getFastområde());
         return tableModel;
     }
-
 
     public static void main(String[] args) throws NamingException {
         Repository repository = LarmHibernateRepository.withFileDb();
