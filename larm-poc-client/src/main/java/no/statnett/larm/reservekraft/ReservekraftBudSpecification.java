@@ -33,12 +33,20 @@ public class ReservekraftBudSpecification implements HibernateSpecification<Rese
         return ReservekraftBud.class;
     }
 
+    public DateMidnight getDriftsdøgn() {
+        return driftsdøgn;
+    }
+
     public void setDriftsdøgn(DateMidnight driftsdøgn) {
         this.driftsdøgn = driftsdøgn;
     }
 
     public void setDriftsperiode(Interval driftsperiode) {
         this.driftsperiode = driftsperiode;
+    }
+
+    public Collection<Elspotområde> getElspotområder() {
+        return elspotområder;
     }
 
     @Override

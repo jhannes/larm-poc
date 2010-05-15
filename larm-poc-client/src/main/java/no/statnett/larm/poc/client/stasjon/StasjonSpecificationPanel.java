@@ -4,9 +4,10 @@ import java.awt.FlowLayout;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JPanel;
 
-public class StasjonSpecificationPanel extends JPanel {
+import no.statnett.larm.client.SpecificationPanel;
+
+public class StasjonSpecificationPanel extends SpecificationPanel<Stasjon> {
     private static final long serialVersionUID = 5610231349517185680L;
     private JCheckBox includeF01Checkbox = new JCheckBox("F01");
     private JCheckBox includeF02Checkbox = new JCheckBox("F02");
@@ -27,6 +28,7 @@ public class StasjonSpecificationPanel extends JPanel {
         return includeF02Checkbox;
     }
 
+    @Override
     public StasjonSpecification getSpecification() {
         StasjonSpecification specification = new StasjonSpecification();
         specification.setIncludeF01(includeF01Checkbox.isSelected());
@@ -34,6 +36,7 @@ public class StasjonSpecificationPanel extends JPanel {
         return specification;
     }
 
+    @Override
     public JButton getSearchButton() {
         return searchButton;
     }

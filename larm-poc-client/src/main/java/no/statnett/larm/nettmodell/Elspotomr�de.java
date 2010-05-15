@@ -5,7 +5,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
-public class Elspotområde {
+public class Elspotområde implements Comparable<Elspotområde> {
 
     @SuppressWarnings("unused")
     @Id @GeneratedValue
@@ -24,6 +24,15 @@ public class Elspotområde {
     @Override
     public String toString() {
         return "Elspotområde<" + navn + ">";
+    }
+
+    public String getNavn() {
+        return navn;
+    }
+
+    @Override
+    public int compareTo(Elspotområde o) {
+        return navn.compareTo(o.getNavn());
     }
 
 }

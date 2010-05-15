@@ -21,10 +21,11 @@ public class StasjonListDialogTest {
     @Test
     public void shouldCreateSpecification() {
         StasjonListDialog dialog = new StasjonListDialog(null);
-        dialog.getSearchPanel().getIncludeF01Checkbox().setSelected(true);
-        dialog.getSearchPanel().getIncludeF02Checkbox().setSelected(false);
+        StasjonSpecificationPanel searchPanel = (StasjonSpecificationPanel) dialog.getSearchPanel();
+        searchPanel.getIncludeF01Checkbox().setSelected(true);
+        searchPanel.getIncludeF02Checkbox().setSelected(false);
 
-        StasjonSpecification specification = dialog.getSearchPanel().getSpecification();
+        StasjonSpecification specification = searchPanel.getSpecification();
 
         assertThat(specification.getIncludeF01()).isTrue();
         assertThat(specification.getIncludeF02()).isFalse();
@@ -43,7 +44,7 @@ public class StasjonListDialogTest {
 
         JTable searchResult = dialog.getSearchResult();
         assertThat(searchResult.getModel().getColumnName(0)).isEqualTo("Stasjonsnavn");
-        assertThat(searchResult.getModel().getColumnName(1)).isEqualTo("Fastomr�de");
+        assertThat(searchResult.getModel().getColumnName(1)).isEqualTo("Fastområde");
         assertThat(searchResult.getModel().getValueAt(0, 0)).isEqualTo("Foo");
         assertThat(searchResult.getModel().getValueAt(1, 1)).isEqualTo("F09");
         assertThat(searchResult.getModel().getRowCount()).isEqualTo(stasjoner.size());
