@@ -1,6 +1,5 @@
 package no.statnett.larm.poc.client;
 
-import javax.naming.NamingException;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -27,7 +26,7 @@ public class ApplicationFrame {
         });
     }
 
-    public static void main(String[] args) throws NamingException {
+    public static void main(String[] args) {
         String clientUrl = args.length > 0 ? args[0] : null;
 
         StasjonListDialog dialog = new StasjonListDialog(createClientRepository(clientUrl));
@@ -35,7 +34,7 @@ public class ApplicationFrame {
 
     }
 
-    private static RepositoryAsync createClientRepository(String clientUrl) throws NamingException {
+    private static RepositoryAsync createClientRepository(String clientUrl) {
         if (clientUrl == null) {
             Repository repository = LarmHibernateRepository.withFileDb();
             repository.insert(Stasjon.medNavnOgFastområde("Stasjon 1", "F01"));

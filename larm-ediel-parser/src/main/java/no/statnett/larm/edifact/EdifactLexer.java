@@ -66,7 +66,7 @@ class EdifactLexer {
         this.lastRead = new CircularBuffer(lastReadBufferSize);
     }
 
-    EdifactLexer(ParserContext pc, String testString, int lastReadBufferSize) throws IOException {
+    EdifactLexer(ParserContext pc, String testString, int lastReadBufferSize) {
         this(pc, new StringReader(testString), lastReadBufferSize);
     }
 

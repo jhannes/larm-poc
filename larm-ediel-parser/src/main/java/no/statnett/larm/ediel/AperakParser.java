@@ -9,7 +9,7 @@ import no.statnett.larm.edifact.SegmentSource;
 public class AperakParser {
     private SegmentSource edifactParser;
 
-    public AperakParser(Reader reader) throws IOException {
+    public AperakParser(Reader reader) {
         this.edifactParser = new EdifactParser(reader);
     }
 

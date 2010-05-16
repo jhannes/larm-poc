@@ -2,7 +2,6 @@ package no.statnett.larm.poc.client.stasjon;
 
 import java.util.List;
 
-import javax.naming.NamingException;
 import javax.swing.table.TableModel;
 
 import no.statnett.larm.LarmHibernateRepository;
@@ -29,7 +28,7 @@ public class StasjonListDialog extends ListDialog<Stasjon> {
         return tableModel;
     }
 
-    public static void main(String[] args) throws NamingException {
+    public static void main(String[] args) {
         Repository repository = LarmHibernateRepository.withFileDb();
         repository.insert(Stasjon.medNavnOgFastområde("Stasjon 1", "F01"));
         repository.insert(Stasjon.medNavnOgFastområde("Stasjon 2", "F01"));

@@ -41,7 +41,7 @@ public class EdielService {
         response.writeTo(edifactWriter);
     }
 
-    EdifactInterchange readInterchange(EdifactInterchange interchange) throws IOException {
+    EdifactInterchange readInterchange(EdifactInterchange interchange) {
         QuoteMessage quoteMessage = (QuoteMessage)interchange.getMessage();
 
         DateTime processingStartTime = quoteMessage.getProcessingStartTime().getDateTime();

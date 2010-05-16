@@ -5,8 +5,6 @@ import static org.fest.assertions.Assertions.assertThat;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.naming.NamingException;
-
 import no.statnett.larm.LarmHibernateRepository;
 import no.statnett.larm.core.repository.Repository;
 import no.statnett.larm.core.repository.inmemory.InmemoryRepository;
@@ -24,7 +22,7 @@ public class StasjonSpecificationTest {
         this.repository = repository;
     }
 
-    @Parameterized.Parameters public static List<Object[]> repositories() throws NamingException {
+    @Parameterized.Parameters public static List<Object[]> repositories() {
         List<Object[]> result = new ArrayList<Object[]>();
         result.add(new Object[] { LarmHibernateRepository.withInmemoryDb() });
         result.add(new Object[] { new InmemoryRepository() });

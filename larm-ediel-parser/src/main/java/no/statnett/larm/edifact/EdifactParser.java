@@ -16,7 +16,7 @@ public class EdifactParser implements SegmentSource {
     private final ParserContext ctx = new ParserContext();
     private final EdifactLexer lexer;
 
-    public EdifactParser(final Reader input) throws IOException {
+    public EdifactParser(final Reader input) {
         this.lexer = new EdifactLexer(ctx, input, 30);
     }
 

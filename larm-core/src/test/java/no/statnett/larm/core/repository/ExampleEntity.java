@@ -36,6 +36,11 @@ public class ExampleEntity {
         return a != null ? a.equals(b) : b == null;
     }
 
+    @Override
+    public int hashCode() {
+        return name != null ? name.hashCode() : -1;
+    }
+
     public static ExampleEntity withNameAndStatus(String name, int status) {
         ExampleEntity testEntity = new ExampleEntity(name);
         testEntity.status = status;

@@ -74,7 +74,7 @@ public abstract class AbstractRepositoryTest {
         @Entity
         class EntityWithoutId {
 
-        };
+        }
 
         repository.insert(new EntityWithoutId());
     }
@@ -86,7 +86,7 @@ public abstract class AbstractRepositoryTest {
             @SuppressWarnings("unused")
             @Id
             private Long id;
-        };
+        }
         repository.insert(new EntityWithId());
     }
 }
