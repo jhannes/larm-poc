@@ -12,6 +12,7 @@ import no.statnett.larm.nettmodell.Elspotområde;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.DistinctRootEntityResultTransformer;
 import org.joda.time.DateMidnight;
 import org.joda.time.Interval;
 
@@ -63,9 +64,9 @@ public class ReservekraftBudSpecification implements HibernateSpecification<Rese
             criteria.createCriteria("volumPerioder", "volumperiode")
                     .add(lt("volumperiode.startTid", driftsperiode.getEnd()))
                     .add(gt("volumperiode.sluttTid", driftsperiode.getStart()))
-                    .add(gt("volumperiode.tilgjengeligVolum", 0L));
+                    .add(gt("volumperiode.tilgjengeligVolum", 0));
         }
-
+        criteria.setResultTransformer(DistinctRootEntityResultTransformer.INSTANCE);
         return criteria;
     }
 

@@ -1,4 +1,4 @@
-package no.statnett.larm.ediel;
+package no.statnett.larm.ediel.servlet;
 
 import static org.apache.commons.io.FileUtils.moveFileToDirectory;
 

@@ -15,8 +15,8 @@ public class RngSegment extends EdifactSegment {
         return getElementComponent(1, 1);
     }
 
-    public Long getQuantity() {
-        return Long.valueOf(getMinimum());
+    public Integer getQuantity() {
+        return Integer.valueOf(getMinimum());
     }
 
     public void setQuantity(Long data) {

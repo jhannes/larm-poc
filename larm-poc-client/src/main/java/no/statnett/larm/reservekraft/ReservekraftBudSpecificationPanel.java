@@ -1,13 +1,17 @@
 package no.statnett.larm.reservekraft;
 
+import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import no.statnett.larm.client.SpecificationPanel;
@@ -19,10 +23,33 @@ import org.joda.time.format.DateTimeFormatter;
 
 public class ReservekraftBudSpecificationPanel extends SpecificationPanel<ReservekraftBud> {
 
+    private DateTimeFormatter format = DateTimeFormat.forPattern("dd.MM.yyyy");
     private static final long serialVersionUID = -45528769624669923L;
-    private JTextField driftsdøgnField = new JTextField();
+    private JTextField driftsdøgnField = new JTextField(12);
     private SortedMap<Elspotområde, JCheckBox> elspotområdeCheckboxlist = new TreeMap<Elspotområde, JCheckBox>();
-    private JButton searchButton = new JButton();
+    private JButton searchButton = new JButton("Søk");
+    private JPanel elspotområderPanel = new JPanel();
+
+    public ReservekraftBudSpecificationPanel() {
+        setLayout(new GridLayout(0, 1));
+
+        JPanel baseOptions = new JPanel();
+        baseOptions.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder("Finn bud"),
+                BorderFactory.createEmptyBorder(5,5,5,5)));
+        baseOptions.add(new JLabel("Driftsdøgn"));
+        //driftsdøgnField.setText(format.print(new DateTime()));
+        baseOptions.add(driftsdøgnField);
+        baseOptions.add(searchButton);
+
+        add(baseOptions);
+
+        elspotområderPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder("Elspotområder"),
+                BorderFactory.createEmptyBorder(5,5,5,5)));
+        add(elspotområderPanel);
+    }
+
 
     public JTextField getDriftsdøgnField() {
         return driftsdøgnField;
@@ -42,7 +69,6 @@ public class ReservekraftBudSpecificationPanel extends SpecificationPanel<Reserv
     }
 
     private DateMidnight getDriftsdøgn() {
-        DateTimeFormatter format = DateTimeFormat.forPattern("dd.MM.yyyy");
         String driftsdøgnValue = this.driftsdøgnField.getText();
         return driftsdøgnValue.isEmpty() ? null : format.parseDateTime(driftsdøgnValue).toDateMidnight();
     }
@@ -59,8 +85,11 @@ public class ReservekraftBudSpecificationPanel extends SpecificationPanel<Reserv
 
     public void setElspotområder(List<Elspotområde> elspotområder) {
         elspotområdeCheckboxlist.clear();
+        elspotområderPanel.removeAll();
         for (Elspotområde elspotområde : elspotområder) {
-            elspotområdeCheckboxlist.put(elspotområde, new JCheckBox(elspotområde.getNavn()));
+            JCheckBox checkbox = new JCheckBox(elspotområde.getNavn());
+            elspotområdeCheckboxlist.put(elspotområde, checkbox);
+            elspotområderPanel.add(checkbox);
         }
     }
 

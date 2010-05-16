@@ -18,7 +18,7 @@
     
     <servlet>
         <servlet-name>edielServlet</servlet-name>
-        <servlet-class>no.statnett.larm.ediel.EdielServlet</servlet-class>
+        <servlet-class>no.statnett.larm.ediel.servlet.EdielServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
 

@@ -1,4 +1,4 @@
-package no.statnett.larm.ediel;
+package no.statnett.larm.ediel.servlet;
 
 import static org.fest.assertions.Assertions.assertThat;
 
@@ -7,6 +7,8 @@ import java.io.InputStreamReader;
 
 import no.statnett.larm.core.repository.Repository;
 import no.statnett.larm.core.repository.RepositoryCallback;
+import no.statnett.larm.ediel.AperakMessage;
+import no.statnett.larm.ediel.AperakParser;
 import no.statnett.larm.nettmodell.Elspotområde;
 import no.statnett.larm.nettmodell.Stasjonsgruppe;
 import no.statnett.larm.poc.web.WebTest;

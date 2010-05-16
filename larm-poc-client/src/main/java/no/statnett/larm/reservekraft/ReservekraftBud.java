@@ -44,9 +44,11 @@ public class ReservekraftBud {
 
     private String budreferanse;
 
-    private Period aktiveringstid;
+    private Integer varighet;
 
-    private Period hviletid;
+    private Integer hviletid;
+
+    private Integer pris;
 
     ReservekraftBud() {
     }
@@ -75,14 +77,12 @@ public class ReservekraftBud {
         this.sluttTid = sluttTid;
     }
 
-    public void setVolumForTidsrom(Interval period, Long volum) {
+    public void setVolumForTidsrom(Interval period, Integer volum) {
         setVolumForTidsrom(period.getStart(), period.getEnd(), volum);
     }
 
-    public void setVolumForTidsrom(DateTime startTid, DateTime sluttTid,
-            Long tilgjengeligMw) {
-        volumPerioder.add(new Volumperiode(this, startTid, sluttTid,
-                tilgjengeligMw));
+    public void setVolumForTidsrom(DateTime startTid, DateTime sluttTid, Integer tilgjengeligMw) {
+        volumPerioder.add(new Volumperiode(this, startTid, sluttTid, tilgjengeligMw));
     }
 
     @Override
@@ -123,20 +123,45 @@ public class ReservekraftBud {
         return volumPerioder;
     }
 
-    public Period getAktiveringstid() {
-        return aktiveringstid;
+    public Integer getVarighet() {
+        return varighet;
     }
 
-    public Period getHviletid() {
+    public Integer getHviletid() {
         return hviletid;
     }
 
     public void setVarighet(Period aktiveringstid) {
-        this.aktiveringstid = aktiveringstid;
+        this.varighet = aktiveringstid.getMinutes();
     }
 
     public void setHviletid(Period hviletid) {
-        this.hviletid = hviletid;
+        this.hviletid = hviletid.getMinutes();
+    }
+
+    public String getRetning() {
+        for (Volumperiode periode : volumPerioder) {
+            if (periode.getTilgjengeligVolum() > 0) return "Opp";
+            if (periode.getTilgjengeligVolum() < 0) return "Ned";
+        }
+        return "Opp";
+    }
+
+    public Integer getPris() {
+        return pris;
+    }
+
+    public void setPris(Integer pris) {
+        this.pris = pris;
+    }
+
+    public Integer getVolumForTime(int time) {
+        for (Volumperiode periode : volumPerioder) {
+            if (periode.getStartTid().getHourOfDay() <= time && periode.getSluttTid().minusHours(1).getHourOfDay() >= time) {
+                return Math.abs(periode.getTilgjengeligVolum());
+            }
+        }
+        return null;
     }
 
 }

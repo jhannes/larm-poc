@@ -46,7 +46,7 @@ public class LarmHibernateRepository extends HibernateRepository {
     }
 
     public static Repository withFileDb() {
-        return withJdbcUrl("jdbc:h2:file:target/testdb;MODE=Oracle", "org.h2.Driver");
+        return withJdbcUrl("jdbc:h2:file:target/testdb;MODE=Oracle;MVCC=true", "org.h2.Driver");
     }
 
     private static void addEntityTypes(AnnotationConfiguration cfg) {

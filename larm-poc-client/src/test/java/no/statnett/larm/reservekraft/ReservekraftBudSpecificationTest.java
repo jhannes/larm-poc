@@ -79,18 +79,18 @@ public class ReservekraftBudSpecificationTest {
         DateTime sluttTid = startTid.plusHours(2);
 
         ReservekraftBud budMedVolumITidsrom = new ReservekraftBud(stasjonsgruppe1);
-        budMedVolumITidsrom.setVolumForTidsrom(startTid.minusHours(2), sluttTid.minusHours(2), 300L);
-        budMedVolumITidsrom.setVolumForTidsrom(startTid, sluttTid, 300L);
+        budMedVolumITidsrom.setVolumForTidsrom(startTid.minusHours(2), sluttTid.minusHours(2), 300);
+        budMedVolumITidsrom.setVolumForTidsrom(startTid, sluttTid, 300);
 
         ReservekraftBud budMedVolumIDelerAvTidsrom = new ReservekraftBud(stasjonsgruppe1);
-        budMedVolumIDelerAvTidsrom.setVolumForTidsrom(startTid.minusHours(1), sluttTid.minusHours(1), 200L);
+        budMedVolumIDelerAvTidsrom.setVolumForTidsrom(startTid.minusHours(1), sluttTid.minusHours(1), 200);
 
         ReservekraftBud budMedNullVolumITidsrom = new ReservekraftBud(stasjonsgruppe1);
-        budMedNullVolumITidsrom.setVolumForTidsrom(startTid, sluttTid, 0L);
+        budMedNullVolumITidsrom.setVolumForTidsrom(startTid, sluttTid, 0);
 
         ReservekraftBud budMedVolumUtenforTidsrom = new ReservekraftBud(stasjonsgruppe1);
-        budMedVolumUtenforTidsrom.setVolumForTidsrom(startTid.minusHours(1), startTid, 100L);
-        budMedVolumUtenforTidsrom.setVolumForTidsrom(sluttTid, sluttTid.plusHours(2), 100L);
+        budMedVolumUtenforTidsrom.setVolumForTidsrom(startTid.minusHours(1), startTid, 100);
+        budMedVolumUtenforTidsrom.setVolumForTidsrom(sluttTid, sluttTid.plusHours(2), 100);
 
         ReservekraftBudSpecification specification = new ReservekraftBudSpecification();
         specification.setDriftsperiode(new Interval(startTid, sluttTid));

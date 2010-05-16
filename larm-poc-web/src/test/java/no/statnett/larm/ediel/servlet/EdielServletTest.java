@@ -1,4 +1,4 @@
-package no.statnett.larm.ediel;
+package no.statnett.larm.ediel.servlet;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -17,6 +17,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import no.statnett.larm.core.repository.Repository;
 import no.statnett.larm.core.repository.inmemory.InmemoryRepository;
+import no.statnett.larm.ediel.AperakParser;
+import no.statnett.larm.ediel.servlet.EdielServlet;
 import no.statnett.larm.nettmodell.Elspotområde;
 import no.statnett.larm.nettmodell.Stasjonsgruppe;
 import no.statnett.larm.reservekraft.ReservekraftBud;

@@ -1,10 +1,20 @@
-package no.statnett.larm.ediel;
+package no.statnett.larm.budservice;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.util.List;
 
 import no.statnett.larm.core.repository.Repository;
+import no.statnett.larm.ediel.AperakMessage;
+import no.statnett.larm.ediel.BgmSegment;
+import no.statnett.larm.ediel.CtaSegment;
+import no.statnett.larm.ediel.DtmSegment;
+import no.statnett.larm.ediel.LinSegment;
+import no.statnett.larm.ediel.NadSegment;
+import no.statnett.larm.ediel.PriSegment;
+import no.statnett.larm.ediel.QuoteMessage;
+import no.statnett.larm.ediel.QuoteParser;
+import no.statnett.larm.ediel.RffSegment;
 import no.statnett.larm.edifact.EdifactInterchange;
 import no.statnett.larm.nettmodell.Stasjonsgruppe;
 import no.statnett.larm.nettmodell.StasjonsgruppeSpecification;
@@ -72,13 +82,16 @@ public class EdielService {
         String stasjonsGruppeNavn = linSegment.getLocation().getLocationIdentification();
         ReservekraftBud reserveKraftBud = new ReservekraftBud(findStasjonsgruppeByNavn(stasjonsGruppeNavn));
         reserveKraftBud.setBudreferanse(linSegment.getPriceQuote().getReference());
-        if (linSegment.getDuration() != null) reserveKraftBud.setVarighet(linSegment.getDuration().getQuantity());
+        if (linSegment.getAvailability() != null) reserveKraftBud.setVarighet(linSegment.getAvailability().getQuantity());
         if (linSegment.getRestingTime() != null) reserveKraftBud.setHviletid(linSegment.getRestingTime().getQuantity());
         reserveKraftBud.setBudperiode(new Interval(processingStartTime, processingEndTime));
 
+        Integer pris = 0;
         for (PriSegment priSegment : linSegment.getPriceDetails()) {
             reserveKraftBud.setVolumForTidsrom(priSegment.getProcessingTime().getPeriod(), priSegment.getVolume());
+            pris = Integer.valueOf(priSegment.getPrice());
         }
+        reserveKraftBud.setPris(pris);
         return reserveKraftBud;
     }
 

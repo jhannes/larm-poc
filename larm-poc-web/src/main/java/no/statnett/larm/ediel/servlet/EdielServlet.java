@@ -1,4 +1,4 @@
-package no.statnett.larm.ediel;
+package no.statnett.larm.ediel.servlet;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import no.statnett.larm.LarmHibernateRepository;
+import no.statnett.larm.budservice.EdielService;
 import no.statnett.larm.core.repository.Repository;
 
 public class EdielServlet extends HttpServlet {

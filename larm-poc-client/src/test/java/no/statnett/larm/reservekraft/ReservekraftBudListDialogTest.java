@@ -24,7 +24,7 @@ public class ReservekraftBudListDialogTest {
     @Test
     public void shouldCreateSpecification() throws Exception {
         Elspotområde no1 = new Elspotområde("NO1"), no2 = new Elspotområde("NO2"), no3 = new Elspotområde("NO3");
-        ReservekraftBudListDialog dialog = new ReservekraftBudListDialog(null);
+        ReservekraftBudListDialog dialog = new ReservekraftBudListDialog(mock(RepositoryAsync.class));
         dialog.setElspotområder(Arrays.asList(no1, no2, no3));
 
         dialog.getSearchPanel().getDriftsdøgnField().setText("20.03.2010");

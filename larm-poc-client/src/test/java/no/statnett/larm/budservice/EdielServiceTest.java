@@ -1,4 +1,4 @@
-package no.statnett.larm.ediel;
+package no.statnett.larm.budservice;
 
 import static org.fest.assertions.Assertions.assertThat;
 
@@ -6,8 +6,15 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.StringWriter;
 
+import no.statnett.larm.budservice.EdielService;
 import no.statnett.larm.core.repository.Repository;
 import no.statnett.larm.core.repository.inmemory.InmemoryRepository;
+import no.statnett.larm.ediel.AperakMessage;
+import no.statnett.larm.ediel.DtmSegment;
+import no.statnett.larm.ediel.LinSegment;
+import no.statnett.larm.ediel.LocSegment;
+import no.statnett.larm.ediel.PriSegment;
+import no.statnett.larm.ediel.RffSegment;
 import no.statnett.larm.nettmodell.Elspotområde;
 import no.statnett.larm.nettmodell.Stasjonsgruppe;
 import no.statnett.larm.reservekraft.ReservekraftBud;
@@ -24,6 +31,7 @@ import org.junit.Test;
 public class EdielServiceTest {
 
     private Repository repository = new InmemoryRepository();
+    //private Repository repository = LarmHibernateRepository.withFileDb();
     private EdielService service = new EdielService(repository);
     private Elspotområde elspotområde = new Elspotområde("NO4");
     private Stasjonsgruppe stasjonsgruppe = new Stasjonsgruppe("NOKG00116", "Sørfjord", elspotområde);
@@ -45,16 +53,20 @@ public class EdielServiceTest {
         Duration enTime = Duration.standardHours(1);
 
         LinSegment linSegment = new LinSegment();
-        linSegment.setDuration(DtmSegment.withMinutes(varighet));
+        linSegment.setAvailability(DtmSegment.withMinutes(varighet));
+        linSegment.setDuration(DtmSegment.withMinutes(varighet.plusMinutes(1)));
         linSegment.setRestingTime(DtmSegment.withMinutes(hviletid));
 
         linSegment.addPriceSegment(new PriSegment()
+                .setCalculationPrice(240)
                 .setProcessingTime(new Interval(bud1StartTid, enTime))
                 .setVolume(800L));
         linSegment.addPriceSegment(new PriSegment()
+                .setCalculationPrice(240)
                 .setProcessingTime(new Interval(bud1StartTid.plusHours(1), enTime))
                 .setVolume(800L));
         linSegment.addPriceSegment(new PriSegment()
+                .setCalculationPrice(240)
                 .setProcessingTime(new Interval(bud1StartTid.plusHours(2), enTime))
                 .setVolume(800L));
 
@@ -75,9 +87,10 @@ public class EdielServiceTest {
 
         assertThat(bud.getStasjonsgruppe()).isEqualTo(stasjonsgruppe);
         assertThat(bud.getBudreferanse()).isEqualTo(budreferanse);
-        assertThat(bud.getAktiveringstid()).isEqualTo(varighet);
-        assertThat(bud.getHviletid()).isEqualTo(hviletid);
+        assertThat(bud.getVarighet()).isEqualTo(varighet.getMinutes());
+        assertThat(bud.getHviletid()).isEqualTo(hviletid.getMinutes());
         assertThat(bud.getBudperiode()).isEqualTo(new Interval(driftsdøgn, Duration.standardDays(1)));
+        assertThat(bud.getPris()).isEqualTo(240);
     }
 
     @Test

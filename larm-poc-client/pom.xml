@@ -17,6 +17,10 @@
     </dependency>
     <dependency>
       <groupId>no.statnett.larm</groupId>
+      <artifactId>larm-ediel-parser</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>no.statnett.larm</groupId>
       <artifactId>larm-core-test</artifactId>
       <scope>test</scope>
     </dependency>

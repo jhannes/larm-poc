@@ -46,8 +46,14 @@ public class PriSegment extends EdifactSegmentGroup {
         return this;
     }
 
-    public Long getVolume() {
+    public Integer getVolume() {
         return range.getQuantity();
+    }
+
+    public PriSegment setCalculationPrice(int price) {
+        setElementComponent(0, 0, "CAL");
+        setElementComponent(0, 1, String.valueOf(price));
+        return this;
     }
 
 }

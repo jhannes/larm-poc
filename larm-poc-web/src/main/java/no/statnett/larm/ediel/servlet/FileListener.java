@@ -1,4 +1,4 @@
-package no.statnett.larm.ediel;
+package no.statnett.larm.ediel.servlet;
 
 import java.io.IOException;
 import java.io.Reader;
