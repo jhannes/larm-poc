@@ -1,8 +1,10 @@
 package no.statnett.larm.poc;
 
+import java.beans.PropertyVetoException;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
@@ -12,10 +14,11 @@ import no.statnett.larm.core.container.ShutdownHandler;
 import no.statnett.larm.core.container.StatusHandler;
 
 import org.apache.log4j.PropertyConfigurator;
-import org.hsqldb.jdbc.jdbcDataSource;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.plus.naming.EnvEntry;
 import org.mortbay.jetty.webapp.WebAppContext;
+
+import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 public class LarmPocServer {
 
@@ -35,8 +38,7 @@ public class LarmPocServer {
             ShutdownHandler.attemptShutdown(getIntProperty("server.port", 8080), getShutdownCookie());
         }
 
-        new EnvEntry("jdbc/foo", getDataSource("foo"));
-        new EnvEntry("jdbc/bar", getDataSource("bar"));
+        new EnvEntry("jdbc/primaryDs", getDataSource("larm"));
 
         Server server = new Server(getIntProperty("server.port", 8080));
         server.addHandler(createLarmPocWebApp());
@@ -58,15 +60,20 @@ public class LarmPocServer {
         return webAppContext;
     }
 
-    private static DataSource getDataSource(String dsName) {
-        String serverUrl = System.getProperty("datasource.url." + dsName, "jdbc:hsqldb:mem:" + dsName);
-        String username = System.getProperty("datasource.username." + dsName, dsName);
-        String password = System.getProperty("datasource.password." + dsName, username);
+    private static DataSource getDataSource(String dsName) throws SQLException, PropertyVetoException {
+        String serverUrl = System.getProperty("datasource."  + dsName + ".url", "jdbc:h2:mem:" + dsName + ";DB_CLOSE_DELAY=-1;MODE=Oracle;MVCC=true");
+        String username = System.getProperty("datasource." + dsName + ".username", dsName);
+        String password = System.getProperty("datasource." + dsName + ".password.", username);
+        String driverClass = System.getProperty("datasource." + dsName + ".driver", "org.h2.Driver");
 
-        jdbcDataSource dataSource = new jdbcDataSource();
-        dataSource.setDatabase(serverUrl);
+        ComboPooledDataSource dataSource = new ComboPooledDataSource();
+        dataSource.setJdbcUrl(serverUrl);
+        dataSource.setDriverClass(driverClass);
         dataSource.setUser(username);
         dataSource.setPassword(password);
+
+        dataSource.getConnection().close();
+
         return dataSource;
     }
 

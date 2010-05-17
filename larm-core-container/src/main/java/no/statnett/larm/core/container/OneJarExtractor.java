@@ -42,15 +42,12 @@ public class OneJarExtractor {
 
     private static JarFile getCurrentJarFile() throws IOException {
         String[] pathElements = System.getProperty("java.class.path").split(System.getProperty("path.separator"));
-        String thisFile = null;
         for (String path : pathElements) {
             if (path.endsWith(".one-jar.jar")) {
-                thisFile = path;
-                break;
+                return new JarFile(path);
             }
         }
-
-        return new JarFile(thisFile);
+        return null;
     }
 
     public static boolean extractFile(String filename) throws IOException {
