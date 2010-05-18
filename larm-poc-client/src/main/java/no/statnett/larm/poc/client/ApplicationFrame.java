@@ -9,7 +9,7 @@ import no.statnett.larm.core.repository.Repository;
 import no.statnett.larm.core.repository.RepositoryAsync;
 import no.statnett.larm.core.web.service.LarmHessianProxyFactory;
 import no.statnett.larm.poc.client.stasjon.Stasjon;
-import no.statnett.larm.poc.client.stasjon.StasjonListDialog;
+import no.statnett.larm.reservekraft.ReservekraftBudListDialog;
 
 public class ApplicationFrame {
     public static void display(final String title, final JPanel panel) {
@@ -29,8 +29,8 @@ public class ApplicationFrame {
     public static void main(String[] args) {
         String clientUrl = args.length > 0 ? args[0] : null;
 
-        StasjonListDialog dialog = new StasjonListDialog(createClientRepository(clientUrl));
-        display("Visning av stasjoner: " + clientUrl, dialog);
+        ReservekraftBudListDialog dialog = new ReservekraftBudListDialog(createClientRepository(clientUrl));
+        display("Visning av reservekraftbud: " + clientUrl, dialog);
 
     }
 
