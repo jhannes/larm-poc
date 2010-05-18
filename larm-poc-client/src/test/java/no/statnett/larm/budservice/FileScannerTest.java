@@ -1,4 +1,4 @@
-package no.statnett.larm.ediel.servlet;
+package no.statnett.larm.budservice;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -16,9 +16,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
-
-import no.statnett.larm.ediel.servlet.FileListener;
-import no.statnett.larm.ediel.servlet.FileScanner;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;

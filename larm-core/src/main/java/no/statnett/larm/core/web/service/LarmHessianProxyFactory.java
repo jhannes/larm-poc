@@ -1,8 +1,10 @@
 package no.statnett.larm.core.web.service;
 
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 
 import com.caucho.hessian.client.HessianProxyFactory;
+import com.caucho.hessian.io.AbstractHessianOutput;
 
 public class LarmHessianProxyFactory extends HessianProxyFactory {
 
@@ -14,5 +16,12 @@ public class LarmHessianProxyFactory extends HessianProxyFactory {
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException(e.getMessage());
         }
+    }
+
+    @Override
+    public AbstractHessianOutput getHessianOutput(OutputStream os) {
+        AbstractHessianOutput hessianOutput = super.getHessianOutput(os);
+        hessianOutput.setSerializerFactory(new LarmHessianSerializerFactory());
+        return hessianOutput;
     }
 }

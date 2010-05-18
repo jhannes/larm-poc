@@ -10,6 +10,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
 import no.statnett.larm.core.async.AsyncCallback;
@@ -23,7 +24,7 @@ public abstract class ListDialog<T> extends JPanel {
 
     private final RepositoryAsync repositoryAsync;
 
-    private JTable searchResult = new JTable();
+    private JTable table = new JTable();
 
     public ListDialog(RepositoryAsync repositoryAsync, SpecificationPanel<T> specificationPanel) {
         this.repositoryAsync = repositoryAsync;
@@ -57,7 +58,7 @@ public abstract class ListDialog<T> extends JPanel {
         };
     }
 
-    private void reportError(String whatWasHappening, Throwable e) {
+    public void reportError(String whatWasHappening, Throwable e) {
         System.err.println(whatWasHappening);
         e.printStackTrace();
         JOptionPane.showMessageDialog(this, e.toString(), "Feil: " + whatWasHappening,
@@ -65,12 +66,15 @@ public abstract class ListDialog<T> extends JPanel {
     }
 
     public JTable getSearchResult() {
-        return searchResult;
+        return table;
     }
 
     private void updateSearchResults(List<T> searchResults) {
-        searchResult.setModel(createTableModel(searchResults));
+        table.setModel(createTableModel(searchResults));
+        table.setColumnModel(createColumnModel(searchResults));
     }
+
+    protected abstract TableColumnModel createColumnModel(List<T> searchResults);
 
     protected abstract TableModel createTableModel(List<T> searchResults);
 

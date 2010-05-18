@@ -1,5 +1,6 @@
 package no.statnett.larm.reservekraft;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +12,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 
 import no.statnett.larm.nettmodell.Elspotområde;
 import no.statnett.larm.nettmodell.Stasjonsgruppe;
@@ -22,7 +22,9 @@ import org.joda.time.Interval;
 import org.joda.time.Period;
 
 @Entity
-public class ReservekraftBud {
+public class ReservekraftBud implements Serializable, Comparable<ReservekraftBud> {
+
+    private static final long serialVersionUID = -6663639649491663160L;
 
     @Id
     @GeneratedValue
@@ -39,7 +41,6 @@ public class ReservekraftBud {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "reserveKraftBud_id", nullable = false)
-    @OrderBy("startTid")
     private List<Volumperiode> volumPerioder = new ArrayList<Volumperiode>();
 
     private String budreferanse;
@@ -49,6 +50,8 @@ public class ReservekraftBud {
     private Integer hviletid;
 
     private Integer pris;
+
+    private String retning = "Opp";
 
     ReservekraftBud() {
     }
@@ -77,17 +80,23 @@ public class ReservekraftBud {
         this.sluttTid = sluttTid;
     }
 
-    public void setVolumForTidsrom(Interval period, Integer volum) {
-        setVolumForTidsrom(period.getStart(), period.getEnd(), volum);
+    public ReservekraftBud setVolumForTidsrom(Interval period, Integer volum) {
+        return setVolumForTidsrom(period.getStart(), period.getEnd(), volum);
     }
 
-    public void setVolumForTidsrom(DateTime startTid, DateTime sluttTid, Integer tilgjengeligMw) {
+    public ReservekraftBud setVolumForTidsrom(DateTime startTid, DateTime sluttTid, Integer tilgjengeligMw) {
         volumPerioder.add(new Volumperiode(this, startTid, sluttTid, tilgjengeligMw));
+        for (Volumperiode periode : volumPerioder) {
+            if (periode.getTilgjengeligVolum() > 0) retning = "Opp";
+            if (periode.getTilgjengeligVolum() < 0) retning = "Ned";
+        }
+
+        return this;
     }
 
     @Override
     public String toString() {
-        return "ReservekraftBud<" + stasjonsgruppe + ",fra " + startTid + ">";
+        return "ReservekraftBud<" + stasjonsgruppe + ",startTid=" + startTid + ", pris=" + getPris() + ">";
     }
 
     @Override
@@ -104,6 +113,14 @@ public class ReservekraftBud {
     @Override
     public int hashCode() {
         return stasjonsgruppe.hashCode();
+    }
+
+    @Override
+    public int compareTo(ReservekraftBud o) {
+        if (!getRetning().equals(o.getRetning())) {
+            return "Opp".equals(getRetning()) ? -1 : 1;
+        }
+        return o.getPris() - getPris();
     }
 
     public Elspotområde getElspotområde() {
@@ -140,19 +157,16 @@ public class ReservekraftBud {
     }
 
     public String getRetning() {
-        for (Volumperiode periode : volumPerioder) {
-            if (periode.getTilgjengeligVolum() > 0) return "Opp";
-            if (periode.getTilgjengeligVolum() < 0) return "Ned";
-        }
-        return "Opp";
+        return retning;
     }
 
-    public Integer getPris() {
-        return pris;
+    public int getPris() {
+        return pris != null ? pris.intValue() : 0;
     }
 
-    public void setPris(Integer pris) {
+    public ReservekraftBud setPris(Integer pris) {
         this.pris = pris;
+        return this;
     }
 
     public Integer getVolumForTime(int time) {

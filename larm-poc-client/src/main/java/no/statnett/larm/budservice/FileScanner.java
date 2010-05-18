@@ -1,4 +1,4 @@
-package no.statnett.larm.ediel.servlet;
+package no.statnett.larm.budservice;
 
 import static org.apache.commons.io.FileUtils.moveFileToDirectory;
 
@@ -8,6 +8,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -81,6 +83,16 @@ public class FileScanner {
             IOUtils.closeQuietly(inputFile);
             IOUtils.closeQuietly(outputFile);
         }
+    }
+
+    public static void scheduleEverySecond(File inputDir, File outputDir, FileListener fileListener) {
+        final FileScanner fileScanner = new FileScanner(inputDir, outputDir, fileListener);
+        new Timer(true).schedule(new TimerTask() {
+            @Override
+            public void run() {
+                fileScanner.scan();
+            }
+        }, 0, 1000);
     }
 
 }

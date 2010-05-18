@@ -1,12 +1,16 @@
 package no.statnett.larm.nettmodell;
 
+import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 @Entity
-public class Stasjonsgruppe {
+public class Stasjonsgruppe implements Serializable {
+
+    private static final long serialVersionUID = -4945255996647163355L;
 
     @Id
     @GeneratedValue

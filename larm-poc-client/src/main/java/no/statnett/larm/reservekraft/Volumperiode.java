@@ -1,5 +1,7 @@
 package no.statnett.larm.reservekraft;
 
+import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -11,7 +13,9 @@ import org.joda.time.DateTime;
 import org.joda.time.Interval;
 
 @Entity
-public class Volumperiode {
+public class Volumperiode implements Serializable {
+    private static final long serialVersionUID = 4370581362104597420L;
+
     @SuppressWarnings("unused")
     @Id
     @GeneratedValue

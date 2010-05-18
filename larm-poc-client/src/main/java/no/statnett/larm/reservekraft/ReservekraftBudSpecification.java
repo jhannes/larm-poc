@@ -4,21 +4,27 @@ import static no.statnett.larm.core.repository.inmemory.ObjectMatching.blankOrCo
 import static org.hibernate.criterion.Restrictions.gt;
 import static org.hibernate.criterion.Restrictions.lt;
 
+import java.io.Serializable;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import no.statnett.larm.core.repository.hibernate.HibernateSpecification;
 import no.statnett.larm.core.repository.inmemory.InmemorySpecification;
+import no.statnett.larm.core.repository.inmemory.PostProcessSpecification;
 import no.statnett.larm.nettmodell.Elspotområde;
 
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.DistinctRootEntityResultTransformer;
 import org.joda.time.DateMidnight;
 import org.joda.time.Interval;
 
 public class ReservekraftBudSpecification implements HibernateSpecification<ReservekraftBud>,
-        InmemorySpecification<ReservekraftBud> {
+        InmemorySpecification<ReservekraftBud>, PostProcessSpecification<ReservekraftBud>, Serializable {
 
+    private static final long serialVersionUID = -1578585305673220372L;
     private Collection<Elspotområde> elspotområder;
     private DateMidnight driftsdøgn;
     private Interval driftsperiode;
@@ -67,6 +73,10 @@ public class ReservekraftBudSpecification implements HibernateSpecification<Rese
                     .add(gt("volumperiode.tilgjengeligVolum", 0));
         }
         criteria.setResultTransformer(DistinctRootEntityResultTransformer.INSTANCE);
+
+        criteria.addOrder(Order.desc("retning"));
+        criteria.addOrder(Order.desc("pris"));
+
         return criteria;
     }
 
@@ -82,6 +92,11 @@ public class ReservekraftBudSpecification implements HibernateSpecification<Rese
         return blankOrContains(elspotområder, entity.getElspotområde())
                 && inneholderDriftsdøgn(driftsdøgn, entity.getBudperiode())
                 && harVolumIPeriode(driftsperiode, entity.getVolumPerioder());
+    }
+
+    @Override
+    public void postProcess(List<ReservekraftBud> list) {
+        Collections.sort(list);
     }
 
     private boolean harVolumIPeriode(Interval interval,

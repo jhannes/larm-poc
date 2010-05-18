@@ -1,4 +1,4 @@
-package no.statnett.larm.ediel.servlet;
+package no.statnett.larm.budservice;
 
 import java.io.IOException;
 import java.io.Reader;

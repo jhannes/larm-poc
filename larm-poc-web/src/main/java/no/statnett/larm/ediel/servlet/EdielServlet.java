@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -14,7 +13,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import no.statnett.larm.LarmHibernateRepository;
 import no.statnett.larm.budservice.EdielService;
+import no.statnett.larm.budservice.FileListener;
+import no.statnett.larm.budservice.FileScanner;
 import no.statnett.larm.core.repository.Repository;
+import no.statnett.larm.nettmodell.Elspotområde;
+import no.statnett.larm.nettmodell.Stasjonsgruppe;
 
 public class EdielServlet extends HttpServlet {
 
@@ -36,20 +39,22 @@ public class EdielServlet extends HttpServlet {
     public void init() throws ServletException {
         repository = LarmHibernateRepository.withJndiUrl("jdbc/primaryDs");
 
-        FileListener edielProcessor = new FileListener() {
+        if (repository.findAll(Elspotområde.class).isEmpty()) {
+            repository.insertAll(new Elspotområde("NO1"), new Elspotområde("NO2"), new Elspotområde("NO3"), new Elspotområde("NO4"));
+        }
+        if (repository.findAll(Stasjonsgruppe.class).isEmpty()) {
+            Elspotområde elspotområde = repository.findAll(Elspotområde.class).get(0);
+            repository.insertAll(new Stasjonsgruppe("NOKG00116", "Sørfjord", elspotområde),
+                    new Stasjonsgruppe("NOKG00056", "Borgund", elspotområde),
+                    new Stasjonsgruppe("NOKG00049", "Sima", elspotområde));
+        }
+
+        FileScanner.scheduleEverySecond(new File("data/ediel/input"), new File("data/ediel/output"), new FileListener() {
             @Override
             public void processFile(String fileName, Reader inputFile, Writer outputFile) throws IOException {
                 process(fileName, inputFile, outputFile);
             }
-        };
-
-        final FileScanner scanner = new FileScanner(new File("data/ediel/input"), new File("data/ediel/output"), edielProcessor);
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                scanner.scan();
-            }
-        }, 0, 1000);
+        });
     }
 
     protected void process(String fileName, Reader edifactRequest, Writer edifactResponse) throws IOException {

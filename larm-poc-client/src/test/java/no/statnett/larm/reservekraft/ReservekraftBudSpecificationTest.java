@@ -25,8 +25,10 @@ public class ReservekraftBudSpecificationTest {
         no3 = new Elspotområde("NO3");
 
     @ReferenceData
-    private Stasjonsgruppe stasjonsgruppe1 = new Stasjonsgruppe("NOKG00116", no1),
-        stasjonsgruppe2 = new Stasjonsgruppe("NOKG00115", no2);
+    private Stasjonsgruppe stasjonsgruppe1 = new Stasjonsgruppe("NOKG00116", "SG1", no1),
+        stasjonsgruppe2 = new Stasjonsgruppe("NOKG00115", "SG2", no2),
+        stasjonsgruppe3 = new Stasjonsgruppe("NOKG00114", "SG1", no3)
+        ;
 
     @Test
     public void skalBegrenseTilElspotområder() throws Exception {
@@ -103,6 +105,26 @@ public class ReservekraftBudSpecificationTest {
             .excludes(budMedNullVolumITidsrom)
             .contains(budMedVolumIDelerAvTidsrom);
     }
+
+    @Test
+    public void skalSortereBudEtterRetningOgSåSynkendePris() throws Exception {
+        Interval interval = new Interval(new DateTime(2010, 4, 10, 1, 0, 0, 0), new DateTime(2010, 4, 10, 2, 0, 0, 0));
+        ReservekraftBud oppjusteringMedLavPris = new ReservekraftBud(stasjonsgruppe1).setPris(100).setVolumForTidsrom(interval, 100);
+        ReservekraftBud oppjusteringMedMellomPris = new ReservekraftBud(stasjonsgruppe2).setPris(400).setVolumForTidsrom(interval, 100);
+        ReservekraftBud nedjusteringMedLavPris = new ReservekraftBud(stasjonsgruppe1).setPris(100).setVolumForTidsrom(interval, -100);
+        ReservekraftBud nedjusteringMedMellomPris = new ReservekraftBud(stasjonsgruppe2).setPris(400).setVolumForTidsrom(interval, -100);
+        ReservekraftBud nedjusteringMedHøyPris = new ReservekraftBud(stasjonsgruppe3).setPris(1000).setVolumForTidsrom(interval, -100);
+        ReservekraftBud oppjusteringMedHøyPris = new ReservekraftBud(stasjonsgruppe3).setPris(1000).setVolumForTidsrom(interval, 100);
+
+        repository.insertAll(oppjusteringMedLavPris, oppjusteringMedMellomPris, nedjusteringMedLavPris,
+                nedjusteringMedMellomPris, nedjusteringMedHøyPris, oppjusteringMedHøyPris);
+
+        assertThat(repository.find(new ReservekraftBudSpecification()))
+            .containsSequence(oppjusteringMedHøyPris, oppjusteringMedMellomPris, oppjusteringMedLavPris,
+                    nedjusteringMedHøyPris, nedjusteringMedMellomPris, nedjusteringMedLavPris);
+
+    }
+
 
     private ReservekraftBud budMedTidsintervall(Stasjonsgruppe stasjonsgruppe, DateTime startTid, DateTime sluttTid) {
         ReservekraftBud reservekraftBud = new ReservekraftBud(stasjonsgruppe);

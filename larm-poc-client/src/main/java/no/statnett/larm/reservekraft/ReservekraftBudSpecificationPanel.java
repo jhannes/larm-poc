@@ -18,6 +18,7 @@ import no.statnett.larm.client.SpecificationPanel;
 import no.statnett.larm.nettmodell.Elspotområde;
 
 import org.joda.time.DateMidnight;
+import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -38,7 +39,7 @@ public class ReservekraftBudSpecificationPanel extends SpecificationPanel<Reserv
                 BorderFactory.createTitledBorder("Finn bud"),
                 BorderFactory.createEmptyBorder(5,5,5,5)));
         baseOptions.add(new JLabel("Driftsdøgn"));
-        //driftsdøgnField.setText(format.print(new DateTime()));
+        driftsdøgnField.setText(format.print(new DateTime()));
         baseOptions.add(driftsdøgnField);
         baseOptions.add(searchButton);
 
@@ -91,6 +92,7 @@ public class ReservekraftBudSpecificationPanel extends SpecificationPanel<Reserv
             elspotområdeCheckboxlist.put(elspotområde, checkbox);
             elspotområderPanel.add(checkbox);
         }
+        elspotområderPanel.validate();
     }
 
     @Override

@@ -1,5 +1,6 @@
 target
 server
+data
 *.iml
 *.iws
 *.ipr

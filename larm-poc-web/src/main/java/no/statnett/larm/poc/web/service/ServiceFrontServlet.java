@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import no.statnett.larm.LarmHibernateRepository;
 import no.statnett.larm.core.repository.Repository;
+import no.statnett.larm.core.web.service.LarmHessianSerializerFactory;
 import no.statnett.larm.poc.client.stasjon.Stasjon;
 
 import org.slf4j.Logger;
@@ -32,7 +33,6 @@ public class ServiceFrontServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HessianSkeleton service = serviceMap.get(getServiceName(req));
-
         if (service == null) {
             log.warn("Tried to access unknown service " + getServiceName(req));
             resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Unknown service " + getServiceName(req));
@@ -40,7 +40,7 @@ public class ServiceFrontServlet extends HttpServlet {
         }
 
         try {
-            SerializerFactory serializerFactory = new SerializerFactory();
+            SerializerFactory serializerFactory = new LarmHessianSerializerFactory();
             service.invoke(req.getInputStream(), resp.getOutputStream(), serializerFactory);
         } catch (InvocationTargetException e) {
             log.error("Error while processing request to " + getServiceName(req), e.getCause());
