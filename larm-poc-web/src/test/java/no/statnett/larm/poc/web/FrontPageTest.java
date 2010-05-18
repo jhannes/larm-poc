@@ -7,14 +7,14 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
-public class HelloWebTest extends WebTest {
+public class FrontPageTest extends WebTest {
 
     @Test
     public void indexPageShouldSayHelloWorld() throws Exception {
         WebDriver browser = new HtmlUnitDriver();
 
         browser.get(getApplicationUrl());
-        assertThat(browser.findElement(By.tagName("h1")).getText()).isEqualTo("Hello world");
+        assertThat(browser.findElement(By.tagName("h1")).getText()).isEqualTo("Velkommen til LARM");
     }
 
 }
