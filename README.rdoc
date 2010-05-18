@@ -13,11 +13,9 @@
 5. Import project into your workspace
    * In Eclipse: <i>File -> Import -> Existing projects into workspace</i>
    * In IDEA: <i>File -> Open Project</i>
-6. Start server: Run main class <tt>no.statkraft.larm.poc.web.WebServer</tt>
+6. Start client in 2-tier mode: Run main class <tt>no.statnett.larm.poc.client.ApplicationFrame</tt>
    * IDEA: Make sure Working Directory is project directory
-7. Start client: Run main class <tt>no.statnett.larm.poc.client.ApplicationFrame</tt>
-   with argument http://localhost:8088/larm-web/services/repositoryService
-   * Alternatively, start with argument <tt>jdbc:...</tt> to run in two-tier mode
+7. Place EDIEL quotes files in <tt>data/ediel/input</tt> to have the client read them
    
 == DEPLOYMENT
 
@@ -33,9 +31,9 @@
 
 These tests are normative for development:
 
-* <tt>no.statnett.larm.poc.client.stasjon.StasjonListDialogTest</tt> describes
+* <tt>no.statnett.larm.reservekraft.ReservekraftBudListDialogTest</tt> describes
   the mapping between the domain and the user interface
-* <tt>no.statnett.larm.poc.client.stasjon.StasjonSpecificationTest</tt> describes
+* <tt>no.statnett.larm.reservekraft.ReservekraftBudSpecificationTest</tt> describes
   the mapping between the domain and the database
 
 These files are the starting points for the runtime:
@@ -53,8 +51,7 @@ These files are the starting points for the runtime:
 == FITNESSE
 
 * Run fitnesseMain.FitNesseMain from the larm-fitnesse project, or execute larm-poc/larm-fitnesse/run-fitnesse.bat
-* Access FitNesse at http://localhost:8090
-  
+* Access FitNesse at http://localhost:8090  
 
 == STYLE GUIDE (ECLIPSE)
 
