@@ -42,6 +42,7 @@ public class NadSegment extends QualifiedEdifactSegmentGroup {
     }
 
     public void readSegmentGroup(SegmentSource edifactParser) throws IOException {
+        edifactParser.readOptionalSegment(LocSegment.class);
         contactInfo = edifactParser.readOptionalSegment(CtaSegment.class);
         edifactParser.readOptionalSegment(ComSegment.class);
     }

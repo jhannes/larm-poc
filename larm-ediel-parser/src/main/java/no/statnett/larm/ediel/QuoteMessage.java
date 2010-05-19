@@ -68,8 +68,8 @@ public class QuoteMessage implements EdifactMessage {
         offsetToUTC = segmentSource.readOptionalSegment(DtmSegment.class, "ZZZ");
         currency = segmentSource.readMandatorySegment(CuxSegment.class);
 
-        messageFrom = segmentSource.readMandatorySegment(NadSegment.class, "FR");
-        documentRecipient = segmentSource.readMandatorySegment(NadSegment.class, "DO");
+        messageFrom = segmentSource.readMandatorySegmentGroup(NadSegment.class, "FR");
+        documentRecipient = segmentSource.readMandatorySegmentGroup(NadSegment.class, "DO");
 
         LinSegment linSegment;
         while ((linSegment = segmentSource.readOptionalSegmentGroup(LinSegment.class)) != null) {

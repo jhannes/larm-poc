@@ -12,11 +12,15 @@ import no.statnett.larm.edifact.SegmentSource;
 public class LinSegment extends EdifactSegmentGroup {
 
     private DtmSegment restingTime;
-    private DtmSegment availability;
+    private DtmSegment maxDuration;
     private List<PriSegment> priceDetails = new ArrayList<PriSegment>();
     private RffSegment priceQuote;
     private LocSegment location;
-    private DtmSegment duration;
+    private DtmSegment minDuration;
+    private DtmSegment activationTime;
+    private DtmSegment processingTime;
+    private RffSegment additionalReferenceNumber;
+    private RffSegment relatedDocumentNumber;
 
     public String getItemNumber() {
         return getElementComponent(2, 0);
@@ -27,7 +31,7 @@ public class LinSegment extends EdifactSegmentGroup {
     }
 
     public DtmSegment getAvailability() {
-        return availability;
+        return maxDuration;
     }
 
     public DtmSegment getRestingTime() {
@@ -51,17 +55,21 @@ public class LinSegment extends EdifactSegmentGroup {
     }
 
     public void readSegmentGroup(SegmentSource segmentSource) throws IOException {
-        availability = segmentSource.readOptionalSegment(DtmSegment.class, "44");
-        duration = segmentSource.readOptionalSegment(DtmSegment.class, "48");
+        maxDuration = segmentSource.readOptionalSegment(DtmSegment.class, "44");
+        minDuration = segmentSource.readOptionalSegment(DtmSegment.class, "48");
         restingTime = segmentSource.readOptionalSegment(DtmSegment.class, "66");
+        activationTime = segmentSource.readOptionalSegment(DtmSegment.class, "163");
+        processingTime = segmentSource.readOptionalSegment(DtmSegment.class, "324");
 
         PriSegment priSegment;
         while ((priSegment = segmentSource.readOptionalSegmentGroup(PriSegment.class)) != null) {
             priceDetails.add(priSegment);
         }
 
-        priceQuote = segmentSource.readMandatorySegment(RffSegment.class, "PR");
-        location = segmentSource.readMandatorySegment(LocSegment.class, "90");
+        priceQuote = segmentSource.readOptionalSegment(RffSegment.class, "PR");
+        relatedDocumentNumber = segmentSource.readOptionalSegment(RffSegment.class, "ACE");
+        additionalReferenceNumber = segmentSource.readOptionalSegment(RffSegment.class, "ACD");
+        location = segmentSource.readOptionalSegment(LocSegment.class, "90");
     }
 
     public void setLocation(LocSegment locSegment) {
@@ -74,17 +82,17 @@ public class LinSegment extends EdifactSegmentGroup {
     }
 
     public void setAvailability(DtmSegment availability) {
-        this.availability = availability;
-        this.availability.setQualifier("44");
+        this.maxDuration = availability;
+        this.maxDuration.setQualifier("44");
     }
 
     public void setDuration(DtmSegment duration) {
-        this.duration = duration;
-        this.duration.setQualifier("48");
+        this.minDuration = duration;
+        this.minDuration.setQualifier("48");
     }
 
     public DtmSegment getDuration() {
-        return duration;
+        return minDuration;
     }
 
     public void setRestingTime(DtmSegment restingTime) {
