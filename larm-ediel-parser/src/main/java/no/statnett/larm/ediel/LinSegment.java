@@ -17,9 +17,13 @@ public class LinSegment extends EdifactSegmentGroup {
     private RffSegment priceQuote;
     private LocSegment location;
     private DtmSegment minDuration;
+    @SuppressWarnings("unused")
     private DtmSegment activationTime;
+    @SuppressWarnings("unused")
     private DtmSegment processingTime;
+    @SuppressWarnings("unused")
     private RffSegment additionalReferenceNumber;
+    @SuppressWarnings("unused")
     private RffSegment relatedDocumentNumber;
 
     public String getItemNumber() {
