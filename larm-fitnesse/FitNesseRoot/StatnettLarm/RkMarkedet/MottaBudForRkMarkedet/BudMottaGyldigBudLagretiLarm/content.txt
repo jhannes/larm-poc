@@ -1,6 +1,6 @@
 !contents
 
-!|table:motta bud om reguleringskraft|
+!|motta bud om reguleringskraft|
 |Meldingsref|bud|budgiver|meldingsdato|start|stopp|stasjonsgruppe|elspotområde|tidsrom|kvantum|pris|
 |UNH|1|7080005050999|200811301505|200912010000|200912012400|NOKG00049|NO1|200912010000200912010100|-39|450|
 ||1|7080005050999|200811301505|200912010000|200912012400|NOKG00049|NO1|200912010100200912010200|-39|450|
