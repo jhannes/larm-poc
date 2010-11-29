@@ -1,6 +1,7 @@
 package no.statnett.larm.poc.client.stasjon;
 
 import java.awt.FlowLayout;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -29,6 +30,11 @@ public class StasjonSpecificationPanel extends SpecificationPanel<Stasjon> {
     }
 
     @Override
+    public void addActionListener(ActionListener actionListener) {
+        searchButton.addActionListener(actionListener);
+    }
+
+    @Override
     public StasjonSpecification getSpecification() {
         StasjonSpecification specification = new StasjonSpecification();
         specification.setIncludeF01(includeF01Checkbox.isSelected());
@@ -36,7 +42,6 @@ public class StasjonSpecificationPanel extends SpecificationPanel<Stasjon> {
         return specification;
     }
 
-    @Override
     public JButton getSearchButton() {
         return searchButton;
     }

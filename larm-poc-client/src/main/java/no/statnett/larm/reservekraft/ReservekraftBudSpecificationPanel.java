@@ -1,6 +1,7 @@
 package no.statnett.larm.reservekraft;
 
 import java.awt.GridLayout;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -51,6 +52,11 @@ public class ReservekraftBudSpecificationPanel extends SpecificationPanel<Reserv
         add(elspotområderPanel);
     }
 
+    @Override
+    public void addActionListener(ActionListener actionListener) {
+        searchButton.addActionListener(actionListener);
+    }
+
 
     public JTextField getDriftsdøgnField() {
         return driftsdøgnField;
@@ -95,7 +101,6 @@ public class ReservekraftBudSpecificationPanel extends SpecificationPanel<Reserv
         elspotområderPanel.validate();
     }
 
-    @Override
     public JButton getSearchButton() {
         return searchButton;
     }

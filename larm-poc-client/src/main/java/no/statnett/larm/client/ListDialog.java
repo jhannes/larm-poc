@@ -10,6 +10,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
 import no.statnett.larm.core.async.AsyncCallback;
@@ -23,7 +24,7 @@ public abstract class ListDialog<T> extends JPanel {
 
     private final RepositoryAsync repositoryAsync;
 
-    private JTable searchResult = new JTable();
+    private JTable itemTable = new JTable();
 
     public ListDialog(RepositoryAsync repositoryAsync, SpecificationPanel<T> specificationPanel) {
         this.repositoryAsync = repositoryAsync;
@@ -31,7 +32,7 @@ public abstract class ListDialog<T> extends JPanel {
 
         layoutDialog();
 
-        specificationPanel.getSearchButton().addActionListener(createActionListener());
+        specificationPanel.addActionListener(createActionListener());
         updateSearchResults(new ArrayList<T>());
     }
 
@@ -50,14 +51,14 @@ public abstract class ListDialog<T> extends JPanel {
                     }
 
                     public void onFailure(Throwable e) {
-                        reportError("while searching", e);
+                        reportError("Feil under søk", e);
                     }
                 });
             }
         };
     }
 
-    private void reportError(String whatWasHappening, Throwable e) {
+    public void reportError(String whatWasHappening, Throwable e) {
         System.err.println(whatWasHappening);
         e.printStackTrace();
         JOptionPane.showMessageDialog(this, e.toString(), "Feil: " + whatWasHappening,
@@ -65,12 +66,15 @@ public abstract class ListDialog<T> extends JPanel {
     }
 
     public JTable getSearchResult() {
-        return searchResult;
+        return itemTable;
     }
 
     private void updateSearchResults(List<T> searchResults) {
-        searchResult.setModel(createTableModel(searchResults));
+        itemTable.setModel(createTableModel(searchResults));
+        itemTable.setColumnModel(createColumnModel(searchResults));
     }
+
+    protected abstract TableColumnModel createColumnModel(List<T> searchResults);
 
     protected abstract TableModel createTableModel(List<T> searchResults);
 

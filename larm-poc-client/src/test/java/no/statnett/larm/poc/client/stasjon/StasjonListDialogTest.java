@@ -39,8 +39,8 @@ public class StasjonListDialogTest {
         List<Stasjon> stasjoner = Arrays.asList(Stasjon.medNavnOgFastområde("Foo", "F01"), Stasjon.medNavnOgFastområde("Bar", "F09"));
         when(repository.find(any(StasjonSpecification.class))).thenReturn(stasjoner);
 
-        dialog.getSearchPanel().getSearchButton().doClick();
-        dialog.getSearchPanel().getSearchButton().doClick();
+        ((StasjonSpecificationPanel) dialog.getSearchPanel()).getSearchButton().doClick();
+        ((StasjonSpecificationPanel) dialog.getSearchPanel()).getSearchButton().doClick();
 
         JTable searchResult = dialog.getSearchResult();
         assertThat(searchResult.getModel().getColumnName(0)).isEqualTo("Stasjonsnavn");
