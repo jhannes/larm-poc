@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JTable;
+import javax.swing.text.JTextComponent;
 
 import no.statnett.larm.core.async.SyncAsyncProxy;
 import no.statnett.larm.core.repository.Repository;
@@ -38,15 +39,16 @@ public class ReservekraftBudListDialogTest {
             .excludes(no2, no3);
     }
 
-
     @Test
     public void shouldDisplaySearchResults() throws Exception {
         Repository repository = mock(Repository.class);
         ReservekraftBudListDialog dialog = new ReservekraftBudListDialog(SyncAsyncProxy.createAsyncProxy(RepositoryAsync.class, repository));
 
+        ReservekraftBud bud2 = new ReservekraftBud(new Stasjonsgruppe("NOKG100001", "Barstasjon", new Elspotområde("NO3")));
+        bud2.setPris(144);
         List<ReservekraftBud> bud = Arrays.asList(
                 new ReservekraftBud(new Stasjonsgruppe("NOKG100000", "Foostasjon", new Elspotområde("NO1"))),
-                new ReservekraftBud(new Stasjonsgruppe("NOKG100001", "Barstasjon", new Elspotområde("NO3"))));
+                bud2);
         when(repository.find(any(ReservekraftBudSpecification.class))).thenReturn(bud);
 
         dialog.getSearchPanel().getSearchButton().doClick();
@@ -61,7 +63,17 @@ public class ReservekraftBudListDialogTest {
         assertThat(searchResult.getModel().getColumnName(5)).isEqualTo("Opp/Ned");
         assertThat(searchResult.getModel().getValueAt(0, 0)).isEqualTo("Foostasjon");
         assertThat(searchResult.getModel().getValueAt(1, 1)).isEqualTo("NO3");
+        assertThat(searchResult.getModel().getValueAt(1, 2)).isEqualTo(144);
         assertThat(searchResult.getModel().getRowCount()).isEqualTo(bud.size());
+
+
+        assertThat(getTableCellText(searchResult, 1, 2)).isEqualTo("144");
+    }
+
+    private String getTableCellText(JTable table, int row, int column) {
+        return ((JTextComponent) table.getCellEditor(row, column)
+                .getTableCellEditorComponent(table, table.getModel().getValueAt(row, column), false, row, column))
+                .getText();
     }
 
 

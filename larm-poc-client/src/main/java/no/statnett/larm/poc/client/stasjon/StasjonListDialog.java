@@ -2,9 +2,6 @@ package no.statnett.larm.poc.client.stasjon;
 
 import java.util.List;
 
-import javax.swing.table.DefaultTableColumnModel;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
 import no.statnett.larm.LarmHibernateRepository;
@@ -29,20 +26,6 @@ public class StasjonListDialog extends ListDialog<Stasjon> {
         tableModel.addLambdaColumn("Stasjonsnavn", Lambda.on(Stasjon.class).getNavn());
         tableModel.addLambdaColumn("Fastområde", Lambda.on(Stasjon.class).getFastområde());
         return tableModel;
-    }
-
-    @Override
-    protected TableColumnModel createColumnModel(List<Stasjon> searchResults) {
-        DefaultTableColumnModel columnModel = new DefaultTableColumnModel();
-        columnModel.addColumn(newTableColumn("Stasjonsnavn", 0));
-        columnModel.addColumn(newTableColumn("Fastområde", 1));
-        return columnModel;
-    }
-
-    private TableColumn newTableColumn(String string, int i) {
-        TableColumn tableColumn = new TableColumn(i);
-        tableColumn.setHeaderValue(string);
-        return tableColumn;
     }
 
     public static void main(String[] args) {
